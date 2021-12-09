@@ -7,6 +7,13 @@ class GoogleSearch {
 
     private settings: Settings
 
+    static async create() {
+        const instance = new GoogleSearch()
+        instance.init()
+
+        return instance
+    }
+
     async init() {
 
         this.settings = new Settings()
