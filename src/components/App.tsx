@@ -13,10 +13,10 @@ export default function App() {
 
     useEffect(() => {
 
-        Mousetrap.bind('command+p', () => setPalette(palette => ({ ...palette, open: true })))
+        Mousetrap.bind('command+p', () =>
+            setPalette(palette => ({ ...palette, query: '', open: true })))
 
     }, [Mousetrap])
-
 
     const onAccept = async () => {
 
@@ -26,14 +26,19 @@ export default function App() {
         setResults(results)
 
         console.log(results)
-
     }
 
+    const onOpen = ({ result }) => {
+
+        window.open(result.link)
+    }
 
     return <div>
-        <Palette value={palette} setValue={setPalette} onAccept={onAccept} />
-        {results == null && <Home />}
-        {results && <SearchResults results={results} />}
+        <div className="absolute">
+            <Palette value={palette} setValue={setPalette} onAccept={onAccept} />
+            {results == null && <Home />}
+            {results && <SearchResults value={results} setValue={setResults} onOpen={onOpen} />}
+        </div>
     </div>
 }
 

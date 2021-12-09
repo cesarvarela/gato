@@ -2,7 +2,7 @@ import Mousetrap from 'mousetrap'
 import React, { createRef, useCallback, useEffect, useState } from 'react'
 import { classnames } from 'tailwindcss-classnames'
 
-function SearchResults({ results }) {
+function SearchResults({ value: results, setValue, onOpen }) {
 
     const [selectedIndex, setSelectedIndex] = useState(0)
     const [refs, setRefs] = useState([])
@@ -39,9 +39,11 @@ function SearchResults({ results }) {
 
         const result = results[selectedIndex]
 
-        window.open(result.link)
+        onOpen({ result })
 
     }, [results, selectedIndex])
+
+    const close = () => setValue(null)
 
 
     useEffect(() => {
@@ -49,10 +51,11 @@ function SearchResults({ results }) {
         Mousetrap.bind('up', up)
         Mousetrap.bind('down', down)
         Mousetrap.bind('command+enter', open)
+        Mousetrap.bind('esc', close)
 
         return () => {
 
-            Mousetrap.unbind(['up', 'down', 'command+enter'])
+            Mousetrap.unbind(['up', 'down', 'esc', 'command+enter'])
         }
 
     }, [Mousetrap, selectedIndex, results])
