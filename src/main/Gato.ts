@@ -48,10 +48,11 @@ class Gato extends EventEmiter {
 
         electron.ipcMain.handle('open', async (e, { url }) => {
 
-            console.log(e)
+            const window = electron.BrowserWindow.fromWebContents(e.sender)
 
-            // mainWindow.loadURL(url)
-            // mainWindow.webContents.focus()
+            window.loadURL(url)
+            window.webContents.focus()
+            this.hide({ window })
         })
 
         electron.ipcMain.handle('hide', async (e) => {
