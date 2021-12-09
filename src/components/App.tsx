@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import Palette from "./Palette";
 import Mousetrap from 'mousetrap'
 import SearchResults from "./ui/SearchResults";
-import Home from "./Home";
 
-const { gato: { search } } = window
+const { gato: { search, open, hide } } = window
 
 export default function App() {
 
-    const [palette, setPalette] = useState({ query: '', open: false })
+    const [palette, setPalette] = useState({ query: '', open: true })
     const [results, setResults] = useState(null)
 
     useEffect(() => {
@@ -28,16 +27,36 @@ export default function App() {
         console.log(results)
     }
 
+    const onCancelPalette = () => {
+
+        if (results && results.length) {
+
+            setPalette(value => ({ ...value, open: false }))
+        }
+        else {
+            setPalette(value => ({ ...value, open: true }))
+            hide()
+        }
+    }
+
+    const onCancelResults = () => {
+
+        setResults(null)
+        setPalette(value => ({ ...value, open: true }))
+        hide()
+    }
+
     const onOpen = ({ result }) => {
 
-        window.open(result.link)
+        setPalette(value => ({ ...value, open: true }))
+        open({ url: result.link })
+        hide()
     }
 
     return <div>
         <div className="absolute">
-            <Palette value={palette} setValue={setPalette} onAccept={onAccept} />
-            {results == null && <Home />}
-            {results && <SearchResults value={results} setValue={setResults} onOpen={onOpen} />}
+            <Palette value={palette} setValue={setPalette} onAccept={onAccept} onCancel={onCancelPalette} />
+            {results && <SearchResults value={results} onOpen={onOpen} onCancel={onCancelResults} />}
         </div>
     </div>
 }

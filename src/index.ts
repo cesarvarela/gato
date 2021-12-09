@@ -1,5 +1,4 @@
-import { app, BrowserWindow, BrowserView, shell, ipcMain } from 'electron';
-import storage from 'electron-json-storage'
+import { app, BrowserWindow, BrowserView, ipcMain, Menu, MenuItem } from 'electron';
 
 import GoogleSearch from './main/GoogleSearch'
 
@@ -11,19 +10,23 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
+let mainWindow: BrowserWindow
+
 const createWindow = async () => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
-    webPreferences: {
-      webviewTag: true,
-      preload: MAIN_PRELOAD_WEBPACK_ENTRY,
-    }
   });
 
-  // and load the index.html of the app.
-  mainWindow.loadURL(MAIN_WEBPACK_ENTRY);
+  view = new BrowserView({ webPreferences: { preload: MAIN_PRELOAD_WEBPACK_ENTRY } })
+  mainWindow.setBrowserView(view)
+
+  view.setBounds({ x: 0, y: 0, width: mainWindow.getBounds().width, height: mainWindow.getBounds().height })
+  view.setAutoResize({ horizontal: true, vertical: true })
+  view.webContents.loadURL(MAIN_WEBPACK_ENTRY)
+  view.webContents.openDevTools();
+
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
@@ -40,7 +43,49 @@ const createWindow = async () => {
     return items
   })
 
+
+  ipcMain.handle('open', async (e, { url }) => {
+
+    mainWindow.loadURL(url)
+    mainWindow.webContents.focus()
+  })
+
+  ipcMain.handle('hide', async () => {
+
+    hide()
+    mainWindow.webContents.focus()
+  })
+
 };
+
+let view: BrowserView
+
+
+function show() {
+
+  view.setBounds({ x: 0, y: 0, width: mainWindow.getBounds().width, height: mainWindow.getBounds().height })
+}
+
+function hide() {
+  view.setBounds({ x: 0, y: 0, width: 0, height: 0 })
+}
+
+const menu = new Menu()
+
+menu.append(new MenuItem({
+  label: 'Electron',
+  submenu: [{
+    role: 'help',
+    accelerator: process.platform === 'darwin' ? 'Cmd+P' : 'Ctrl+P',
+    click: () => {
+
+      show()
+      view.webContents.focus()
+    }
+  }]
+}))
+
+Menu.setApplicationMenu(menu)
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
