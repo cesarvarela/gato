@@ -1,11 +1,12 @@
-import './index.css';
 import "tailwindcss/tailwind.css"
 import React from "react";
 import ReactDOM from "react-dom";
-import App from './components/App';
+import App from '../../components/App';
+import { IGato } from "../../interfaces";
 
 declare global {
     interface Window {
+        gato: IGato
     }
 }
 

@@ -4,7 +4,7 @@ import Modal from "./Modal";
 import SearchInput from "./ui/SearchInput";
 
 
-export default function Palette({ value, setValue }) {
+export default function Palette({ value, setValue, onAccept }) {
 
     useEffect(() => {
 
@@ -33,7 +33,7 @@ export default function Palette({ value, setValue }) {
             <SearchInput value={value.query}
                 onChange={(e) => setValue(value => ({ ...value, query: e.target.value }))}
                 onCancel={close}
-                onAccept={close}
+                onAccept={onAccept}
             />
 
         </div>
