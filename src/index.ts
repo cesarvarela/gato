@@ -22,12 +22,7 @@ const createWindow = async () => {
       webviewTag: true,
     }
   });
-
-  const view = new BrowserView()
-  mainWindow.setBrowserView(view)
-  view.setBounds({ x: 0, y: 0, width: 300, height: 300 })
-  view.webContents.loadURL('https://electronjs.org')
-
+  
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
