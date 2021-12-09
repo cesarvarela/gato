@@ -70,22 +70,71 @@ function hide() {
   view.setBounds({ x: 0, y: 0, width: 0, height: 0 })
 }
 
-const menu = new Menu()
-
-menu.append(new MenuItem({
-  label: 'Electron',
-  submenu: [{
-    role: 'help',
-    accelerator: process.platform === 'darwin' ? 'Cmd+P' : 'Ctrl+P',
-    click: () => {
-
-      show()
-      view.webContents.focus()
+const application = new MenuItem({
+  label: "Application",
+  submenu: [
+    {
+      label: "Open palette",
+      accelerator: process.platform === 'darwin' ? 'Cmd+P' : 'Ctrl+P',
+      click: () => {
+        show()
+        view.webContents.focus()
+      },
+    },
+    {
+      type: "separator"
+    },
+    {
+      label: "Quit",
+      accelerator: "Command+Q",
+      click: () => {
+        app.quit()
+      }
     }
-  }]
-}))
+  ]
+})
 
-Menu.setApplicationMenu(menu)
+const edit = new MenuItem({
+  label: "Edit",
+  submenu: [
+    {
+      label: "Undo",
+      accelerator: "CmdOrCtrl+Z",
+      role: "undo",
+    },
+    {
+      label: "Redo",
+      accelerator: "Shift+CmdOrCtrl+Z",
+      role: "redo",
+    },
+    {
+      type: "separator"
+    },
+    {
+      label: "Cut",
+      accelerator: "CmdOrCtrl+X",
+      role: "cut",
+    },
+    {
+      label: "Copy",
+      accelerator: "CmdOrCtrl+C",
+      role: "copy"
+    },
+    {
+      label: "Paste",
+      accelerator: "CmdOrCtrl+V",
+      role: "paste",
+    },
+    {
+      label: "Select All",
+      accelerator: "CmdOrCtrl+A",
+      role: "selectAll"
+    }
+  ]
+})
+
+Menu.setApplicationMenu(Menu.buildFromTemplate([application, edit]))
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
