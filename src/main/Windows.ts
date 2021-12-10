@@ -65,6 +65,14 @@ class Windows extends EventEmiter {
                 window.webContents.reload()
             }
         })
+
+        menu.on('openDevTools', ({ window }: { window: electron.BrowserWindow }) => {
+
+            if (window) {
+                window.webContents.openDevTools()
+                window.getBrowserView().webContents.openDevTools()
+            }
+        })
     }
 }
 

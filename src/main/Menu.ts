@@ -57,6 +57,11 @@ class Menu extends EventEmiter {
                     click: (item, window, event) => this.emit('refresh', { window, event, item })
                 },
                 {
+                    label: "DevTools",
+                    accelerator: 'Cmd+Alt+I',
+                    click: (item, window, event) => this.emit('openDevTools', { window, event, item })
+                },
+                {
                     type: "separator"
                 },
                 {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Palette from "./Palette";
 import Mousetrap from 'mousetrap'
 import SearchResults from "./ui/SearchResults";
+import isURL from "validator/es/lib/isURL";
 
 const { gato: { search, open, hide } } = window
 
@@ -19,12 +20,27 @@ export default function App() {
 
     const onAccept = async () => {
 
-        const results = await search({ q: palette.query })
+        if (isURL(palette.query, { require_protocol: false })) {
 
-        setPalette(palette => ({ ...palette, open: false }))
-        setResults(results)
+            let url = palette.query
 
-        console.log(results)
+            if (!url.startsWith('http')) {
+
+                url = `https://${url}`
+            }
+
+            open({ url })
+            hide()
+        }
+        else {
+
+            const results = await search({ q: palette.query })
+
+            setPalette(palette => ({ ...palette, open: false }))
+            setResults(results)
+
+            console.log(results)
+        }
     }
 
     const onCancelPalette = () => {
