@@ -17,20 +17,16 @@ electron.app.on('ready', async () => {
   menu.emit('newWindow')
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 electron.app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     electron.app.quit();
   }
 });
 
-// TODO
-// app.on('activate', () => {
-//   // On OS X it's common to re-create a window in the app when the
-//   // dock icon is clicked and there are no other windows open.
-//   if (BrowserWindow.getAllWindows().length === 0) {
-//     createWindow();
-//   }
-// });
+electron.app.on('activate', async () => {
+  if (electron.BrowserWindow.getAllWindows().length === 0) {
+
+    const menu = await Menu.getInstance()
+    menu.emit('newWindow')
+  }
+});
