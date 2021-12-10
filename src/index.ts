@@ -14,7 +14,7 @@ electron.app.on('ready', async () => {
   const menu = await Menu.getInstance()
   const windows = await Windows.create()
 
-  windows.emit('newWindow')
+  menu.emit('newWindow')
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

@@ -32,6 +32,17 @@ class Menu extends EventEmiter {
                     click: (item, window, event) => this.emit('hide', { window, event, item })
                 },
                 {
+                    label: "New Window",
+                    accelerator: 'Cmd+N',
+                    click: (item, window, event) => this.emit('newWindow', { window, event, item })
+                },
+                {
+                    label: "Close Window",
+                    accelerator: 'Cmd+W',
+                    click: (item, window, event) => this.emit('closeWindow', { window, event, item })
+                },
+                
+                {
                     type: "separator"
                 },
                 {

@@ -1,5 +1,6 @@
 import electron from 'electron';
 import EventEmiter from 'events';
+import Menu from './Menu';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -33,9 +34,16 @@ class Windows extends EventEmiter {
 
     async init() {
 
-        this.on('newWindow', () => {
+        const menu = await Menu.getInstance()
+
+        menu.on('newWindow', () => {
 
             this.newWindow()
+        })
+
+        menu.on('closeWindow', ({ window }: { window: electron.BrowserWindow }) => {
+
+            window.close()
         })
     }
 }
