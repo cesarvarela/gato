@@ -51,7 +51,11 @@ class Menu extends EventEmiter {
                     accelerator: 'Ctrl+Cmd+Right',
                     click: (item, window, event) => this.emit('forward', { window, event, item })
                 },
-                
+                {
+                    label: "Refresh",
+                    accelerator: 'Cmd+R',
+                    click: (item, window, event) => this.emit('refresh', { window, event, item })
+                },
                 {
                     type: "separator"
                 },

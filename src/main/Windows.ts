@@ -58,6 +58,13 @@ class Windows extends EventEmiter {
                 window.webContents.goForward()
             }
         })
+
+        menu.on('refresh', ({ window }: { window: electron.BrowserWindow }) => {
+
+            if (window) {
+                window.webContents.reload()
+            }
+        })
     }
 }
 
