@@ -41,6 +41,16 @@ class Menu extends EventEmiter {
                     accelerator: 'Cmd+W',
                     click: (item, window, event) => this.emit('closeWindow', { window, event, item })
                 },
+                {
+                    label: "Back",
+                    accelerator: 'Ctrl+Cmd+Left',
+                    click: (item, window, event) => this.emit('back', { window, event, item })
+                },
+                {
+                    label: "Forward",
+                    accelerator: 'Ctrl+Cmd+Right',
+                    click: (item, window, event) => this.emit('forward', { window, event, item })
+                },
                 
                 {
                     type: "separator"

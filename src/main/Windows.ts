@@ -29,7 +29,6 @@ class Windows extends EventEmiter {
         view.setBounds({ x: 0, y: 0, width: window.getBounds().width, height: window.getBounds().height })
         view.setAutoResize({ horizontal: true, vertical: true })
         view.webContents.loadURL(MAIN_WEBPACK_ENTRY)
-        view.webContents.openDevTools();
     }
 
     async init() {
@@ -44,6 +43,20 @@ class Windows extends EventEmiter {
         menu.on('closeWindow', ({ window }: { window: electron.BrowserWindow }) => {
 
             window.close()
+        })
+
+        menu.on('back', ({ window }: { window: electron.BrowserWindow }) => {
+
+            if (window.webContents.canGoBack()) {
+                window.webContents.goBack()
+            }
+        })
+
+        menu.on('forward', ({ window }: { window: electron.BrowserWindow }) => {
+
+            if (window.webContents.canGoForward()) {
+                window.webContents.goForward()
+            }
         })
     }
 }
