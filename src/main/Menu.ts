@@ -22,9 +22,14 @@ class Menu extends EventEmiter {
             label: "Application",
             submenu: [
                 {
-                    label: "Open palette",
+                    label: "Show palette",
                     accelerator: process.platform === 'darwin' ? 'Cmd+P' : 'Ctrl+P',
                     click: (item, window, event) => this.emit('show', { window, event, item })
+                },
+                {
+                    label: "Hide palette",
+                    accelerator: 'Esc',
+                    click: (item, window, event) => this.emit('hide', { window, event, item })
                 },
                 {
                     type: "separator"

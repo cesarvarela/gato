@@ -37,6 +37,12 @@ class Gato extends EventEmiter {
             this.show({ window })
         })
 
+        menu.on('hide', () => {
+
+            const window = electron.BrowserWindow.getFocusedWindow()
+            this.hide({ window })
+        })
+
         const googleSearch = await GoogleSearch.create()
 
         electron.ipcMain.handle('search', async (e, { q }) => {
