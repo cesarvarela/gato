@@ -57,6 +57,14 @@
                   "preload": {
                     "js": "./src/windows/main/preload.ts"
                   }
+                },
+                {
+                  "html": "./src/windows/search/index.html",
+                  "js": "./src/windows/search/renderer.tsx",
+                  "name": "search",
+                  "preload": {
+                    "js": "./src/windows/search/preload.ts"
+                  }
                 }
               ]
             }
@@ -74,6 +82,7 @@
     "@electron-forge/plugin-webpack": "6.0.0-beta.61",
     "@types/mousetrap": "^1.6.8",
     "@types/react-dom": "^17.0.11",
+    "@types/validator": "^13.7.0",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
     "@vercel/webpack-asset-relocator-loader": "1.7.0",
@@ -100,8 +109,11 @@
     "jsdom": "^19.0.0",
     "lodash": "^4.17.21",
     "mousetrap": "^1.6.5",
+    "query-string": "^7.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "tailwindcss-classnames": "^2.2.6"
+    "tailwindcss-classnames": "^2.2.6",
+    "use-query-params": "^1.2.3",
+    "validator": "^13.7.0"
   }
 }

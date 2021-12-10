@@ -20,6 +20,9 @@ class Windows extends EventEmiter {
         const window = new electron.BrowserWindow({
             height: 600,
             width: 800,
+            webPreferences: {
+                preload: MAIN_PRELOAD_WEBPACK_ENTRY,
+            }
         });
 
         const view = new electron.BrowserView({ webPreferences: { preload: MAIN_PRELOAD_WEBPACK_ENTRY } })

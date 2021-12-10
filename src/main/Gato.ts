@@ -3,6 +3,8 @@ import electron from 'electron'
 import GoogleSearch from './GoogleSearch'
 import Menu from './Menu'
 
+declare const SEARCH_WEBPACK_ENTRY: string;
+
 class Gato extends EventEmiter {
 
     static async create() {
@@ -52,11 +54,31 @@ class Gato extends EventEmiter {
             return items
         })
 
-        electron.ipcMain.handle('open', async (e, { url }) => {
+        electron.ipcMain.handle('open', async (e, { snack = 'default', params = {} }) => {
 
             const window = electron.BrowserWindow.fromWebContents(e.sender)
 
-            window.loadURL(url)
+            let target = null
+
+            switch (snack) {
+
+                case 'search': {
+                    const { q } = params
+
+                    target = `${SEARCH_WEBPACK_ENTRY}?q=${q}`
+                }
+                    break;
+
+                default: {
+                    const { url } = params
+
+                    target = url
+                }
+            }
+
+            console.log('loading', target)
+
+            window.loadURL(target)
             window.webContents.focus()
             this.hide({ window })
         })

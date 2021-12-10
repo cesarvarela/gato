@@ -4,7 +4,7 @@ interface ISearchResult {
 
 interface IGato {
     search: ({ q }: { q: string }) => Promise<ISearchResult[]>
-    open: ({ url }: { url: string }) => void,
+    open: ({ snack, params }: { snack?: string, params?: unknown }) => void,
     hide: () => void,
 }
 
