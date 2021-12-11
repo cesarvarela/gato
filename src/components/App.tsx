@@ -19,6 +19,21 @@ export default function App() {
                 url = `https://${url}`
             }
 
+            try {
+
+                const parsed = new URL(url)
+
+                if (parsed.host.includes('youtube')) {
+
+                    const matches = url.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/)
+
+                    console.log(matches[5])
+
+                    return open({ snack: 'youtubeVideo', params: { v: matches[5] } })
+                }
+            }
+            catch (e) { }
+
             open({ snack: 'read', params: { url } })
         }
         else {

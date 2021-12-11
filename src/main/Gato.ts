@@ -93,6 +93,13 @@ class Gato extends EventEmiter {
             }
                 break;
 
+            case 'youtubeVideo': {
+                const { v } = params
+
+                target = `${SNACKS_WEBPACK_ENTRY}?snack=youtubeVideo&v=${v}`
+            }
+                break;
+
             default: {
                 const { url } = params
 
@@ -128,6 +135,33 @@ class Gato extends EventEmiter {
         this.paletteView.webContents.loadURL(MAIN_WEBPACK_ENTRY)
 
         this.window.addBrowserView(this.paletteView)
+
+        this.window.webContents.on('will-navigate', function (e, reqUrl) {
+
+            console.log('will-navigate', reqUrl)
+
+            // let getHost = url=>require('url').parse(url).host;
+            // let reqHost = getHost(reqUrl);
+            // let isExternal = reqHost && reqHost !== getHost(wc.getURL());
+            // if(isExternal) {
+            //   e.preventDefault();
+            //   shell.openExternal(reqUrl, {});
+            // }
+        })
+
+        this.window.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+            callback({
+                responseHeaders: {
+                    ...details.responseHeaders,
+                    'Content-Security-Policy': [
+                        [
+                            "default-src 'unsafe-inline' 'self' 'unsafe-eval' blob: data: *.sentry.io *.cloudfront.net *.youtube.com *.google.com *.ytimg.com *.ggpht.com *.googlevideo.com",
+                        ].join(';')
+                    ]
+                }
+            })
+        });
+
     }
 
     async init() {

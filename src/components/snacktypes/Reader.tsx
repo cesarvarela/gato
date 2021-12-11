@@ -35,15 +35,13 @@ export default function Reader() {
 
     return <div>
         <Helmet>
-            <meta charSet="utf-8" />
             <title>{url}</title>
-            <link rel="canonical" href={url} />
         </Helmet>
         <div className="border flex gap-2 p-2">
             <div >{url}</div>
             <button onClick={exitReader}>exit</button>
         </div >
-        <div className="p-6" dangerouslySetInnerHTML={{ __html: content }} />
+        <article className="p-6 prose max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
     </div>
 
 }
