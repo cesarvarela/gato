@@ -10,7 +10,7 @@ export default function App() {
 
     const onAccept = async () => {
 
-        if (isURL(palette.query, { require_protocol: false, require_tld: false })) {
+        if (isURL(palette.query, { require_tld: true, require_protocol: false }) || isURL(palette.query, { require_protocol: true, require_tld: false, require_port: true })) {
 
             let url = palette.query
 
