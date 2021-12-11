@@ -17,7 +17,6 @@ export default function Reader() {
                 const result = await read({ url })
 
                 setContent(result.content)
-                console.log(result)
             }
             catch (e) {
 
@@ -29,14 +28,22 @@ export default function Reader() {
 
     }, []);
 
+    const exitReader = () => {
+
+        open({ snack: null, params: { url } })
+    }
+
     return <div>
         <Helmet>
             <meta charSet="utf-8" />
             <title>{url}</title>
             <link rel="canonical" href={url} />
         </Helmet>
-        <div>{url}</div>
-        <div dangerouslySetInnerHTML={{ __html: content }} />
+        <div className="border flex gap-2 p-2">
+            <div >{url}</div>
+            <button onClick={exitReader}>exit</button>
+        </div >
+        <div className="p-6" dangerouslySetInnerHTML={{ __html: content }} />
     </div>
 
 }
