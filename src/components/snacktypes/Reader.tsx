@@ -33,15 +33,15 @@ export default function Reader() {
         open({ snack: null, params: { url } })
     }
 
-    return <div>
+    return <div className="bg-white dark:bg-gray-900">
         <Helmet>
             <title>{url}</title>
         </Helmet>
-        <div className="border flex gap-2 p-2">
+        <div className="flex gap-2 p-6 justify-between prose dark:prose-invert max-w-none">
             <div >{url}</div>
             <button onClick={exitReader}>exit</button>
         </div >
-        <article className="p-6 prose max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
+        <article className="p-6 prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: content.replace(/class/g, 'we') }} />
     </div>
 
 }
