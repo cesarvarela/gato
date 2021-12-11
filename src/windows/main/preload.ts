@@ -6,6 +6,7 @@ const api: IGato = {
     open: (url) => ipcRenderer.invoke('open', url),
     hide: () => ipcRenderer.invoke('hide'),
     read: ({ url }) => ipcRenderer.invoke('read', { url }),
+    choose: ({ q }) => ipcRenderer.invoke('choose', { q }),
 }
 
 contextBridge.exposeInMainWorld("gato", api);

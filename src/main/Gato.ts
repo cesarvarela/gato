@@ -1,5 +1,6 @@
 import EventEmiter from 'events'
 import electron from 'electron'
+import isURL from "validator/es/lib/isURL";
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -64,6 +65,46 @@ class Gato extends EventEmiter {
         this.window.webContents.openDevTools()
 
         this.paletteView.webContents.openDevTools()
+    }
+
+    async choose({ q }: { q: string }) {
+
+        let snack = null
+        let params = {}
+
+        if (isURL(q, { require_tld: true, require_protocol: false }) || isURL(q, { require_protocol: true, require_tld: false, require_port: true })) {
+
+            let url = q
+
+            if (!url.startsWith('http')) {
+
+                url = `https://${url}`
+            }
+
+            const parsed = new URL(url)
+
+            if (parsed.host.includes('youtube')) {
+
+                const matches = url.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/)
+
+                console.log(matches[5])
+
+                snack = 'youtubeVideo'
+                params = { v: matches[5] }
+            }
+            else {
+
+                snack = 'read'
+                params = { url }
+            }
+        }
+        else {
+
+            snack = 'search'
+            params = { q }
+        }
+
+        return { snack, params }
     }
 
     async open({ snack, params = {} }: { snack: string, params?: Record<string, unknown> }) {
@@ -149,18 +190,41 @@ class Gato extends EventEmiter {
             // }
         })
 
+        this.window.webContents.on('will-redirect', function (e, reqUrl) {
+
+            console.log('will-redirect', reqUrl)
+
+            // let getHost = url=>require('url').parse(url).host;
+            // let reqHost = getHost(reqUrl);
+            // let isExternal = reqHost && reqHost !== getHost(wc.getURL());
+            // if(isExternal) {
+            //   e.preventDefault();
+            //   shell.openExternal(reqUrl, {});
+            // }
+        })
+
         this.window.webContents.session.webRequest.onHeadersReceived((details, callback) => {
             callback({
                 responseHeaders: {
                     ...details.responseHeaders,
                     'Content-Security-Policy': [
                         [
-                            "default-src 'unsafe-inline' 'self' 'unsafe-eval' blob: data: *.sentry.io *.cloudfront.net *.youtube.com *.google.com *.ytimg.com *.ggpht.com *.googlevideo.com",
+                            // "default-src 'unsafe-inline' 'self' 'unsafe-eval' blob: data: *.sentry.io *.cloudfront.net *.youtube.com *.google.com *.ytimg.com *.ggpht.com *.googlevideo.com",
+                            "*"
                         ].join(';')
                     ]
                 }
             })
         });
+
+        this.window.webContents.session.webRequest.onBeforeRequest({
+            urls: ['*://*.youtube.com/watch*']
+        }, (details, cb) => {
+
+            console.log('youtube', details)
+
+            // cb({redirectURL: 'https://example.com'})
+        })
 
     }
 

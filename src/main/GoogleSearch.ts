@@ -4,6 +4,8 @@ import electron from 'electron'
 
 const customsearch = google.customsearch('v1');
 
+const cache = new Map<string, unknown>();
+
 class GoogleSearch {
 
     private settings: Settings
@@ -31,10 +33,14 @@ class GoogleSearch {
 
         const { googleSearch: { key, cx } } = await this.settings.get()
 
-        return customsearch.cse.list({ key, cx, q })
+        if (!(q in cache)) {
+            const result = await customsearch.cse.list({ key, cx, q })
+
+            cache[q] = result
+        }
+
+        return cache[q]
     }
-
-
 }
 
 export default GoogleSearch
