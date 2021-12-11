@@ -5,6 +5,10 @@ import Menu from './Menu';
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
 
+
+declare const HOME_WEBPACK_ENTRY: string;
+declare const HOME_PRELOAD_WEBPACK_ENTRY: string;
+
 class Windows extends EventEmiter {
 
     static async create() {
@@ -21,9 +25,11 @@ class Windows extends EventEmiter {
             height: 600,
             width: 800,
             webPreferences: {
-                preload: MAIN_PRELOAD_WEBPACK_ENTRY,
+                preload: HOME_PRELOAD_WEBPACK_ENTRY,
             }
         });
+
+        window.loadURL(HOME_WEBPACK_ENTRY)
 
         const view = new electron.BrowserView({ webPreferences: { preload: MAIN_PRELOAD_WEBPACK_ENTRY } })
 
