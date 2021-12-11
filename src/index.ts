@@ -1,5 +1,5 @@
 import electron from 'electron';
-import Gato from './main/Gato';
+import GoogleSearch from './main/GoogleSearch';
 import Menu from './main/Menu';
 import Windows from './main/Windows';
 
@@ -10,9 +10,9 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 
 electron.app.on('ready', async () => {
 
-  const gato = await Gato.create()
   const menu = await Menu.getInstance()
-  const windows = await Windows.create()
+  await Windows.create()
+  await GoogleSearch.create()
 
   menu.emit('newWindow')
 });

@@ -1,5 +1,6 @@
 import Settings from "./Settings"
 import { google } from 'googleapis'
+import electron from 'electron'
 
 const customsearch = google.customsearch('v1');
 
@@ -17,6 +18,13 @@ class GoogleSearch {
     async init() {
 
         this.settings = new Settings()
+
+        electron.ipcMain.handle('search', async (e, { q }) => {
+
+            const { data: { items } } = await this.search({ q })
+
+            return items
+        })
     }
 
     async search({ q }) {

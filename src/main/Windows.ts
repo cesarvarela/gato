@@ -1,15 +1,11 @@
 import electron from 'electron';
 import EventEmiter from 'events';
+import Gato from './Gato';
 import Menu from './Menu';
 
-declare const MAIN_WEBPACK_ENTRY: string;
-declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
-
-
-declare const HOME_WEBPACK_ENTRY: string;
-declare const HOME_PRELOAD_WEBPACK_ENTRY: string;
-
 class Windows extends EventEmiter {
+
+    windows: Record<string, Gato> = {}
 
     static async create() {
 
@@ -19,68 +15,71 @@ class Windows extends EventEmiter {
         return instance
     }
 
-    async newWindow() {
-        // Create the browser window.
-        const window = new electron.BrowserWindow({
-            height: 600,
-            width: 800,
-            webPreferences: {
-                preload: HOME_PRELOAD_WEBPACK_ENTRY,
-            }
-        });
-
-        window.loadURL(HOME_WEBPACK_ENTRY)
-
-        const view = new electron.BrowserView({ webPreferences: { preload: MAIN_PRELOAD_WEBPACK_ENTRY } })
-
-        window.setBrowserView(view)
-
-        view.setBounds({ x: 0, y: 0, width: window.getBounds().width, height: window.getBounds().height })
-        view.setAutoResize({ horizontal: true, vertical: true })
-        view.webContents.loadURL(MAIN_WEBPACK_ENTRY)
-    }
-
     async init() {
 
         const menu = await Menu.getInstance()
 
-        menu.on('newWindow', () => {
+        menu.on('newWindow', async () => {
 
-            this.newWindow()
+            const gato = await Gato.create()
+
+            this.windows[gato.id] = gato
         })
 
         menu.on('closeWindow', ({ window }: { window: electron.BrowserWindow }) => {
 
-            window.close()
+            this.windows[window.id].close()
+            delete this.windows[window.id]
         })
 
         menu.on('back', ({ window }: { window: electron.BrowserWindow }) => {
 
-            if (window.webContents.canGoBack()) {
-                window.webContents.goBack()
+            if (this.windows[window.id].canGoBack()) {
+
+                this.windows[window.id].back()
             }
         })
 
         menu.on('forward', ({ window }: { window: electron.BrowserWindow }) => {
 
-            if (window.webContents.canGoForward()) {
-                window.webContents.goForward()
+            if (this.windows[window.id].canGoForward()) {
+
+                this.windows[window.id].forward()
             }
         })
 
-        menu.on('refresh', ({ window }: { window: electron.BrowserWindow }) => {
+        menu.on('reload', ({ window }: { window: electron.BrowserWindow }) => {
 
-            if (window) {
-                window.webContents.reload()
-            }
+            this.windows[window.id].reload()
         })
 
         menu.on('openDevTools', ({ window }: { window: electron.BrowserWindow }) => {
 
-            if (window) {
-                window.webContents.openDevTools()
-                window.getBrowserView().webContents.openDevTools()
-            }
+            this.windows[window.id].openDevTools()
+        })
+
+        menu.on('show', ({ window }: { window: electron.BrowserWindow }) => {
+
+            this.windows[window.id].show()
+        })
+
+        menu.on('hide', ({ window }: { window: electron.BrowserWindow }) => {
+
+            this.windows[window.id].hide()
+        })
+
+        electron.ipcMain.handle('open', async (e, { snack = 'reader', params = {} }) => {
+
+            const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+            this.windows[window.id].open({ snack, params })
+        })
+
+        electron.ipcMain.handle('hide', async (e) => {
+
+            const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+            this.windows[window.id].hide()
         })
     }
 }

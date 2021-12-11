@@ -52,9 +52,9 @@ class Menu extends EventEmiter {
                     click: (item, window, event) => this.emit('forward', { window, event, item })
                 },
                 {
-                    label: "Refresh",
+                    label: "Reload",
                     accelerator: 'Cmd+R',
-                    click: (item, window, event) => this.emit('refresh', { window, event, item })
+                    click: (item, window, event) => this.emit('reload', { window, event, item })
                 },
                 {
                     label: "DevTools",
