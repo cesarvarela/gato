@@ -2,16 +2,18 @@ import React, { useEffect, useState } from "react";
 import { StringParam, useQueryParam } from "use-query-params";
 import SearchResults from "../ui/SearchResults";
 
-const { gato: { search, open } } = window
+const { gato: { search, open, choose } } = window
 
 export default function Search() {
 
     const [q] = useQueryParam('q', StringParam);
     const [results, setResults] = useState(null)
 
-    const onOpen = ({ result }) => {
+    const onOpen = async ({ result }) => {
 
-        open({ snack: 'read', params: { url: result.link } })
+        const chosen = await choose({ q: result.link })
+
+        open(chosen)
     }
 
     useEffect(() => {
