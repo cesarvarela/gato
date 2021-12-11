@@ -1,21 +1,15 @@
 import EventEmiter from 'events'
 import electron from 'electron'
-import { Readability, isProbablyReaderable } from '@mozilla/readability';
-import { JSDOM } from 'jsdom'
-import got from 'got'
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
 
-declare const HOME_WEBPACK_ENTRY: string;
-declare const HOME_PRELOAD_WEBPACK_ENTRY: string;
-
-declare const SEARCH_WEBPACK_ENTRY: string;
+declare const SNACKS_WEBPACK_ENTRY: string;
+declare const SNACKS_PRELOAD_WEBPACK_ENTRY: string;
 
 class Gato extends EventEmiter {
 
     window: electron.BrowserWindow = null
-    snackView: electron.BrowserView = null
     paletteView: electron.BrowserView = null
     id: number
 
@@ -30,6 +24,7 @@ class Gato extends EventEmiter {
     show() {
 
         this.paletteView.setBounds({ x: 0, y: 0, width: this.window.getBounds().width, height: this.window.getBounds().height })
+        this.paletteView.webContents.focus()
     }
 
     hide() {
@@ -68,43 +63,40 @@ class Gato extends EventEmiter {
 
         this.window.webContents.openDevTools()
 
-        this.snackView.webContents.openDevTools()
         this.paletteView.webContents.openDevTools()
     }
 
-    async open({ snack = 'reader', params = {} }: { snack: string, params: Record<string, unknown> }) {
+    async open({ snack, params = {} }: { snack: string, params?: Record<string, unknown> }) {
 
         let target = null
 
         switch (snack) {
 
-            case 'search': {
-                const { q } = params
+            case 'home': {
 
-                target = `${SEARCH_WEBPACK_ENTRY}?q=${q}`
+                target = `${SNACKS_WEBPACK_ENTRY}?snack=home`
             }
                 break;
 
-            case 'reader':
+            case 'search': {
+                const { q } = params
+
+                target = `${SNACKS_WEBPACK_ENTRY}?snack=search&q=${q}`
+            }
+                break;
+
+            case 'read': {
+
+                const { url } = params
+
+                target = `${SNACKS_WEBPACK_ENTRY}?snack=read&url=${url}`
+            }
+                break;
+
             default: {
                 const { url } = params
 
-                const response = await got(url)
-                const page = new JSDOM(response.body, { url });
-
-                if (isProbablyReaderable(page.window.document)) {
-
-                    isProbablyReaderable(page.window.document)
-
-                    const reader = new Readability(page.window.document);
-                    const article = reader.parse();
-
-                    target = `data:text/html,${encodeURIComponent(article.content)}`
-                }
-                else {
-
-                    target = url
-                }
+                target = url
             }
         }
 
@@ -112,6 +104,7 @@ class Gato extends EventEmiter {
 
         this.window.loadURL(target)
         this.window.webContents.focus()
+
         this.hide()
     }
 
@@ -122,19 +115,11 @@ class Gato extends EventEmiter {
             height: 600,
             width: 800,
             webPreferences: {
-                preload: HOME_PRELOAD_WEBPACK_ENTRY,
+                preload: SNACKS_PRELOAD_WEBPACK_ENTRY,
             }
         });
 
-        this.window.loadURL(HOME_WEBPACK_ENTRY)
-
-        this.snackView = new electron.BrowserView({ webPreferences: { preload: MAIN_PRELOAD_WEBPACK_ENTRY } })
-
-        this.snackView.setBounds({ x: 0, y: 0, width: this.window.getBounds().width, height: this.window.getBounds().height })
-        this.snackView.setAutoResize({ horizontal: true, vertical: true })
-        this.snackView.webContents.loadURL(MAIN_WEBPACK_ENTRY)
-
-        this.window.addBrowserView(this.snackView)
+        this.window.loadURL(SNACKS_WEBPACK_ENTRY)
 
         this.paletteView = new electron.BrowserView({ webPreferences: { preload: MAIN_PRELOAD_WEBPACK_ENTRY } })
 

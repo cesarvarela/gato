@@ -59,19 +59,11 @@
                   }
                 },
                 {
-                  "html": "./src/windows/search/index.html",
-                  "js": "./src/windows/search/renderer.tsx",
-                  "name": "search",
+                  "html": "./src/windows/snacks/index.html",
+                  "js": "./src/windows/snacks/renderer.tsx",
+                  "name": "snacks",
                   "preload": {
-                    "js": "./src/windows/search/preload.ts"
-                  }
-                },
-                {
-                  "html": "./src/windows/home/index.html",
-                  "js": "./src/windows/home/renderer.tsx",
-                  "name": "home",
-                  "preload": {
-                    "js": "./src/windows/home/preload.ts"
+                    "js": "./src/windows/snacks/preload.ts"
                   }
                 }
               ]

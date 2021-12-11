@@ -1,4 +1,5 @@
 import electron from 'electron';
+import Reader from './main/Reader';
 import GoogleSearch from './main/GoogleSearch';
 import Menu from './main/Menu';
 import Windows from './main/Windows';
@@ -13,6 +14,7 @@ electron.app.on('ready', async () => {
   const menu = await Menu.getInstance()
   await Windows.create()
   await GoogleSearch.create()
+  await Reader.create()
 
   menu.emit('newWindow')
 });

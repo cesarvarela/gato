@@ -2,7 +2,7 @@ import "tailwindcss/tailwind.css"
 import React from "react";
 import ReactDOM from "react-dom";
 import { IGato } from "../../interfaces";
-import Search from "../../components/snacks/Search";
+import Snacks from "../../components/Snacks";
 import { QueryParamProvider } from "use-query-params";
 
 declare global {
@@ -13,6 +13,6 @@ declare global {
 
 ReactDOM.render(
     <QueryParamProvider>
-        <Search />
+        <Snacks />
     </QueryParamProvider>
     , document.getElementById("root"));

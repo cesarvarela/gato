@@ -11,9 +11,8 @@ export default function Search() {
 
     const onOpen = ({ result }) => {
 
-        open({ params: { url: result.link } })
+        open({ snack: 'read', params: { url: result.link } })
     }
-
 
     useEffect(() => {
 
@@ -31,7 +30,6 @@ export default function Search() {
     }, []);
 
     return <div>
-        {window.location.href}
         {results && <SearchResults value={results} onOpen={onOpen} onCancel={() => false} />}
     </div>;
 }
