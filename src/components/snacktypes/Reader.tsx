@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StringParam, useQueryParam } from "use-query-params";
+import { Helmet } from "react-helmet";
 
 const { gato: { read, open } } = window
 
@@ -28,5 +29,14 @@ export default function Reader() {
 
     }, []);
 
-    return <div dangerouslySetInnerHTML={{ __html: content }} />
+    return <div>
+        <Helmet>
+            <meta charSet="utf-8" />
+            <title>{url}</title>
+            <link rel="canonical" href={url} />
+        </Helmet>
+        <div>{url}</div>
+        <div dangerouslySetInnerHTML={{ __html: content }} />
+    </div>
+
 }

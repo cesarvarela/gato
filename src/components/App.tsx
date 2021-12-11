@@ -19,7 +19,7 @@ export default function App() {
                 url = `https://${url}`
             }
 
-            open({ params: { url } })
+            open({ snack: 'read', params: { url } })
         }
         else {
 

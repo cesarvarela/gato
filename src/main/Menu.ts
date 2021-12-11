@@ -1,5 +1,6 @@
 import electron from "electron"
 import EventEmiter from "events"
+import storage from "electron-json-storage"
 
 class Menu extends EventEmiter {
 
@@ -63,6 +64,12 @@ class Menu extends EventEmiter {
                 },
                 {
                     type: "separator"
+                },
+                {
+                    label: 'Open settings folder',
+                    click: () => {
+                        electron.shell.showItemInFolder(storage.getDefaultDataPath())
+                    }
                 },
                 {
                     label: "Quit",
