@@ -2,6 +2,9 @@ import EventEmiter from 'events'
 import electron from 'electron'
 import GoogleSearch from './GoogleSearch'
 import Menu from './Menu'
+import { Readability, isProbablyReaderable } from '@mozilla/readability';
+import { JSDOM } from 'jsdom'
+import got from 'got'
 
 declare const SEARCH_WEBPACK_ENTRY: string;
 
@@ -54,7 +57,7 @@ class Gato extends EventEmiter {
             return items
         })
 
-        electron.ipcMain.handle('open', async (e, { snack = 'default', params = {} }) => {
+        electron.ipcMain.handle('open', async (e, { snack = 'reader', params = {} }) => {
 
             const window = electron.BrowserWindow.fromWebContents(e.sender)
 
@@ -69,10 +72,26 @@ class Gato extends EventEmiter {
                 }
                     break;
 
+                case 'reader':
                 default: {
                     const { url } = params
 
-                    target = url
+                    const response = await got(url)
+                    const page = new JSDOM(response.body, { url });
+
+                    if (isProbablyReaderable(page.window.document)) {
+
+                        isProbablyReaderable(page.window.document)
+
+                        const reader = new Readability(page.window.document);
+                        const article = reader.parse();
+
+                        target = `data:text/html,${encodeURIComponent(article.content)}`
+                    }
+                    else {
+                        
+                        target = url
+                    }
                 }
             }
 
