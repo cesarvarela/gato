@@ -83,11 +83,11 @@ class Windows extends EventEmiter {
             this.windows[window.id].hide()
         })
 
-        electron.ipcMain.handle('show', async (e) => {
+        electron.ipcMain.handle('show', async (e, params) => {
 
             const window = electron.BrowserWindow.fromWebContents(e.sender)
 
-            this.windows[window.id].show()
+            this.windows[window.id].show(params)
         })
 
         electron.ipcMain.handle('choose', async (e, { q }: { q: string }) => {

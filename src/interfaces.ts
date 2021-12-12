@@ -1,3 +1,5 @@
+import electron from 'electron'
+
 interface ISearchResult {
     title: string
 }
@@ -10,6 +12,7 @@ interface IPaletteParams {
 
 interface IStatus {
     url: { href: string }
+    bounds: electron.Rectangle
 }
 
 interface IFind {
@@ -29,7 +32,7 @@ interface IGato {
     read: ({ url }: { url: string }) => Promise<{ content: string, title: string, author: string, date_published: string }>
     open: ({ snack, params }: { snack?: string, params?: unknown }) => void
     hide: () => void,
-    show: () => void,
+    show: ({ bounds }: { bounds: electron.Rectangle }) => void,
     on: (channel: string, cb: (e, params) => void) => void,
     status: () => Promise<IStatus>,
     find: (params: IFind) => Promise<number>,

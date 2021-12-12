@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { IPaletteParams, PaletteMode } from "../interfaces";
+import Modal from "./Modal";
 import Palette from "./Palette";
 
 const { gato: { choose, open, hide, show, on, status, find, stopFind } } = window
@@ -14,13 +15,16 @@ export default function App() {
 
         on('call', async (e, { params }: { params: IPaletteParams }) => {
 
+            const { url, bounds } = await status()
+
+            const fullBounds = { x: 0, y: 0, width: bounds.width, height: bounds.height }
+
             switch (params.mode) {
 
                 case "location": {
 
-                    const s = await status()
-                    setQ(s.url.href)
-                    show()
+                    setQ(url.href)
+                    show({ bounds: fullBounds })
                 }
                     break;
 
@@ -33,13 +37,14 @@ export default function App() {
                 case "find": {
 
                     setQ(':')
-                    show()
+
+                    show({ bounds: { ...fullBounds, height: 120 } })
                 }
                     break;
 
                 case 'default': {
 
-                    show()
+                    show({ bounds: fullBounds })
                 }
                     break;
             }
@@ -86,10 +91,8 @@ export default function App() {
         hide()
     }
 
-    return <div>
-        <div className="absolute">
-            <Palette mode={mode} value={q} onChange={setQ} onAccept={onAccept} onCancel={onCancelPalette} />
-        </div>
-    </div>
+    return <Modal open={true}>
+        <Palette mode={mode} value={q} onChange={setQ} onAccept={onAccept} onCancel={onCancelPalette} />
+    </Modal>
 }
 
