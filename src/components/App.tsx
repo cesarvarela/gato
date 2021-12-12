@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Palette from "./Palette";
 
-const { gato: { choose, open, hide, show, on } } = window
+const { gato: { choose, open, hide, show, on, status } } = window
 
 export default function App() {
 
@@ -9,10 +9,12 @@ export default function App() {
 
     useEffect(() => {
 
-        on('call', (e, { params }) => {
+        on('call', async (e, { params }) => {
+
+            const s = await status()
 
             if (params.mode == 'location') {
-                setQ(window.location.href)
+                setQ(s.url.href)
             }
 
             show()

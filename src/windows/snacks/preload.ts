@@ -9,6 +9,7 @@ const api: IGato = {
     read: ({ url }) => ipcRenderer.invoke('read', { url }),
     choose: ({ q }) => ipcRenderer.invoke('choose', { q }),
     on: (channel, callback) => ipcRenderer.on(`gato:${channel}`, callback),
+    status: () => ipcRenderer.invoke('status'),
 }
 
 contextBridge.exposeInMainWorld("gato", api);

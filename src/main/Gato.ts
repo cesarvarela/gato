@@ -1,7 +1,7 @@
 import EventEmiter from 'events'
 import electron from 'electron'
 import isURL from "validator/es/lib/isURL";
-import { IPaletteParams } from '../interfaces';
+import { IPaletteParams, IStatus } from '../interfaces';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -169,6 +169,17 @@ class Gato extends EventEmiter {
         this.hide()
     }
 
+    async status(): Promise<IStatus> {
+
+        const response = {
+            url: {
+                href: this.window.webContents.getURL()
+            }
+        }
+
+        return response
+    }
+
     async createWindow() {
 
         // Create the browser window.
@@ -239,6 +250,7 @@ class Gato extends EventEmiter {
             // cb({redirectURL: 'https://example.com'})
         })
 
+        // this.window.webContents.setWindowOpenHandler
     }
 
     async init() {
