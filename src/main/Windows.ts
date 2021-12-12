@@ -6,14 +6,18 @@ import Menu from './Menu';
 
 class Windows extends EventEmiter {
 
+    static instance: Windows
     windows: Record<string, Gato> = {}
 
-    static async create() {
+    static async getInstance() {
 
-        const instance = new Windows()
-        await instance.init()
+        if (!Windows.instance) {
 
-        return instance
+            Windows.instance = new Windows()
+            await Windows.instance.init()
+        }
+
+        return Windows.instance
     }
 
     async init() {

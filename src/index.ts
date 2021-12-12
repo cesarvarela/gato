@@ -12,7 +12,7 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 electron.app.on('ready', async () => {
 
   const menu = await Menu.getInstance()
-  await Windows.create()
+  await Windows.getInstance()
   await GoogleSearch.create()
   await Reader.create()
 
