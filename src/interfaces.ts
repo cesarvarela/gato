@@ -26,6 +26,8 @@ interface IStopFind {
     action: 'clearSelection' | 'keepSelection' | 'activateSelection'
 }
 
+type ITarget = '_blank' | '_self'
+
 interface IGato {
     search: ({ q }: { q: string }) => Promise<ISearchResult[]>
     choose: ({ q }: { q: string }) => Promise<{ snack: string, params: Record<string, unknown> }>
@@ -39,4 +41,13 @@ interface IGato {
     stopFind: (params?: IStopFind) => Promise<void>,
 }
 
-export { IGato, ISearchResult, IPaletteParams, IStatus, IFind, PaletteMode, IStopFind }
+export {
+    IGato,
+    ISearchResult,
+    IPaletteParams,
+    IStatus,
+    IFind,
+    PaletteMode,
+    IStopFind,
+    ITarget,
+}

@@ -35,11 +35,11 @@ function SearchResults({ value: results, onOpen, onCancel }) {
 
     }, [results])
 
-    const open = useCallback(() => {
+    const open = useCallback(({ target }) => {
 
         const result = results[selectedIndex]
 
-        onOpen({ result })
+        onOpen({ result, target })
 
     }, [results, selectedIndex])
 
@@ -47,7 +47,8 @@ function SearchResults({ value: results, onOpen, onCancel }) {
 
         Mousetrap.bind('up', up)
         Mousetrap.bind('down', down)
-        Mousetrap.bind('enter', open)
+        Mousetrap.bind('enter', () => open({ target: '_self' }))
+        Mousetrap.bind('command+enter', () => open({ target: '_blank' }))
         Mousetrap.bind('esc', onCancel)
 
         return () => {

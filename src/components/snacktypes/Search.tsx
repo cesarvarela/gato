@@ -9,11 +9,11 @@ export default function Search() {
     const [q] = useQueryParam('q', StringParam);
     const [results, setResults] = useState(null)
 
-    const onOpen = async ({ result }) => {
+    const onOpen = async ({ result, target }) => {
 
-        const chosen = await choose({ q: result.link })
+        const { snack, params } = await choose({ q: result.link })
 
-        open(chosen)
+        open({ snack, params: { ...params, target } })
     }
 
     useEffect(() => {
