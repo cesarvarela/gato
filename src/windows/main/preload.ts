@@ -1,5 +1,5 @@
 import { ipcRenderer, contextBridge } from "electron";
-import { IGato } from "../../interfaces";
+import { IFind, IGato } from "../../interfaces";
 
 const api: IGato = {
     search: (query) => ipcRenderer.invoke('search', query),
@@ -10,6 +10,8 @@ const api: IGato = {
     choose: ({ q }) => ipcRenderer.invoke('choose', { q }),
     on: (channel, callback) => ipcRenderer.on(`gato:${channel}`, callback),
     status: () => ipcRenderer.invoke('status'),
+    find: (params: IFind) => ipcRenderer.invoke('find', params),
+    stopFind: (params) => ipcRenderer.invoke('stopFind', params),
 }
 
 contextBridge.exposeInMainWorld("gato", api);

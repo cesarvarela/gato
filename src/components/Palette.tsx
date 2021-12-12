@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "./Modal";
 import SearchInput from "./ui/SearchInput";
 
-export default function Palette({ value, onChange, onCancel, onAccept }) {
+export default function Palette({ mode, value, onChange, onCancel, onAccept }) {
 
     return <Modal open={true}>
 
@@ -13,7 +13,7 @@ export default function Palette({ value, onChange, onCancel, onAccept }) {
                 onCancel={onCancel}
                 onAccept={onAccept}
             />
-
+            {mode}
         </div>
 
     </Modal>

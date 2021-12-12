@@ -38,6 +38,11 @@ class Menu extends EventEmiter {
                     click: (item, window, event) => this.emit('show', { window, event, item, params: { mode: 'location' } })
                 },
                 {
+                    label: "Find",
+                    accelerator: 'Cmd+F',
+                    click: (item, window, event) => this.emit('show', { window, event, item, params: { mode: 'find' } }) 
+                },
+                {
                     type: "separator"
                 },
                 {

@@ -2,12 +2,25 @@ interface ISearchResult {
     title: string
 }
 
+type PaletteMode = 'location' | 'default' | 'find' | 'hide'
+
 interface IPaletteParams {
-    mode: 'location' | 'default'
+    mode: PaletteMode
 }
 
 interface IStatus {
     url: { href: string }
+}
+
+interface IFind {
+    text: string
+    forward?: boolean
+    matchCase?: boolean
+    findNext?: boolean
+}
+
+interface IStopFind {
+    action: 'clearSelection' | 'keepSelection' | 'activateSelection'
 }
 
 interface IGato {
@@ -19,6 +32,8 @@ interface IGato {
     show: () => void,
     on: (channel: string, cb: (e, params) => void) => void,
     status: () => Promise<IStatus>,
+    find: (params: IFind) => Promise<number>,
+    stopFind: (params?: IStopFind) => Promise<void>,
 }
 
-export { IGato, ISearchResult, IPaletteParams, IStatus }
+export { IGato, ISearchResult, IPaletteParams, IStatus, IFind, PaletteMode, IStopFind }

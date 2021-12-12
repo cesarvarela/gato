@@ -1,7 +1,7 @@
 import EventEmiter from 'events'
 import electron from 'electron'
 import isURL from "validator/es/lib/isURL";
-import { IPaletteParams, IStatus } from '../interfaces';
+import { IFind, IPaletteParams, IStatus, IStopFind } from '../interfaces';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -37,7 +37,7 @@ class Gato extends EventEmiter {
     hide() {
 
         this.paletteView.setBounds({ x: 0, y: 0, width: 0, height: 0 })
-        // this.window.webContents.focus()
+        this.window.webContents.focus()
     }
 
     close() {
@@ -101,7 +101,7 @@ class Gato extends EventEmiter {
                 params = { v: matches[5] }
             }
             else if (parsed.host.includes('localhost')) {
-                
+
                 snack = null
                 params = { url }
             }
@@ -199,8 +199,6 @@ class Gato extends EventEmiter {
         this.paletteView.setAutoResize({ horizontal: true, vertical: true })
         this.paletteView.webContents.loadURL(MAIN_WEBPACK_ENTRY)
 
-        this.window.addBrowserView(this.paletteView)
-
         this.window.webContents.on('will-navigate', function (e, reqUrl) {
 
             console.log('will-navigate', reqUrl)
@@ -250,7 +248,37 @@ class Gato extends EventEmiter {
             // cb({redirectURL: 'https://example.com'})
         })
 
+        this.window.webContents.on('found-in-page', (event, result) => {
+
+            // console.log('we', event, result)
+
+            // if (result.finalUpdate) {
+
+            //     this.window.webContents.stopFindInPage('clearSelection')
+            // }
+        })
+
+        this.window.addBrowserView(this.paletteView)
+
         // this.window.webContents.setWindowOpenHandler
+    }
+
+    async find({ text, forward = true, findNext = false, matchCase = false }: IFind) {
+
+        console.log('find', text, forward, findNext, matchCase,)
+
+        return this.window.webContents.findInPage(text, {
+            forward,
+            matchCase,
+            findNext
+        })
+    }
+
+    async stopFind({ action }: IStopFind) {
+
+        console.log('stopFind', action)
+
+        this.window.webContents.stopFindInPage(action)
     }
 
     async init() {

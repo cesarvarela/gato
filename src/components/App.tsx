@@ -1,35 +1,86 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { IPaletteParams, PaletteMode } from "../interfaces";
 import Palette from "./Palette";
 
-const { gato: { choose, open, hide, show, on, status } } = window
+const { gato: { choose, open, hide, show, on, status, find, stopFind } } = window
 
 export default function App() {
 
     const [q, setQ] = useState("")
+    const [mode, setMode] = useState<PaletteMode>("default")
+    const [currentSerch, setCurrentSerch] = useState<string>("")
 
     useEffect(() => {
 
-        on('call', async (e, { params }) => {
+        on('call', async (e, { params }: { params: IPaletteParams }) => {
 
-            const s = await status()
+            switch (params.mode) {
 
-            if (params.mode == 'location') {
-                setQ(s.url.href)
+                case "location": {
+
+                    const s = await status()
+                    setQ(s.url.href)
+                    show()
+                }
+                    break;
+
+                case "hide": {
+
+                    stopFind({ action: 'keepSelection' })
+                }
+                    break;
+
+                case "find": {
+
+                    setQ(':')
+                    show()
+                }
+                    break;
+
+                case 'default': {
+
+                    show()
+                }
+                    break;
             }
-
-            show()
         })
 
     }, [])
 
+    useEffect(() => {
+
+        if (q.startsWith(':')) {
+
+            setMode('find')
+        }
+        else {
+
+            setMode('default')
+        }
+
+    }, [q])
+
     const onAccept = useCallback(async () => {
 
-        const chosen = await choose({ q })
+        if (mode == 'find') {
 
-        open(chosen)
+            const tokens = q.split(':')
+            const text = tokens.slice(1).join('')
 
-        hide()
-    }, [q])
+            await find({ text, findNext: currentSerch !== text })
+
+            setCurrentSerch(text)
+        }
+        else {
+
+            const chosen = await choose({ q })
+
+            open(chosen)
+
+            hide()
+        }
+
+    }, [q, currentSerch])
 
     const onCancelPalette = () => {
         hide()
@@ -37,7 +88,7 @@ export default function App() {
 
     return <div>
         <div className="absolute">
-            <Palette value={q} onChange={setQ} onAccept={onAccept} onCancel={onCancelPalette} />
+            <Palette mode={mode} value={q} onChange={setQ} onAccept={onAccept} onCancel={onCancelPalette} />
         </div>
     </div>
 }

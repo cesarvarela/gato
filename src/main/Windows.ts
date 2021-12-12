@@ -1,6 +1,6 @@
 import electron from 'electron';
 import EventEmiter from 'events';
-import { IPaletteParams } from '../interfaces';
+import { IFind, IPaletteParams, IStopFind } from '../interfaces';
 import Gato from './Gato';
 import Menu from './Menu';
 
@@ -66,7 +66,7 @@ class Windows extends EventEmiter {
 
         menu.on('hide', ({ window }: { window: electron.BrowserWindow }) => {
 
-            this.windows[window.id].hide()
+            this.windows[window.id].call({ params: { mode: 'hide' } })
         })
 
         electron.ipcMain.handle('open', async (e, { snack = 'reader', params = {} }) => {
@@ -102,6 +102,20 @@ class Windows extends EventEmiter {
             const window = electron.BrowserWindow.fromWebContents(e.sender)
 
             return this.windows[window.id].status()
+        })
+
+        electron.ipcMain.handle('find', async (e, params: IFind) => {
+
+            const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+            return this.windows[window.id].find(params)
+        })
+
+        electron.ipcMain.handle('stopFind', async (e, params: IStopFind) => {
+
+            const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+            return this.windows[window.id].stopFind(params)
         })
     }
 }
