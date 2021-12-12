@@ -89,13 +89,9 @@ class Gato extends EventEmiter {
 
             const parsed = new URL(url)
 
-            console.log('chosing', parsed)
-
             if (parsed.host.includes('youtube')) {
 
                 const matches = url.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/)
-
-                console.log(matches[5])
 
                 snack = 'youtubeVideo'
                 params = { v: matches[5] }
