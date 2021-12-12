@@ -25,12 +25,20 @@ class Menu extends EventEmiter {
                 {
                     label: "Show palette",
                     accelerator: process.platform === 'darwin' ? 'Cmd+P' : 'Ctrl+P',
-                    click: (item, window, event) => this.emit('show', { window, event, item })
+                    click: (item, window, event) => this.emit('show', { window, event, item, params: { mode: 'default' } })
                 },
                 {
                     label: "Hide palette",
                     accelerator: 'Esc',
                     click: (item, window, event) => this.emit('hide', { window, event, item })
+                },
+                {
+                    label: "Open palette with location",
+                    accelerator: 'Cmd+L',
+                    click: (item, window, event) => this.emit('show', { window, event, item, params: { mode: 'location' } })
+                },
+                {
+                    type: "separator"
                 },
                 {
                     label: "New Window",
@@ -56,6 +64,9 @@ class Menu extends EventEmiter {
                     label: "Reload",
                     accelerator: 'Cmd+R',
                     click: (item, window, event) => this.emit('reload', { window, event, item })
+                },
+                {
+                    type: "separator"
                 },
                 {
                     label: "DevTools",

@@ -1,20 +1,33 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Palette from "./Palette";
 
-const { gato: { choose, open, hide } } = window
+const { gato: { choose, open, hide, show, on } } = window
 
 export default function App() {
 
-    const [palette, setPalette] = useState({ query: '', open: true })
+    const [q, setQ] = useState("")
 
-    const onAccept = async () => {
+    useEffect(() => {
 
-        const chosen = await choose({ q: palette.query })
+        on('call', (e, { params }) => {
+
+            if (params.mode == 'location') {
+                setQ(window.location.href)
+            }
+
+            show()
+        })
+
+    }, [])
+
+    const onAccept = useCallback(async () => {
+
+        const chosen = await choose({ q })
 
         open(chosen)
 
         hide()
-    }
+    }, [q])
 
     const onCancelPalette = () => {
         hide()
@@ -22,7 +35,7 @@ export default function App() {
 
     return <div>
         <div className="absolute">
-            <Palette value={palette} setValue={setPalette} onAccept={onAccept} onCancel={onCancelPalette} />
+            <Palette value={q} onChange={setQ} onAccept={onAccept} onCancel={onCancelPalette} />
         </div>
     </div>
 }

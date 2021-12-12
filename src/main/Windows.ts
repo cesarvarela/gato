@@ -1,5 +1,6 @@
 import electron from 'electron';
 import EventEmiter from 'events';
+import { IPaletteParams } from '../interfaces';
 import Gato from './Gato';
 import Menu from './Menu';
 
@@ -58,9 +59,9 @@ class Windows extends EventEmiter {
             this.windows[window.id].openDevTools()
         })
 
-        menu.on('show', ({ window }: { window: electron.BrowserWindow }) => {
+        menu.on('show', ({ window, params }: { window: electron.BrowserWindow, params: IPaletteParams }) => {
 
-            this.windows[window.id].show()
+            this.windows[window.id].call({ params })
         })
 
         menu.on('hide', ({ window }: { window: electron.BrowserWindow }) => {
@@ -80,6 +81,13 @@ class Windows extends EventEmiter {
             const window = electron.BrowserWindow.fromWebContents(e.sender)
 
             this.windows[window.id].hide()
+        })
+
+        electron.ipcMain.handle('show', async (e) => {
+
+            const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+            this.windows[window.id].show()
         })
 
         electron.ipcMain.handle('choose', async (e, { q }: { q: string }) => {

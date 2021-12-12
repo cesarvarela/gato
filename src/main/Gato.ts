@@ -1,6 +1,7 @@
 import EventEmiter from 'events'
 import electron from 'electron'
 import isURL from "validator/es/lib/isURL";
+import { IPaletteParams } from '../interfaces';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -20,6 +21,11 @@ class Gato extends EventEmiter {
         await instance.init()
 
         return instance
+    }
+
+    call({ params }: { params?: IPaletteParams } = {}) {
+
+        this.paletteView.webContents.send('gato:call', { params });
     }
 
     show() {

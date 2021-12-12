@@ -5,8 +5,10 @@ const api: IGato = {
     search: (query) => ipcRenderer.invoke('search', query),
     open: (url) => ipcRenderer.invoke('open', url),
     hide: () => ipcRenderer.invoke('hide'),
+    show: () => ipcRenderer.invoke('show'),
     read: ({ url }) => ipcRenderer.invoke('read', { url }),
     choose: ({ q }) => ipcRenderer.invoke('choose', { q }),
+    on: (channel, callback) => ipcRenderer.on(`gato:${channel}`, callback),
 }
 
 contextBridge.exposeInMainWorld("gato", api);
