@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 
 
-function SearchInput({ value, onChange, onCancel, onAccept }) {
+function SearchInput({ value, onChange, onAccept }) {
 
     const ref = useRef<HTMLInputElement>(null)
 
@@ -13,11 +13,7 @@ function SearchInput({ value, onChange, onCancel, onAccept }) {
 
     const onKeyDown = (e) => {
 
-        if(e.keyCode === 27) {
-
-            onCancel()
-        }
-        else if (e.key === "Enter") {
+        if (e.key === "Enter") {
 
             onAccept()
         }

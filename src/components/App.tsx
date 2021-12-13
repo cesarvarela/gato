@@ -11,46 +11,53 @@ export default function App() {
     const [mode, setMode] = useState<PaletteMode>("default")
     const [currentSerch, setCurrentSerch] = useState<string>("")
 
-    useEffect(() => {
 
-        on('call', async (e, { params }: { params: IPaletteParams }) => {
+    const handleCall = useCallback(async (e, { params }: { params: IPaletteParams }) => {
 
-            const { url, bounds } = await status()
+        const { url, bounds } = await status()
 
-            const fullBounds = { x: 0, y: 0, width: bounds.width, height: bounds.height }
+        const fullBounds = { x: 0, y: 0, width: bounds.width, height: bounds.height }
 
-            switch (params.mode) {
+        switch (params.mode) {
 
-                case "location": {
+            case "location": {
 
-                    setQ(url.href)
-                    show({ bounds: fullBounds })
-                }
-                    break;
+                setQ(url.href)
+                show({ bounds: fullBounds })
+            }
+                break;
 
-                case "hide": {
+            case "hide": {
 
+                if (mode === 'find') {
                     stopFind({ action: 'keepSelection' })
                 }
-                    break;
 
-                case "find": {
-
-                    setQ(':')
-
-                    show({ bounds: { ...fullBounds, height: 120 } })
-                }
-                    break;
-
-                case 'default': {
-
-                    show({ bounds: fullBounds })
-                }
-                    break;
+                hide()
             }
-        })
+                break;
 
-    }, [])
+            case "find": {
+
+                setQ(':')
+
+                show({ bounds: { ...fullBounds, height: 120 } })
+            }
+                break;
+
+            case 'default': {
+
+                show({ bounds: fullBounds })
+            }
+                break;
+        }
+    }, [mode])
+
+    useEffect(() => {
+
+        on('call', handleCall)
+
+    }, [mode])
 
     useEffect(() => {
 
@@ -87,12 +94,8 @@ export default function App() {
 
     }, [q, currentSerch])
 
-    const onCancelPalette = () => {
-        hide()
-    }
-
     return <Modal open={true}>
-        <Palette mode={mode} value={q} onChange={setQ} onAccept={onAccept} onCancel={onCancelPalette} />
+        <Palette mode={mode} value={q} onChange={setQ} onAccept={onAccept} />
     </Modal>
 }
 
