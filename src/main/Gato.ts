@@ -2,6 +2,7 @@ import EventEmiter from 'events'
 import electron from 'electron'
 import isURL from "validator/es/lib/isURL";
 import { IFind, IPaletteParams, IStatus, IStopFind } from '../interfaces';
+import Windows from './Windows';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -15,10 +16,14 @@ class Gato extends EventEmiter {
     paletteView: electron.BrowserView = null
     id: number
 
-    static async create() {
+    static async create({ q }: { q?: string } = {}) {
 
         const instance = new Gato()
         await instance.init()
+
+        if (q) {
+            await instance.open({ q })
+        }
 
         return instance
     }
@@ -123,22 +128,30 @@ class Gato extends EventEmiter {
         return { snack, params }
     }
 
-    async open({ snack, params = {} }: { snack: string, params?: Record<string, unknown> }) {
+    async open({ q, snack, params = {} }: { q?: string, snack?: string, params?: Record<string, unknown> }) {
 
-        let target = null
+        if (q) {
+
+            const { snack: chosenSnack, params: chosenParams } = await this.choose({ q })
+
+            snack = chosenSnack
+            params = chosenParams
+        }
+
+        let href = null
 
         switch (snack) {
 
             case 'home': {
 
-                target = `${SNACKS_WEBPACK_ENTRY}?snack=home`
+                href = `${SNACKS_WEBPACK_ENTRY}?snack=home`
             }
                 break;
 
             case 'search': {
                 const { q } = params
 
-                target = `${SNACKS_WEBPACK_ENTRY}?snack=search&q=${q}`
+                href = `${SNACKS_WEBPACK_ENTRY}?snack=search&q=${q}`
             }
                 break;
 
@@ -146,28 +159,39 @@ class Gato extends EventEmiter {
 
                 const { url } = params
 
-                target = `${SNACKS_WEBPACK_ENTRY}?snack=read&url=${url}`
+                href = `${SNACKS_WEBPACK_ENTRY}?snack=read&url=${url}`
             }
                 break;
 
             case 'youtubeVideo': {
                 const { v } = params
 
-                target = `${SNACKS_WEBPACK_ENTRY}?snack=youtubeVideo&v=${v}`
+                href = `${SNACKS_WEBPACK_ENTRY}?snack=youtubeVideo&v=${v}`
             }
                 break;
 
             default: {
                 const { url } = params
 
-                target = url
+                href = url
             }
         }
 
-        console.log('loading', target)
 
-        this.window.loadURL(target)
-        this.window.webContents.focus()
+        if (params.target == "_blank") {
+
+            console.log('loading', params.target, href)
+
+            const gato = await (await Windows.getInstance()).newWindow()
+
+            gato.open({ snack, params: { ...params, target: '_self' } })
+        } else {
+
+            console.log('loading', params.target, href)
+
+            this.window.loadURL(href)
+            this.window.webContents.focus()
+        }
 
         this.hide()
     }

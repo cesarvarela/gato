@@ -20,15 +20,21 @@ class Windows extends EventEmiter {
         return Windows.instance
     }
 
+    async newWindow({ q = '' } = {}) {
+
+        const gato = await Gato.create({ q })
+        this.windows[gato.id] = gato
+
+        return gato
+    }
+
     async init() {
 
         const menu = await Menu.getInstance()
 
         menu.on('newWindow', async () => {
 
-            const gato = await Gato.create()
-
-            this.windows[gato.id] = gato
+            this.newWindow()
         })
 
         menu.on('closeWindow', ({ window }: { window: electron.BrowserWindow }) => {
