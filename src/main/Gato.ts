@@ -3,6 +3,7 @@ import electron from 'electron'
 import isURL from "validator/es/lib/isURL";
 import { IFind, IPaletteParams, IStatus, IStopFind } from '../interfaces';
 import Windows from './Windows';
+import contextMenu from 'electron-context-menu'
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -15,6 +16,7 @@ class Gato extends EventEmiter {
     window: electron.BrowserWindow = null
     paletteView: electron.BrowserView = null
     id: number
+    contextMenuDispose: () => void
 
     static async create({ q }: { q?: string } = {}) {
 
@@ -48,8 +50,8 @@ class Gato extends EventEmiter {
     }
 
     close() {
-
         this.window.close()
+        this.contextMenuDispose()
     }
 
     canGoBack() {
@@ -214,8 +216,23 @@ class Gato extends EventEmiter {
         this.window = new electron.BrowserWindow({
             webPreferences: {
                 preload: SNACKS_PRELOAD_WEBPACK_ENTRY,
+                spellcheck: true,
             }
         });
+
+        this.contextMenuDispose = contextMenu({
+            window: this.window,
+            showSearchWithGoogle: false,
+            prepend: (defaultActions, parameters, browserWindow) => [
+                {
+                    label: 'Search for “{selection}”',
+                    visible: parameters.selectionText.trim().length > 0,
+                    click: () => {
+                        this.open({ q: parameters.selectionText })
+                    }
+                }
+            ]
+        })
 
         this.window.loadURL(SNACKS_WEBPACK_ENTRY)
 

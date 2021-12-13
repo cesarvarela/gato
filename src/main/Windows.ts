@@ -28,6 +28,12 @@ class Windows extends EventEmiter {
         return gato
     }
 
+    async closeWindow({ gato }: { gato: Gato }) {
+
+        delete this.windows[gato.id]
+        gato.close()
+    }
+
     async init() {
 
         const menu = await Menu.getInstance()
@@ -39,8 +45,8 @@ class Windows extends EventEmiter {
 
         menu.on('closeWindow', ({ window }: { window: electron.BrowserWindow }) => {
 
-            this.windows[window.id].close()
-            delete this.windows[window.id]
+            const gato = this.windows[window.id]
+            this.closeWindow({ gato })
         })
 
         menu.on('back', ({ window }: { window: electron.BrowserWindow }) => {
