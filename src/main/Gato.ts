@@ -212,8 +212,6 @@ class Gato extends EventEmiter {
 
         // Create the browser window.
         this.window = new electron.BrowserWindow({
-            height: 600,
-            width: 800,
             webPreferences: {
                 preload: SNACKS_PRELOAD_WEBPACK_ENTRY,
             }
@@ -225,6 +223,7 @@ class Gato extends EventEmiter {
 
         this.paletteView.setBounds({ x: 0, y: 0, width: this.window.getBounds().width, height: this.window.getBounds().height })
         this.paletteView.webContents.loadURL(MAIN_WEBPACK_ENTRY)
+        this.window.addBrowserView(this.paletteView)
 
         this.window.webContents.on('will-navigate', function (e, reqUrl) {
 
@@ -285,9 +284,12 @@ class Gato extends EventEmiter {
             // }
         })
 
-        this.window.addBrowserView(this.paletteView)
+        this.window.webContents.setWindowOpenHandler(({ url }) => {
 
-        // this.window.webContents.setWindowOpenHandler
+            (async () => (await Windows.getInstance()).newWindow({ q: url }))()
+
+            return { action: 'deny' }
+        })
     }
 
     async find({ text, forward = true, findNext = false, matchCase = false }: IFind) {
