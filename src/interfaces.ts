@@ -29,17 +29,24 @@ interface IStopFind {
 type ITarget = '_blank' | '_self'
 
 interface IGato {
-    search: ({ q }: { q: string }) => Promise<ISearchResult[]>
+    
     choose: ({ q }: { q: string }) => Promise<{ snack: string, params: Record<string, unknown> }>
-    read: ({ url }: { url: string }) => Promise<{ content: string, title: string, author: string, date_published: string }>
     open: ({ snack, params }: { snack?: string, params?: unknown }) => void
+
     hide: () => void,
     show: ({ bounds }: { bounds: electron.Rectangle }) => void,
+
+    search: ({ q }: { q: string }) => Promise<ISearchResult[]>
+    read: ({ url }: { url: string }) => Promise<{ content: string, title: string, author: string, date_published: string }>
+    
     on: (channel: string, cb: (e, params) => void) => void,
+    off: (channel: string, cb: (e, params) => void) => void,
+
     status: () => Promise<IStatus>,
+    menu: () => Promise<Record<string, MenuItemConstructorOptions>>,
+    
     find: (params: IFind) => Promise<number>,
     stopFind: (params?: IStopFind) => Promise<void>,
-    menu: () => Promise<Record<string, MenuItemConstructorOptions>>,
 }
 
 export {
