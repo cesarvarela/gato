@@ -1,6 +1,7 @@
 import Settings from "./Settings"
 import { google } from 'googleapis'
 import electron from 'electron'
+import secureListener from "../utils/secureHandle";
 
 const customsearch = google.customsearch('v1');
 
@@ -21,12 +22,12 @@ class GoogleSearch {
 
         this.settings = new Settings()
 
-        electron.ipcMain.handle('search', async (e, { q }) => {
+        electron.ipcMain.handle('search', secureListener(async (e, { q }) => {
 
             const { data: { items } } = await this.search({ q })
 
             return items
-        })
+        }))
     }
 
     async search({ q }) {
