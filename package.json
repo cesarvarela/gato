@@ -106,6 +106,7 @@
     "@types/lodash": "^4.14.177",
     "@u-wave/react-youtube": "^0.7.2",
     "electron-context-menu": "^3.1.1",
+    "electron-dl": "^3.3.0",
     "electron-json-storage": "^4.5.0",
     "electron-squirrel-startup": "^1.0.0",
     "googleapis": "^92.0.0",

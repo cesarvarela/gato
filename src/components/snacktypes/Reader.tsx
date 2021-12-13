@@ -33,7 +33,7 @@ export default function Reader() {
         open({ snack: null, params: { url } })
     }
 
-    return <div className="bg-white dark:bg-gray-900">
+    return <div className="bg-white dark:bg-gray-900 min-h-full">
         <Helmet>
             <title>{url}</title>
         </Helmet>
