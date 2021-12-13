@@ -1,4 +1,4 @@
-import electron from 'electron'
+import electron, { MenuItemConstructorOptions } from 'electron'
 
 interface ISearchResult {
     title: string
@@ -39,6 +39,7 @@ interface IGato {
     status: () => Promise<IStatus>,
     find: (params: IFind) => Promise<number>,
     stopFind: (params?: IStopFind) => Promise<void>,
+    menu: () => Promise<Record<string, MenuItemConstructorOptions>>,
 }
 
 export {

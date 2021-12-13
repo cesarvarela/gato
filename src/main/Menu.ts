@@ -1,6 +1,7 @@
-import electron from "electron"
+import electron, { MenuItemConstructorOptions } from "electron"
 import EventEmiter from "events"
 import storage from "electron-json-storage"
+import _ from 'lodash'
 
 class Menu extends EventEmiter {
 
@@ -17,9 +18,9 @@ class Menu extends EventEmiter {
         return Menu.instance
     }
 
-    async init() {
 
-        const application = new electron.MenuItem({
+    menu = {
+        application: {
             label: "Application",
             submenu: [
                 {
@@ -40,7 +41,7 @@ class Menu extends EventEmiter {
                 {
                     label: "Find",
                     accelerator: 'Cmd+F',
-                    click: (item, window, event) => this.emit('show', { window, event, item, params: { mode: 'find' } }) 
+                    click: (item, window, event) => this.emit('show', { window, event, item, params: { mode: 'find' } })
                 },
                 {
                     type: "separator"
@@ -93,9 +94,8 @@ class Menu extends EventEmiter {
                     click: () => this.emit("quit")
                 }
             ]
-        })
-
-        const edit = new electron.MenuItem({
+        },
+        edit: {
             label: "Edit",
             submenu: [
                 {
@@ -132,9 +132,21 @@ class Menu extends EventEmiter {
                     role: "selectAll"
                 }
             ]
-        })
+        }
+    }
+
+    async init() {
+
+        const application = new electron.MenuItem(this.menu.application as MenuItemConstructorOptions)
+        const edit = new electron.MenuItem(this.menu.edit as MenuItemConstructorOptions)
 
         electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate([application, edit]))
+
+        electron.ipcMain.handle('menu', (e) => {
+            const menu = JSON.parse(JSON.stringify(this.menu))
+
+            return menu
+        })
     }
 }
 

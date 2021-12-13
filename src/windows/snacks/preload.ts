@@ -12,6 +12,7 @@ const api: IGato = {
     status: () => ipcRenderer.invoke('status'),
     find: (params: IFind) => ipcRenderer.invoke('find', params),
     stopFind: (params) => ipcRenderer.invoke('stopFind', params),
+    menu: () => ipcRenderer.invoke('menu'),
 }
 
 contextBridge.exposeInMainWorld("gato", api);
