@@ -1,5 +1,5 @@
 import { ipcRenderer, contextBridge } from "electron";
-import { IFind, IGato } from "../../interfaces";
+import { IGato } from "../../interfaces";
 
 const api: Partial<IGato> = {
     search: (query) => ipcRenderer.invoke('search', query),
