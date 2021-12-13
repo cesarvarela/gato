@@ -3,7 +3,7 @@ import { IPaletteParams, PaletteMode } from "../interfaces";
 import Modal from "./Modal";
 import Palette from "./Palette";
 
-const { gato: { choose, open, hide, show, on, status, find, stopFind } } = window
+const { gato: { choose, open, hide, show, on, off, status, find, stopFind } } = window
 
 export default function App() {
 
@@ -56,6 +56,10 @@ export default function App() {
     useEffect(() => {
 
         on('call', handleCall)
+
+        return () => {
+            off('call', handleCall)
+        }
 
     }, [mode])
 
