@@ -45,7 +45,7 @@ export default function Reader() {
         <article className="prose dark:prose-invert max-w-none mt-4">
             <h1 className=""> {result.title}</h1>
             <p>{result.author} {result.date_published}</p>
-            <div dangerouslySetInnerHTML={{ __html: result.content.replace(/class/g, 'we') }} />
+            <div dangerouslySetInnerHTML={{ __html: result.content }} />
         </article>
     </div>
 
