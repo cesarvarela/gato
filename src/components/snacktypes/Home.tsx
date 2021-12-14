@@ -1,5 +1,6 @@
 import { MenuItemConstructorOptions } from "electron";
 import React, { useEffect, useState } from "react";
+import logo from '../../assets/logo.png'
 
 const { menu } = window.gato
 
@@ -31,9 +32,7 @@ function Home() {
     }, [menu])
 
     return <div className="text-center p-6 flex flex-col ">
-        <span role="img" className="text-5xl">
-            😸
-        </span>
+        <img src={logo} alt="logo" className="w-16 m-auto" />
         <div className="mt-6 m-auto text-gray-500 flex flex-col gap-2 w-96 justify-center">
             {commands.map(({ type, label, accelerator }) => {
 
