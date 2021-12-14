@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IPaletteParams, PaletteMode } from "../interfaces";
 import Modal from "./Modal";
 import Palette from "./Palette";
@@ -10,7 +10,7 @@ export default function App() {
     const [q, setQ] = useState("")
     const [mode, setMode] = useState<PaletteMode>("default")
     const [currentSerch, setCurrentSerch] = useState<string>("")
-
+    const ref = useRef<HTMLInputElement>(null)
 
     const handleCall = useCallback(async (e, { params }: { params: IPaletteParams }) => {
 
@@ -24,6 +24,7 @@ export default function App() {
 
                 setQ(url.href)
                 show({ bounds: fullBounds })
+                ref.current.focus()
             }
                 break;
 
@@ -40,14 +41,15 @@ export default function App() {
             case "find": {
 
                 setQ(':')
-
                 show({ bounds: { ...fullBounds, height: 120 } })
+                ref.current.focus()
             }
                 break;
 
             case 'default': {
 
                 show({ bounds: fullBounds })
+                ref.current.focus()
             }
                 break;
         }
@@ -99,7 +101,7 @@ export default function App() {
     }, [q, currentSerch])
 
     return <Modal open={true}>
-        <Palette mode={mode} value={q} onChange={setQ} onAccept={onAccept} />
+        <Palette innerRef={ref} mode={mode} value={q} onChange={setQ} onAccept={onAccept} />
     </Modal>
 }
 

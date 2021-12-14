@@ -1,15 +1,7 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 
 
-function SearchInput({ value, onChange, onAccept }) {
-
-    const ref = useRef<HTMLInputElement>(null)
-
-    useEffect(() => {
-
-        ref.current?.focus()
-
-    }, [ref])
+function SearchInput({ innerRef, value, onChange, onAccept }) {
 
     const onKeyDown = (e) => {
 
@@ -26,7 +18,8 @@ function SearchInput({ value, onChange, onAccept }) {
             </svg>
         </span>
 
-        <input ref={ref}
+        <input
+            ref={innerRef}
             value={value}
             onChange={onChange}
             onKeyDown={onKeyDown}
@@ -35,7 +28,6 @@ function SearchInput({ value, onChange, onAccept }) {
             placeholder="Search"
         />
     </div>
-
 }
 
 export default SearchInput
