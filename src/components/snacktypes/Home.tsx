@@ -31,7 +31,7 @@ function Home() {
         fetch()
     }, [menu])
 
-    return <div className="text-center p-6 flex flex-col ">
+    return <div className="dark:bg-gray-800 min-h-full text-center p-6 flex flex-col ">
         <img src={logo} alt="logo" className="w-16 m-auto" />
         <div className="mt-6 m-auto text-gray-500 flex flex-col gap-2 w-96 justify-center">
             {commands.map(({ type, label, accelerator }) => {

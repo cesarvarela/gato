@@ -84,6 +84,7 @@ class Menu extends EventEmiter {
                 },
                 {
                     label: 'Open settings folder',
+                    accelerator: 'Cmd+,',
                     click: () => {
                         electron.shell.showItemInFolder(storage.getDefaultDataPath())
                     }

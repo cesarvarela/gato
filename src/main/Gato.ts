@@ -322,8 +322,6 @@ class Gato extends EventEmiter {
 
     async stopFind({ action }: IStopFind) {
 
-        console.log('stopFind', action)
-
         this.window.webContents.stopFindInPage(action)
     }
 
