@@ -29,7 +29,7 @@ interface IStopFind {
 type ITarget = '_blank' | '_self'
 
 interface IGato {
-    
+
     choose: ({ q }: { q: string }) => Promise<{ snack: string, params: Record<string, unknown> }>
     open: ({ snack, params }: { snack?: string, params?: unknown }) => void
 
@@ -38,15 +38,30 @@ interface IGato {
 
     search: ({ q }: { q: string }) => Promise<ISearchResult[]>
     read: ({ url }: { url: string }) => Promise<{ content: string, title: string, author: string, date_published: string }>
-    
+
     on: (channel: string, cb: (e, params) => void) => void,
     off: (channel: string, cb: (e, params) => void) => void,
 
     status: () => Promise<IStatus>,
     menu: () => Promise<Record<string, MenuItemConstructorOptions>>,
-    
+
     find: (params: IFind) => Promise<number>,
     stopFind: (params?: IStopFind) => Promise<void>,
+
+    reader: IReader
+}
+
+interface IReaderResult {
+    content: string
+    title: string
+    author: string
+    date_published: string
+}
+
+interface IReader {
+    read: ({ url }: { url: string }) => Promise<IReaderResult>
+    blacklist: ({ url }: { url: string }) => Promise<boolean>
+    whitelist: ({ url }: { url: string }) => Promise<boolean>
 }
 
 export {
@@ -58,4 +73,6 @@ export {
     PaletteMode,
     IStopFind,
     ITarget,
+    IReader,
+    IReaderResult,
 }

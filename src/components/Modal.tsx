@@ -8,7 +8,7 @@ export default function Modal({ open, children }) {
     }
 
     return <div className="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true" />
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity backdrop-blur-lg" aria-hidden="true" />
         <div className="flex items-center justify-center h-full">
             {children}
         </div>

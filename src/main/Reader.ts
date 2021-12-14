@@ -1,23 +1,47 @@
-import electron from 'electron'
 import Mercury from '@postlight/mercury-parser';
+import { IReader } from '../interfaces';
+import Settings from './Settings';
+import { handleApi } from '../utils/bridge';
 
 class Reader {
+    api: IReader
+    settings = new Settings()
 
-    static async create() {
-        const instance = new Reader()
-        instance.init()
+    static instance: Reader
 
-        return instance
+    static async getInstance() {
+
+        if (!Reader.instance) {
+            const instance = new Reader()
+            await instance.init()
+            Reader.instance = instance
+        }
+
+        return Reader.instance
     }
 
     async init() {
 
-        electron.ipcMain.handle('read', async (e, { url }) => {
+        const { reader: { blacklist } } = await this.settings.get()
 
-            const result = await Mercury.parse(url)
+        this.api = {
+            read: async ({ url }) => {
 
-            return result
-        })
+                const result = await Mercury.parse(url)
+                
+                return result
+            },
+            blacklist: async ({ url }) => {
+                console.log('blacklist', url)
+                return Promise.resolve(true)
+            },
+            whitelist: async ({ url }) => {
+                console.log('whitelist', url)
+                return Promise.resolve(true)
+            }
+        }
+
+        handleApi('reader', this.api)
     }
 }
 

@@ -4,7 +4,13 @@ import { IGato } from "../../interfaces";
 const api: Partial<IGato> = {
     search: (query) => ipcRenderer.invoke('search', query),
     open: (url) => ipcRenderer.invoke('open', url),
-    read: ({ url }) => ipcRenderer.invoke('read', { url }),
+
+    reader: {
+        read: (...args) => ipcRenderer.invoke('reader:read', ...args),
+        whitelist: (...args) => ipcRenderer.invoke('reader:whitelist', ...args),
+        blacklist: (...args) => ipcRenderer.invoke('reader:blacklist', ...args),
+    },
+
     choose: ({ q }) => ipcRenderer.invoke('choose', { q }),
 
     status: () => ipcRenderer.invoke('status'),

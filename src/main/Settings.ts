@@ -7,6 +7,10 @@ interface ISettings {
         key: string,
         cx: string,
     }
+
+    reader: {
+        blacklist: string[],
+    }
 }
 
 const defaults: ISettings = {
@@ -14,6 +18,10 @@ const defaults: ISettings = {
     googleSearch: {
         key: '',
         cx: '',
+    },
+    
+    reader: {
+        blacklist: [],
     }
 }
 

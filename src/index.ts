@@ -12,12 +12,12 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 
 electron.app.on('ready', async () => {
 
-  const menu = await Menu.getInstance()
-  const windows = await Windows.getInstance()
+  await Menu.getInstance()
+  await Windows.getInstance()
   await GoogleSearch.create()
-  await Reader.create()
+  await Reader.getInstance()
 
-  windows.newWindow()
+  await (await Windows.getInstance()).newWindow()
 
   electron.ipcMain.on('download-button', async (event, { url }) => {
     const window = electron.BrowserWindow.getFocusedWindow();
