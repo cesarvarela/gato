@@ -234,6 +234,8 @@ class Gato extends EventEmiter {
             ]
         })
 
+        this.window.webContents.setVisualZoomLevelLimits(1, 4);
+
         this.window.loadURL(SNACKS_WEBPACK_ENTRY)
 
         this.paletteView = new electron.BrowserView({ webPreferences: { preload: MAIN_PRELOAD_WEBPACK_ENTRY } })
