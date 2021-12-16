@@ -5,30 +5,42 @@ import Palette from "./Palette";
 
 const { gato: { choose, open, hide, show, on, off, status, find, stopFind } } = window
 
+const paletteSize = { width: 640, height: 720 }
+
+const showPalette = async (mode) => {
+
+    const { bounds: windowBounds } = await status()
+    let bounds
+
+    switch (mode) {
+        case 'find':
+            bounds = {
+                x: Math.round(windowBounds.width / 2 - paletteSize.width / 2),
+                y: 0,
+                width: paletteSize.width,
+                height: 60,
+            }
+            break;
+
+        default:
+            bounds = {
+                x: Math.round(windowBounds.width / 2 - paletteSize.width / 2),
+                y: 0,
+                width: paletteSize.width,
+                height: Math.min(paletteSize.height, Math.round(windowBounds.height / 2)),
+            }
+            break;
+    }
+
+    await show({ bounds })
+}
+
 export default function App() {
 
     const [q, setQ] = useState("")
     const [mode, setMode] = useState<PaletteMode>("default")
     const [currentSerch, setCurrentSerch] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
-    const paletteSize = { width: 640, height: 720 }
-
-    const showPalette = useCallback(async () => {
-
-        const { bounds: windowBounds } = await status()
-
-        const bounds = {
-            x: windowBounds.width / 2 - paletteSize.width / 2,
-            y: 0,
-            width: paletteSize.width,
-            height: Math.min(paletteSize.height, Math.round(windowBounds.height / 2)),
-        }
-
-        await show({ bounds })
-
-        ref.current.focus()
-
-    }, [ref])
 
     const handleCall = useCallback(async (e, { params }: { params: IPaletteParams }) => {
 
@@ -39,7 +51,7 @@ export default function App() {
             case "location": {
 
                 setQ(url.href)
-                showPalette()
+                showPalette(params.mode)
             }
                 break;
 
@@ -56,13 +68,13 @@ export default function App() {
             case "find": {
 
                 setQ(':')
-                showPalette()
+                showPalette(params.mode)
             }
                 break;
 
             case 'default': {
 
-                showPalette()
+                showPalette(params.mode)
             }
                 break;
         }
@@ -76,18 +88,22 @@ export default function App() {
             off('call', handleCall)
         }
 
-    }, [mode])
+    }, [on])
 
     useEffect(() => {
 
+        let mode = null
+
         if (q.startsWith(':')) {
 
-            setMode('find')
+            mode = 'find'
         }
         else {
-
-            setMode('default')
+            mode = 'default'
         }
+
+        setMode(mode)
+        showPalette(mode)
 
     }, [q])
 
@@ -114,7 +130,10 @@ export default function App() {
     }, [q, currentSerch])
 
     return <Modal open={true}>
-        <Palette innerRef={ref} mode={mode} value={q} onChange={setQ} onAccept={onAccept} />
+        <div className="flex flex-col items-stretch justify-start w-full self-stretch">
+            <Palette innerRef={ref} mode={mode} value={q} onChange={setQ} onAccept={onAccept} />
+            <div className="flex flex-1" />
+        </div>
     </Modal>
 }
 
