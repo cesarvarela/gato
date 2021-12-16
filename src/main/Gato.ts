@@ -45,7 +45,7 @@ class Gato extends EventEmiter {
 
     hide() {
 
-        this.paletteView.setBounds({ x: 0, y: 0, width: 0, height: 0 })
+        this.paletteView.setBounds({ x: 0, y: 0, width: this.window.getBounds().width, height: 0 })
         this.window.webContents.focus()
     }
 
@@ -185,8 +185,8 @@ class Gato extends EventEmiter {
             console.log('loading', params.target, href)
 
             const gato = await (await Windows.getInstance()).newWindow()
-
             gato.open({ snack, params: { ...params, target: '_self' } })
+            
         } else {
 
             console.log('loading', params.target, href)
@@ -217,6 +217,7 @@ class Gato extends EventEmiter {
             webPreferences: {
                 preload: SNACKS_PRELOAD_WEBPACK_ENTRY,
                 spellcheck: true,
+                sandbox: true,
             }
         });
 
@@ -240,7 +241,7 @@ class Gato extends EventEmiter {
 
         this.paletteView = new electron.BrowserView({ webPreferences: { preload: MAIN_PRELOAD_WEBPACK_ENTRY } })
 
-        this.paletteView.setBounds({ x: 0, y: 0, width: this.window.getBounds().width, height: this.window.getBounds().height })
+        this.paletteView.setBounds({ x: 0, y: 0, width: this.window.getBounds().width, height: 0 })
         this.paletteView.webContents.loadURL(MAIN_WEBPACK_ENTRY)
         this.window.addBrowserView(this.paletteView)
 

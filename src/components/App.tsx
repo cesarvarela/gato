@@ -11,20 +11,35 @@ export default function App() {
     const [mode, setMode] = useState<PaletteMode>("default")
     const [currentSerch, setCurrentSerch] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
+    const paletteSize = { width: 640, height: 720 }
+
+    const showPalette = useCallback(async () => {
+
+        const { bounds: windowBounds } = await status()
+
+        const bounds = {
+            x: windowBounds.width / 2 - paletteSize.width / 2,
+            y: 0,
+            width: paletteSize.width,
+            height: Math.min(paletteSize.height, Math.round(windowBounds.height / 2)),
+        }
+
+        await show({ bounds })
+
+        ref.current.focus()
+
+    }, [ref])
 
     const handleCall = useCallback(async (e, { params }: { params: IPaletteParams }) => {
 
-        const { url, bounds } = await status()
-
-        const fullBounds = { x: 0, y: 0, width: bounds.width, height: bounds.height }
+        const { url } = await status()
 
         switch (params.mode) {
 
             case "location": {
 
                 setQ(url.href)
-                show({ bounds: fullBounds })
-                ref.current.focus()
+                showPalette()
             }
                 break;
 
@@ -41,15 +56,13 @@ export default function App() {
             case "find": {
 
                 setQ(':')
-                show({ bounds: { ...fullBounds, height: 120 } })
-                ref.current.focus()
+                showPalette()
             }
                 break;
 
             case 'default': {
 
-                show({ bounds: fullBounds })
-                ref.current.focus()
+                showPalette()
             }
                 break;
         }
