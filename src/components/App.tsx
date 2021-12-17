@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { IPaletteParams, PaletteEvent } from "../interfaces";
 import Modal from "./Modal";
 import Palette from "./Palette";
 
-const { gato: { choose, open, hide, show, on, off, status, find, stopFind } } = window
+const { gato: { gato: { choose, open, hide, show, status, find, stopFind }, on, off, } } = window
 
 const paletteSize = { width: 640, height: 720 }
 
@@ -40,11 +39,11 @@ const showPalette = async (mode, ref) => {
 export default function App() {
 
     const [q, setQ] = useState("")
-    const [mode, setMode] = useState<PaletteEvent>("show")
+    const [mode, setMode] = useState("show")
     const [currentSerch, setCurrentSerch] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
 
-    const handleCall = useCallback(async (e, { params }: { params: IPaletteParams }) => {
+    const handleCall = useCallback(async (e, { params }: { params }) => {
 
         const { url } = await status()
 
@@ -97,7 +96,7 @@ export default function App() {
         async function update(q) {
             const { snack } = await choose({ q })
 
-            setMode(snack as PaletteEvent)
+            setMode(snack)
             showPalette(snack, ref)
         }
 

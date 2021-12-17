@@ -1,9 +1,9 @@
-import EventEmiter from 'events'
 import electron from 'electron'
 import isURL from "validator/es/lib/isURL";
-import { IFind, IPaletteParams, IPersona, IStatus, IStopFind, PersonaName } from '../interfaces';
-import Windows from './Windows';
+import { IFind, IGatoWindow, IPersona, IStatus, IStopFind, IWindows, PersonaName } from '../interfaces';
 import contextMenu from 'electron-context-menu'
+import { handleApi, listen } from '../utils/bridge';
+import Menu from './Menu';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -11,26 +11,123 @@ declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
 declare const SNACKS_WEBPACK_ENTRY: string;
 declare const SNACKS_PRELOAD_WEBPACK_ENTRY: string;
 
-class Gato extends EventEmiter {
+class Gato {
 
     window: electron.BrowserWindow = null
     paletteView: electron.BrowserView = null
     id: number
     contextMenuDispose: () => void
 
-    static async create({ q }: { q?: string } = {}) {
+    static gatos: Gato[] = []
 
-        const instance = new Gato()
-        await instance.init()
+    static async setup() {
 
-        if (q) {
-            await instance.open({ q })
-        }
+        const menu = await Menu.getInstance()
 
-        return instance
+        listen<IWindows>(menu, {
+            close: async ({ window }) => {
+
+                Gato.gatos[window.id].close()
+                delete Gato.gatos[window.id]
+            },
+            new: async () => {
+
+                await Gato.create()
+            },
+            back: async ({ window }) => {
+
+                Gato.gatos[window.id].back()
+            },
+            forward: async ({ window }) => {
+
+                Gato.gatos[window.id].forward()
+            },
+            openDevTools: async ({ window }) => {
+
+                Gato.gatos[window.id].openDevTools()
+            },
+            reload: async ({ window }) => {
+                Gato.gatos[window.id].reload()
+            },
+            show: async ({ window }) => {
+
+                Gato.gatos[window.id].call({ params: { mode: 'show' } })
+            },
+            find: async ({ window }) => {
+
+                Gato.gatos[window.id].call({ params: { mode: 'find' } })
+            },
+            hide: async ({ window }) => {
+
+                Gato.gatos[window.id].call({ params: { mode: 'hide' } })
+            },
+            location: async ({ window }) => {
+
+                Gato.gatos[window.id].call({ params: { mode: 'location' } })
+            }
+        })
+
+        handleApi<IGatoWindow>('gato', {
+
+            open: async (params, e) => {
+
+                const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+                Gato.gatos[window.id].open(params)
+            },
+            hide: async (e) => {
+                const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+                Gato.gatos[window.id].hide()
+            },
+            show: async (params, e) => {
+
+                const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+                Gato.gatos[window.id].show(params)
+            },
+            choose: async (params, e) => {
+
+                const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+                return Gato.gatos[window.id].choose(params)
+            },
+            status: async (e) => {
+
+                const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+                return Gato.gatos[window.id].status()
+            },
+            find: async (params, e) => {
+
+                const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+                return Gato.gatos[window.id].find(params)
+            },
+            stopFind: async (params, e) => {
+
+                const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+                return Gato.gatos[window.id].stopFind(params)
+            }
+        })
     }
 
-    call({ params }: { params?: IPaletteParams } = {}) {
+    static async create({ q }: { q?: string } = {}) {
+
+        const gato = new Gato()
+        await gato.init()
+
+        Gato.gatos[gato.id] = gato
+
+        if (q) {
+            await gato.open({ q })
+        }
+
+        return gato
+    }
+
+    call({ params }: { params?} = {}) {
 
         this.paletteView.webContents.send('gato:call', { params });
     }
@@ -103,7 +200,7 @@ class Gato extends EventEmiter {
 
             if (parsed.host.includes('youtube')) {
 
-                const matches = url.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/)
+                const matches = url.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/)
 
                 snack = 'youtube'
                 params = { v: matches[5] }
@@ -187,7 +284,8 @@ class Gato extends EventEmiter {
 
             console.log('loading', params.target, href)
 
-            const gato = await (await Windows.getInstance()).new()
+            const gato = await Gato.create()
+
             gato.open({ snack, params: { ...params, target: '_self' } })
 
         } else {
@@ -227,7 +325,7 @@ class Gato extends EventEmiter {
         this.contextMenuDispose = contextMenu({
             window: this.window,
             showSearchWithGoogle: false,
-            prepend: (defaultActions, parameters, browserWindow) => [
+            prepend: (defaultActions, parameters) => [
                 {
                     label: 'Search for “{selection}”',
                     visible: parameters.selectionText.trim().length > 0,
@@ -309,7 +407,7 @@ class Gato extends EventEmiter {
 
         this.window.webContents.setWindowOpenHandler(({ url }) => {
 
-            (async () => (await Windows.getInstance()).new({ q: url }))()
+            Gato.create({ q: url })
 
             return { action: 'deny' }
         })

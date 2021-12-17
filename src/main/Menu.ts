@@ -2,7 +2,7 @@ import electron, { MenuItemConstructorOptions } from "electron"
 import EventEmiter from "events"
 import storage from "electron-json-storage"
 import _ from 'lodash'
-import { PaletteEvent, WindowEvent } from "../interfaces"
+import { WindowEvent } from "../interfaces"
 
 class Menu extends EventEmiter {
 
@@ -19,7 +19,8 @@ class Menu extends EventEmiter {
         return Menu.instance
     }
 
-    paletteEvent(event: PaletteEvent | WindowEvent, params: any) {
+    paletteEvent(event: WindowEvent, params: any) {
+
         this.emit(event, params)
     }
 
@@ -53,27 +54,27 @@ class Menu extends EventEmiter {
                 {
                     label: "New Window",
                     accelerator: 'Cmd+N',
-                    click: (item, window, event) => this.emit('new', { window, event, item })
+                    click: (item, window, event) => this.paletteEvent('new', { window, event, item })
                 },
                 {
                     label: "Close Window",
                     accelerator: 'Cmd+W',
-                    click: (item, window, event) => this.emit('close', { window, event, item })
+                    click: (item, window, event) => this.paletteEvent('close', { window, event, item })
                 },
                 {
                     label: "Back",
                     accelerator: 'Ctrl+Cmd+Left',
-                    click: (item, window, event) => this.emit('back', { window, event, item })
+                    click: (item, window, event) => this.paletteEvent('back', { window, event, item })
                 },
                 {
                     label: "Forward",
                     accelerator: 'Ctrl+Cmd+Right',
-                    click: (item, window, event) => this.emit('forward', { window, event, item })
+                    click: (item, window, event) => this.paletteEvent('forward', { window, event, item })
                 },
                 {
                     label: "Reload",
                     accelerator: 'Cmd+R',
-                    click: (item, window, event) => this.emit('reload', { window, event, item })
+                    click: (item, window, event) => this.paletteEvent('reload', { window, event, item })
                 },
                 {
                     type: "separator"
@@ -81,7 +82,7 @@ class Menu extends EventEmiter {
                 {
                     label: "DevTools",
                     accelerator: 'Cmd+Alt+I',
-                    click: (item, window, event) => this.emit('openDevTools', { window, event, item })
+                    click: (item, window, event) => this.paletteEvent('openDevTools', { window, event, item })
                 },
                 {
                     type: "separator"

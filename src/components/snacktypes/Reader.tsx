@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import SnackHeader from "../ui/SnackHeader";
 import { IReaderResult } from "../../interfaces";
 
-const { gato: { reader, open } } = window
+const { gato: { reader, gato: { open } } } = window
 
 export default function Reader() {
 

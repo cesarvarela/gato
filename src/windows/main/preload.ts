@@ -2,19 +2,19 @@ import { ipcRenderer, contextBridge } from "electron";
 import { IGato } from "../../interfaces";
 
 const api: Partial<IGato> = {
-    hide: () => ipcRenderer.invoke('hide'),
-    show: (params) => ipcRenderer.invoke('show', params),
-
-    open: (url) => ipcRenderer.invoke('open', url),
-    choose: ({ q }) => ipcRenderer.invoke('choose', { q }),
 
     on: (channel, callback) => ipcRenderer.on(`gato:${channel}`, callback),
     off: (channel, callback) => ipcRenderer.off(`gato:${channel}`, callback),
 
-    status: () => ipcRenderer.invoke('status'),
-
-    find: (params) => ipcRenderer.invoke('find', params),
-    stopFind: (params) => ipcRenderer.invoke('stopFind', params),
+    gato: {
+        hide: () => ipcRenderer.invoke('gato:hide'),
+        show: (...args) => ipcRenderer.invoke('gato:show', ...args),
+        open: (...args) => ipcRenderer.invoke('gato:open', ...args),
+        choose: (...args) => ipcRenderer.invoke('gato:choose', ...args),
+        status: (...args) => ipcRenderer.invoke('gato:status', ...args),
+        find: (...args) => ipcRenderer.invoke('gato:find', ...args),
+        stopFind: (...args) => ipcRenderer.invoke('gato:stopFind', ...args),
+    }
 }
 
 contextBridge.exposeInMainWorld("gato", api);

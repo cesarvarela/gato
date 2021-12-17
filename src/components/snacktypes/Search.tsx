@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { StringParam, useQueryParam } from "use-query-params";
 import SearchResults from "../ui/SearchResults";
 
-const { gato: { search, open, choose } } = window
+const { gato: { search, gato: { open, choose } } } = window
 
 export default function Search() {
 
