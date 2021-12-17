@@ -1,7 +1,7 @@
 import EventEmiter from 'events'
 import electron from 'electron'
 import isURL from "validator/es/lib/isURL";
-import { IFind, IPaletteParams, IStatus, IStopFind } from '../interfaces';
+import { IFind, IPaletteParams, IPersona, IStatus, IStopFind, PersonaName } from '../interfaces';
 import Windows from './Windows';
 import contextMenu from 'electron-context-menu'
 
@@ -38,8 +38,6 @@ class Gato extends EventEmiter {
     show({ bounds }: { bounds: electron.Rectangle }) {
 
         this.paletteView.setBounds(bounds)
-        this.paletteView.setAutoResize({ horizontal: true, vertical: true })
-
         this.paletteView.webContents.focus()
     }
 
@@ -82,9 +80,9 @@ class Gato extends EventEmiter {
         this.paletteView.webContents.openDevTools()
     }
 
-    async choose({ q }: { q: string }) {
+    async choose({ q }: { q: string }): Promise<IPersona> {
 
-        let snack = null
+        let snack:PersonaName = null
         let params = {}
 
         if (isURL(q, { require_tld: true, require_protocol: false }) || isURL(q, { require_protocol: true, require_tld: false, require_port: true })) {
@@ -102,12 +100,12 @@ class Gato extends EventEmiter {
 
                 const matches = url.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/)
 
-                snack = 'youtubeVideo'
+                snack = 'youtube'
                 params = { v: matches[5] }
             }
             else if (parsed.host.includes('localhost')) {
 
-                snack = null
+                snack = 'web'
                 params = { url }
             }
             else {
@@ -186,7 +184,7 @@ class Gato extends EventEmiter {
 
             const gato = await (await Windows.getInstance()).newWindow()
             gato.open({ snack, params: { ...params, target: '_self' } })
-            
+
         } else {
 
             console.log('loading', params.target, href)

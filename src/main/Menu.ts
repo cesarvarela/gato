@@ -2,6 +2,7 @@ import electron, { MenuItemConstructorOptions } from "electron"
 import EventEmiter from "events"
 import storage from "electron-json-storage"
 import _ from 'lodash'
+import { PaletteEvent } from "../interfaces"
 
 class Menu extends EventEmiter {
 
@@ -18,7 +19,10 @@ class Menu extends EventEmiter {
         return Menu.instance
     }
 
-
+    paletteEvent(event: PaletteEvent, params: any) {
+        this.emit(event, params)
+    }
+    
     menu = {
         application: {
             label: "Application",
@@ -26,22 +30,22 @@ class Menu extends EventEmiter {
                 {
                     label: "Show palette",
                     accelerator: process.platform === 'darwin' ? 'Cmd+P' : 'Ctrl+P',
-                    click: (item, window, event) => this.emit('show', { window, event, item, params: { mode: 'default' } })
+                    click: (item, window, event) => this.paletteEvent('show', { window, event, item })
                 },
                 {
                     label: "Hide palette",
                     accelerator: 'Esc',
-                    click: (item, window, event) => this.emit('hide', { window, event, item })
+                    click: (item, window, event) => this.paletteEvent('hide', { window, event, item })
                 },
                 {
                     label: "Open palette with location",
                     accelerator: 'Cmd+L',
-                    click: (item, window, event) => this.emit('show', { window, event, item, params: { mode: 'location' } })
+                    click: (item, window, event) => this.paletteEvent('location', { window, event, item })
                 },
                 {
                     label: "Find",
                     accelerator: 'Cmd+F',
-                    click: (item, window, event) => this.emit('show', { window, event, item, params: { mode: 'find' } })
+                    click: (item, window, event) => this.paletteEvent('find', { window, event, item })
                 },
                 {
                     type: "separator"

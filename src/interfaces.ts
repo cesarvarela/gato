@@ -4,10 +4,17 @@ interface ISearchResult {
     title: string
 }
 
-type PaletteMode = 'location' | 'default' | 'find' | 'hide'
+type PaletteEvent = 'location' | 'find' | 'hide' | 'show'
+
+type PersonaName = 'search' | 'web' | 'read' | 'youtube' | 'find' | 'home'
+
+type IPersona = {
+    snack: PersonaName
+    params: Record<string, unknown>
+}
 
 interface IPaletteParams {
-    mode: PaletteMode
+    mode: PaletteEvent
 }
 
 interface IStatus {
@@ -48,7 +55,9 @@ interface IGato {
     find: (params: IFind) => Promise<number>,
     stopFind: (params?: IStopFind) => Promise<void>,
 
-    reader: IReader
+    reader: IReader,
+
+    ethereum: any
 }
 
 interface IReaderResult {
@@ -70,9 +79,11 @@ export {
     IPaletteParams,
     IStatus,
     IFind,
-    PaletteMode,
+    PaletteEvent,
     IStopFind,
     ITarget,
     IReader,
     IReaderResult,
+    IPersona,
+    PersonaName,
 }

@@ -24,7 +24,7 @@ function SearchInput({ innerRef, value, onChange, onAccept }) {
             onChange={onChange}
             onKeyDown={onKeyDown}
             type="text"
-            className="w-96 p-2 pl-10 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+            className="p-2 pl-10 w-full text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
             placeholder="Search"
         />
     </div>

@@ -1,6 +1,6 @@
 import electron from 'electron';
 import EventEmiter from 'events';
-import { IFind, IPaletteParams, IStopFind } from '../interfaces';
+import { IFind, IStopFind, PaletteEvent } from '../interfaces';
 import Gato from './Gato';
 import Menu from './Menu';
 
@@ -34,9 +34,38 @@ class Windows extends EventEmiter {
         gato.close()
     }
 
+    listen(emitter: EventEmiter, api: Record<PaletteEvent, unknown>) {
+
+        Object.keys(api).forEach(event => {
+
+            emitter.on(event, api[event])
+        })
+    }
+
     async init() {
 
         const menu = await Menu.getInstance()
+
+        const listeners: Record<PaletteEvent, unknown> = {
+            show: ({ window }) => {
+
+                this.windows[window.id].call({ params: { mode: 'show' } })
+            },
+            find: ({ window }) => {
+
+                this.windows[window.id].call({ params: { mode: 'find' } })
+            },
+            hide: ({ window }) => {
+
+                this.windows[window.id].call({ params: { mode: 'hide' } })
+            },
+            location: ({ window }) => {
+
+                this.windows[window.id].call({ params: { mode: 'location' } })
+            }
+        }
+
+        this.listen(menu, listeners)
 
         menu.on('newWindow', async () => {
 
@@ -73,16 +102,6 @@ class Windows extends EventEmiter {
         menu.on('openDevTools', ({ window }: { window: electron.BrowserWindow }) => {
 
             this.windows[window.id].openDevTools()
-        })
-
-        menu.on('show', ({ window, params }: { window: electron.BrowserWindow, params: IPaletteParams }) => {
-
-            this.windows[window.id].call({ params })
-        })
-
-        menu.on('hide', ({ window }: { window: electron.BrowserWindow }) => {
-
-            this.windows[window.id].call({ params: { mode: 'hide' } })
         })
 
         electron.ipcMain.handle('open', async (e, { snack = 'reader', params = {} }) => {

@@ -1,11 +1,14 @@
+import { PersonaName } from "../../interfaces";
 import Home from "./Home";
 import Reader from "./Reader";
 import Search from "./Search";
 import YoutubeVideo from "./YoutubeVideo";
 
-export default {
+const map: Partial<Record<PersonaName, unknown>> = {
     home: Home,
     read: Reader,
     search: Search,
-    youtubeVideo: YoutubeVideo,
-};
+    youtube: YoutubeVideo,
+}
+
+export default map

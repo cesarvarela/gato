@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { IPaletteParams, PaletteMode } from "../interfaces";
+import { IPaletteParams, PaletteEvent } from "../interfaces";
 import Modal from "./Modal";
 import Palette from "./Palette";
 
@@ -7,7 +7,7 @@ const { gato: { choose, open, hide, show, on, off, status, find, stopFind } } = 
 
 const paletteSize = { width: 640, height: 720 }
 
-const showPalette = async (mode) => {
+const showPalette = async (mode, ref) => {
 
     const { bounds: windowBounds } = await status()
     let bounds
@@ -18,7 +18,7 @@ const showPalette = async (mode) => {
                 x: Math.round(windowBounds.width / 2 - paletteSize.width / 2),
                 y: 0,
                 width: paletteSize.width,
-                height: 60,
+                height: 80,
             }
             break;
 
@@ -32,13 +32,15 @@ const showPalette = async (mode) => {
             break;
     }
 
+    ref.current.focus()
+
     await show({ bounds })
 }
 
 export default function App() {
 
     const [q, setQ] = useState("")
-    const [mode, setMode] = useState<PaletteMode>("default")
+    const [mode, setMode] = useState<PaletteEvent>("show")
     const [currentSerch, setCurrentSerch] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
 
@@ -51,7 +53,7 @@ export default function App() {
             case "location": {
 
                 setQ(url.href)
-                showPalette(params.mode)
+                showPalette(params.mode, ref)
             }
                 break;
 
@@ -68,17 +70,17 @@ export default function App() {
             case "find": {
 
                 setQ(':')
-                showPalette(params.mode)
+                showPalette(params.mode, ref)
             }
                 break;
 
-            case 'default': {
+            case 'show': {
 
-                showPalette(params.mode)
+                showPalette(params.mode, ref)
             }
                 break;
         }
-    }, [mode])
+    }, [mode, ref])
 
     useEffect(() => {
 
@@ -92,20 +94,16 @@ export default function App() {
 
     useEffect(() => {
 
-        let mode = null
+        async function update(q) {
+            const { snack } = await choose({ q })
 
-        if (q.startsWith(':')) {
-
-            mode = 'find'
-        }
-        else {
-            mode = 'default'
+            setMode(snack as PaletteEvent)
+            showPalette(snack, ref)
         }
 
-        setMode(mode)
-        showPalette(mode)
+        update(q)
 
-    }, [q])
+    }, [q, ref])
 
     const onAccept = useCallback(async () => {
 

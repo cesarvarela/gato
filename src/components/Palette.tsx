@@ -10,6 +10,6 @@ export default function Palette({ mode, innerRef, value, onChange, onAccept }) {
             onChange={(e) => onChange(e.target.value)}
             onAccept={onAccept}
         />
-        {mode}
+        <div className="dark:text-white">{mode}</div>
     </div>
 }
