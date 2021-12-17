@@ -1,6 +1,6 @@
 import electron from 'electron';
 import EventEmiter from 'events';
-import { IFind, IStopFind, PaletteEvent } from '../interfaces';
+import { IFind, IStopFind, PaletteEvent, WindowEvent } from '../interfaces';
 import Gato from './Gato';
 import Menu from './Menu';
 
@@ -20,7 +20,7 @@ class Windows extends EventEmiter {
         return Windows.instance
     }
 
-    async newWindow({ q = '' } = {}) {
+    async new({ q = '' } = {}) {
 
         const gato = await Gato.create({ q })
         this.windows[gato.id] = gato
@@ -28,17 +28,17 @@ class Windows extends EventEmiter {
         return gato
     }
 
-    async closeWindow({ gato }: { gato: Gato }) {
+    async close({ gato }: { gato: Gato }) {
 
         delete this.windows[gato.id]
         gato.close()
     }
 
-    listen(emitter: EventEmiter, api: Record<PaletteEvent, unknown>) {
+    listen(emitter: EventEmiter, api: Record<any, unknown>) {
 
         Object.keys(api).forEach(event => {
 
-            emitter.on(event, api[event])
+            emitter.on(event, api[event] as any)
         })
     }
 
@@ -67,42 +67,36 @@ class Windows extends EventEmiter {
 
         this.listen(menu, listeners)
 
-        menu.on('newWindow', async () => {
 
-            this.newWindow()
-        })
+        const windowListeners: Record<WindowEvent, unknown> = {
+            close: ({ window }) => {
 
-        menu.on('closeWindow', ({ window }: { window: electron.BrowserWindow }) => {
+                this.close({ gato: this.windows[window.id] })
+            },
+            new: () => {
 
-            const gato = this.windows[window.id]
-            this.closeWindow({ gato })
-        })
-
-        menu.on('back', ({ window }: { window: electron.BrowserWindow }) => {
-
-            if (this.windows[window.id].canGoBack()) {
+                this.new()
+            },
+            back: ({ window }) => {
 
                 this.windows[window.id].back()
-            }
-        })
-
-        menu.on('forward', ({ window }: { window: electron.BrowserWindow }) => {
-
-            if (this.windows[window.id].canGoForward()) {
+            },
+            forward: ({ window }) => {
 
                 this.windows[window.id].forward()
+            },
+            openDevTools: ({ window }) => {
+
+                this.windows[window.id].openDevTools()
+            },
+            reload: ({ window }) => {
+                this.windows[window.id].reload()
             }
-        })
 
-        menu.on('reload', ({ window }: { window: electron.BrowserWindow }) => {
+        }
 
-            this.windows[window.id].reload()
-        })
+        this.listen(menu, windowListeners)
 
-        menu.on('openDevTools', ({ window }: { window: electron.BrowserWindow }) => {
-
-            this.windows[window.id].openDevTools()
-        })
 
         electron.ipcMain.handle('open', async (e, { snack = 'reader', params = {} }) => {
 

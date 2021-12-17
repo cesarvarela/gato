@@ -57,7 +57,10 @@ class Gato extends EventEmiter {
     }
 
     back() {
-        this.window.webContents.goBack()
+        if (this.canGoBack()) {
+
+            this.window.webContents.goBack()
+        }
     }
 
     canGoForward() {
@@ -65,7 +68,9 @@ class Gato extends EventEmiter {
     }
 
     forward() {
-        this.window.webContents.goForward()
+        if (this.canGoForward()) {
+            this.window.webContents.goForward()
+        }
     }
 
     reload() {
@@ -82,7 +87,7 @@ class Gato extends EventEmiter {
 
     async choose({ q }: { q: string }): Promise<IPersona> {
 
-        let snack:PersonaName = null
+        let snack: PersonaName = null
         let params = {}
 
         if (isURL(q, { require_tld: true, require_protocol: false }) || isURL(q, { require_protocol: true, require_tld: false, require_port: true })) {
@@ -182,7 +187,7 @@ class Gato extends EventEmiter {
 
             console.log('loading', params.target, href)
 
-            const gato = await (await Windows.getInstance()).newWindow()
+            const gato = await (await Windows.getInstance()).new()
             gato.open({ snack, params: { ...params, target: '_self' } })
 
         } else {
@@ -304,7 +309,7 @@ class Gato extends EventEmiter {
 
         this.window.webContents.setWindowOpenHandler(({ url }) => {
 
-            (async () => (await Windows.getInstance()).newWindow({ q: url }))()
+            (async () => (await Windows.getInstance()).new({ q: url }))()
 
             return { action: 'deny' }
         })

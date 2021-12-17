@@ -19,7 +19,7 @@ electron.app.on('ready', async () => {
   await Reader.getInstance()
   await WhatsApp.getInstance()
 
-  await (await Windows.getInstance()).newWindow()
+  await (await Windows.getInstance()).new()
 
   electron.ipcMain.on('download-button', async (event, { url }) => {
     const window = electron.BrowserWindow.getFocusedWindow();
@@ -35,8 +35,7 @@ electron.app.on('ready', async () => {
   electron.app.on('activate', async () => {
     if (electron.BrowserWindow.getAllWindows().length === 0) {
 
-      const menu = await Menu.getInstance()
-      menu.emit('newWindow')
+      await (await Windows.getInstance()).new()
     }
   });
 });

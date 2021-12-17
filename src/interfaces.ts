@@ -6,6 +6,8 @@ interface ISearchResult {
 
 type PaletteEvent = 'location' | 'find' | 'hide' | 'show'
 
+type WindowEvent = 'new' | 'close' | 'back' | 'forward' | 'reload' | 'openDevTools'
+
 type PersonaName = 'search' | 'web' | 'read' | 'youtube' | 'find' | 'home'
 
 type IPersona = {
@@ -86,4 +88,5 @@ export {
     IReaderResult,
     IPersona,
     PersonaName,
+    WindowEvent,
 }

@@ -2,7 +2,7 @@ import electron, { MenuItemConstructorOptions } from "electron"
 import EventEmiter from "events"
 import storage from "electron-json-storage"
 import _ from 'lodash'
-import { PaletteEvent } from "../interfaces"
+import { PaletteEvent, WindowEvent } from "../interfaces"
 
 class Menu extends EventEmiter {
 
@@ -19,10 +19,10 @@ class Menu extends EventEmiter {
         return Menu.instance
     }
 
-    paletteEvent(event: PaletteEvent, params: any) {
+    paletteEvent(event: PaletteEvent | WindowEvent, params: any) {
         this.emit(event, params)
     }
-    
+
     menu = {
         application: {
             label: "Application",
@@ -53,12 +53,12 @@ class Menu extends EventEmiter {
                 {
                     label: "New Window",
                     accelerator: 'Cmd+N',
-                    click: (item, window, event) => this.emit('newWindow', { window, event, item })
+                    click: (item, window, event) => this.emit('new', { window, event, item })
                 },
                 {
                     label: "Close Window",
                     accelerator: 'Cmd+W',
-                    click: (item, window, event) => this.emit('closeWindow', { window, event, item })
+                    click: (item, window, event) => this.emit('close', { window, event, item })
                 },
                 {
                     label: "Back",
