@@ -1,49 +1,47 @@
-import storage from '../utils/storage'
-import merge from 'lodash/merge';
+import Store from 'electron-store'
 
 interface ISettings {
-
     googleSearch: {
         key: string,
         cx: string,
     }
-
     reader: {
-        blacklist: string[],
+        whitelist: string[],
     }
 }
 
-const defaults: ISettings = {
-
-    googleSearch: {
-        key: '',
-        cx: '',
+const store = new Store<ISettings>({
+    schema: {
+        googleSearch: {
+            type: 'object',
+            default: {
+                key: {
+                    type: 'string',
+                },
+                cx: {
+                    type: 'string',
+                }
+            }
+        },
+        reader: {
+            type: 'object',
+            default: {
+                whitelist: {
+                    type: 'array',
+                }
+            }
+        }
     },
-    
-    reader: {
-        blacklist: [],
+    defaults: {
+        googleSearch: {
+            cx: '',
+            key: ''
+        },
+        reader: {
+            whitelist: [],
+        }
     }
-}
+})
 
-class Settings {
+export default store
 
-    private readonly key = "settings"
-
-    async set(value: Partial<ISettings>): Promise<ISettings> {
-
-        //TODO this may be backwatds :)
-        const stored = merge({}, value, defaults)
-
-        return storage.set(this.key, stored)
-    }
-
-    async get(): Promise<ISettings> {
-
-        const stored = await storage.get(this.key)
-        const value = merge({}, defaults, stored,)
-
-        return value
-    }
-}
-
-export default Settings

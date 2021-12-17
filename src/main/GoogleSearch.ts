@@ -1,4 +1,4 @@
-import Settings from "./Settings"
+import settings from "./settings"
 import { google } from 'googleapis'
 import electron from 'electron'
 import secureListener from "../utils/secureHandle";
@@ -9,8 +9,6 @@ const cache = new Map<string, unknown>();
 
 class GoogleSearch {
 
-    private settings: Settings
-
     static async create() {
         const instance = new GoogleSearch()
         instance.init()
@@ -19,8 +17,6 @@ class GoogleSearch {
     }
 
     async init() {
-
-        this.settings = new Settings()
 
         electron.ipcMain.handle('search', secureListener(async (e, { q }) => {
 
@@ -32,7 +28,7 @@ class GoogleSearch {
 
     async search({ q }) {
 
-        const { googleSearch: { key, cx } } = await this.settings.get()
+        const { googleSearch: { key, cx } } = settings.store
 
         if (!(q in cache)) {
             const result = await customsearch.cse.list({ key, cx, q })

@@ -1,11 +1,11 @@
 import Mercury from '@postlight/mercury-parser';
 import { IReader } from '../interfaces';
-import Settings from './Settings';
 import { handleApi } from '../utils/bridge';
+import settings from './settings';
+import matchUrl from 'match-url-wildcard'
 
 class Reader {
     api: IReader
-    settings = new Settings()
 
     static instance: Reader
 
@@ -22,26 +22,22 @@ class Reader {
 
     async init() {
 
-        const { reader: { blacklist } } = await this.settings.get()
-
         this.api = {
             read: async ({ url }) => {
 
                 const result = await Mercury.parse(url)
-                
                 return result
             },
-            blacklist: async ({ url }) => {
-                console.log('blacklist', url)
-                return Promise.resolve(true)
-            },
-            whitelist: async ({ url }) => {
-                console.log('whitelist', url)
-                return Promise.resolve(true)
-            }
         }
 
         handleApi('reader', this.api)
+    }
+
+    async isWhitelisted({ url }) {
+
+        const list: string[] = settings.get('reader.whitelist')
+
+        return list.some(pattern => matchUrl(url, pattern))
     }
 }
 

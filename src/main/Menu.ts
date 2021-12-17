@@ -1,8 +1,7 @@
 import electron, { MenuItemConstructorOptions } from "electron"
 import EventEmiter from "events"
-import storage from "electron-json-storage"
-import _ from 'lodash'
 import { WindowEvent } from "../interfaces"
+import settings from "./settings"
 
 class Menu extends EventEmiter {
 
@@ -91,7 +90,7 @@ class Menu extends EventEmiter {
                     label: 'Open settings folder',
                     accelerator: 'Cmd+,',
                     click: () => {
-                        electron.shell.showItemInFolder(storage.getDefaultDataPath())
+                        settings.openInEditor()
                     }
                 },
                 {

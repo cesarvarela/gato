@@ -4,12 +4,15 @@ import { IFind, IGatoWindow, IPersona, IStatus, IStopFind, IWindows, PersonaName
 import contextMenu from 'electron-context-menu'
 import { handleApi, listen } from '../utils/bridge';
 import Menu from './Menu';
+import Reader from './Reader';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
 
 declare const SNACKS_WEBPACK_ENTRY: string;
 declare const SNACKS_PRELOAD_WEBPACK_ENTRY: string;
+
+const gatos: Gato[] = []
 
 class Gato {
 
@@ -27,8 +30,8 @@ class Gato {
         listen<IWindows>(menu, {
             close: async ({ window }) => {
 
-                Gato.gatos[window.id].close()
-                delete Gato.gatos[window.id]
+                gatos[window.id].close()
+                delete gatos[window.id]
             },
             new: async () => {
 
@@ -36,34 +39,34 @@ class Gato {
             },
             back: async ({ window }) => {
 
-                Gato.gatos[window.id].back()
+                gatos[window.id].back()
             },
             forward: async ({ window }) => {
 
-                Gato.gatos[window.id].forward()
+                gatos[window.id].forward()
             },
             openDevTools: async ({ window }) => {
 
-                Gato.gatos[window.id].openDevTools()
+                gatos[window.id].openDevTools()
             },
             reload: async ({ window }) => {
-                Gato.gatos[window.id].reload()
+                gatos[window.id].reload()
             },
             show: async ({ window }) => {
 
-                Gato.gatos[window.id].call({ params: { mode: 'show' } })
+                gatos[window.id].call({ params: { mode: 'show' } })
             },
             find: async ({ window }) => {
 
-                Gato.gatos[window.id].call({ params: { mode: 'find' } })
+                gatos[window.id].call({ params: { mode: 'find' } })
             },
             hide: async ({ window }) => {
 
-                Gato.gatos[window.id].call({ params: { mode: 'hide' } })
+                gatos[window.id].call({ params: { mode: 'hide' } })
             },
             location: async ({ window }) => {
 
-                Gato.gatos[window.id].call({ params: { mode: 'location' } })
+                gatos[window.id].call({ params: { mode: 'location' } })
             }
         })
 
@@ -73,42 +76,42 @@ class Gato {
 
                 const window = electron.BrowserWindow.fromWebContents(e.sender)
 
-                Gato.gatos[window.id].open(params)
+                gatos[window.id].open(params)
             },
             hide: async (e) => {
                 const window = electron.BrowserWindow.fromWebContents(e.sender)
 
-                Gato.gatos[window.id].hide()
+                gatos[window.id].hide()
             },
             show: async (params, e) => {
 
                 const window = electron.BrowserWindow.fromWebContents(e.sender)
 
-                Gato.gatos[window.id].show(params)
+                gatos[window.id].show(params)
             },
             choose: async (params, e) => {
 
                 const window = electron.BrowserWindow.fromWebContents(e.sender)
 
-                return Gato.gatos[window.id].choose(params)
+                return gatos[window.id].choose(params)
             },
             status: async (e) => {
 
                 const window = electron.BrowserWindow.fromWebContents(e.sender)
 
-                return Gato.gatos[window.id].status()
+                return gatos[window.id].status()
             },
             find: async (params, e) => {
 
                 const window = electron.BrowserWindow.fromWebContents(e.sender)
 
-                return Gato.gatos[window.id].find(params)
+                return gatos[window.id].find(params)
             },
             stopFind: async (params, e) => {
 
                 const window = electron.BrowserWindow.fromWebContents(e.sender)
 
-                return Gato.gatos[window.id].stopFind(params)
+                return gatos[window.id].stopFind(params)
             }
         })
     }
@@ -118,7 +121,7 @@ class Gato {
         const gato = new Gato()
         await gato.init()
 
-        Gato.gatos[gato.id] = gato
+        gatos[gato.id] = gato
 
         if (q) {
             await gato.open({ q })
@@ -184,9 +187,6 @@ class Gato {
 
     async choose({ q }: { q: string }): Promise<IPersona> {
 
-        let snack: PersonaName = null
-        let params = {}
-
         if (isURL(q, { require_tld: true, require_protocol: false }) || isURL(q, { require_protocol: true, require_tld: false, require_port: true })) {
 
             let url = q
@@ -196,38 +196,42 @@ class Gato {
                 url = `https://${url}`
             }
 
-            const parsed = new URL(url)
+            try {
+                const parsed = new URL(url)
 
-            if (parsed.host.includes('youtube')) {
+                if (parsed.host.includes('youtube')) {
 
-                const matches = url.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/)
+                    const matches = url.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/)
 
-                snack = 'youtube'
-                params = { v: matches[5] }
+                    return { snack: 'youtube', params: { v: matches[5] } }
+                }
+                else {
+
+                    const reader = await Reader.getInstance()
+
+                    if (await reader.isWhitelisted({ url })) {
+
+                        return { snack: 'web', params: { url } }
+                    }
+                    else {
+
+                        return { snack: 'read', params: { url } }
+                    }
+                }
             }
-            else if (parsed.host.includes('localhost')) {
-
-                snack = 'web'
-                params = { url }
-            }
-            else {
-
-                snack = 'read'
-                params = { url }
+            catch (e) {
+                
+                return { snack: 'search', params: { q } }
             }
         }
         else if (q.startsWith(':')) {
 
-            snack = 'find'
-            params = { q }
+            return { snack: 'find', params: { q } }
         }
         else {
 
-            snack = 'search'
-            params = { q }
+            return { snack: 'search', params: { q } }
         }
-
-        return { snack, params }
     }
 
     async open({ q, snack, params = {} }: { q?: string, snack?: string, params?: Record<string, unknown> }) {

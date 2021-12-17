@@ -10,8 +10,6 @@ const api: Partial<IGato> = {
 
     reader: {
         read: (...args) => ipcRenderer.invoke('reader:read', ...args),
-        whitelist: (...args) => ipcRenderer.invoke('reader:whitelist', ...args),
-        blacklist: (...args) => ipcRenderer.invoke('reader:blacklist', ...args),
     },
 
     gato: {

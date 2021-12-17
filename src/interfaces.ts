@@ -53,8 +53,6 @@ interface IReaderResult {
 
 interface IReader {
     read: ({ url }: { url: string }) => Promise<IReaderResult>
-    blacklist: ({ url }: { url: string }) => Promise<boolean>
-    whitelist: ({ url }: { url: string }) => Promise<boolean>
 }
 
 interface IGatoWindow {
