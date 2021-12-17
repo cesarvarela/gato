@@ -61,12 +61,31 @@
                   }
                 },
                 {
-                  "html": "./src/windows/snacks/index.html",
-                  "js": "./src/windows/snacks/renderer.tsx",
-                  "name": "snacks",
+                  "name": "persona_shared",
+                  "js": "./src/windows/persona_shared/dummy.ts",
                   "preload": {
-                    "js": "./src/windows/snacks/preload.ts"
+                    "js": "./src/windows/persona_shared/preload.ts"
                   }
+                },
+                {
+                  "html": "./src/windows/persona_shared/index.html",
+                  "js": "./src/windows/search/renderer.tsx",
+                  "name": "search"
+                },
+                {
+                  "html": "./src/windows/persona_shared/index.html",
+                  "js": "./src/windows/home/renderer.tsx",
+                  "name": "home"
+                },
+                {
+                  "html": "./src/windows/persona_shared/index.html",
+                  "js": "./src/windows/reader/renderer.tsx",
+                  "name": "reader"
+                },
+                {
+                  "html": "./src/windows/persona_shared/index.html",
+                  "js": "./src/windows/youtube/renderer.tsx",
+                  "name": "youtube"
                 }
               ]
             }

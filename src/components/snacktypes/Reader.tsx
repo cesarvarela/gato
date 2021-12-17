@@ -40,7 +40,7 @@ export default function Reader() {
             <title>{url}</title>
         </Helmet>
 
-        <SnackHeader title={url} onClose={exitReader} />
+        <SnackHeader title={url} onSettings={null} onClose={exitReader} />
 
         <article className="prose dark:prose-invert max-w-none mt-4">
             <h1 className=""> {result.title}</h1>

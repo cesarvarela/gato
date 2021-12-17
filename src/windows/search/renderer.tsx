@@ -1,9 +1,9 @@
-import "./index.css"
+import "../../styles/snack.css"
 import React from "react";
 import ReactDOM from "react-dom";
 import { IGato } from "../../interfaces";
-import Snacks from "../../components/Snacks";
 import { QueryParamProvider } from "use-query-params";
+import Search from "../../components/snacktypes/Search";
 
 declare global {
     interface Window {
@@ -13,6 +13,6 @@ declare global {
 
 ReactDOM.render(
     <QueryParamProvider>
-        <Snacks />
+        <Search />
     </QueryParamProvider>
     , document.getElementById("root"));

@@ -5,7 +5,7 @@ const secureListener = (listener: (e: electron.IpcMainInvokeEvent, ...args) => v
     return (e: electron.IpcMainInvokeEvent, ...args) => {
 
         //TODO: check if the sender is trusted
-        if (e.sender.getURL().includes('snacks')) {
+        if (e.sender.getURL().startsWith('gato://')) {
 
             console.log('secure listener', e.sender.getURL())
 

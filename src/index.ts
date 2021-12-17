@@ -11,6 +11,14 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   electron.app.quit();
 }
 
+//TODO: check this
+electron.protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'gato',
+    privileges: { bypassCSP: true, stream: true, standard: true, supportFetchAPI: true }
+  }
+])
+
 electron.app.on('ready', async () => {
 
   await Menu.getInstance()
@@ -19,8 +27,8 @@ electron.app.on('ready', async () => {
   await WhatsApp.getInstance()
 
   await Gato.setup()
-  
-  await Gato.create()
+
+  await Gato.create({ q: 'gato://home' })
 
   electron.ipcMain.on('download-button', async (event, { url }) => {
     const window = electron.BrowserWindow.getFocusedWindow();

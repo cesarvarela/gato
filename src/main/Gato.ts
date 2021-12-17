@@ -9,8 +9,19 @@ import Reader from './Reader';
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
 
-declare const SNACKS_WEBPACK_ENTRY: string;
-declare const SNACKS_PRELOAD_WEBPACK_ENTRY: string;
+declare const HOME_WEBPACK_ENTRY: string;
+declare const SEARCH_WEBPACK_ENTRY: string;
+declare const READER_WEBPACK_ENTRY: string;
+declare const YOUTUBE_WEBPACK_ENTRY: string;
+
+const map = {
+    search: SEARCH_WEBPACK_ENTRY,
+    home: HOME_WEBPACK_ENTRY,
+    reader: READER_WEBPACK_ENTRY,
+    youtube: YOUTUBE_WEBPACK_ENTRY,
+}
+
+declare const PERSONA_SHARED_PRELOAD_WEBPACK_ENTRY: string
 
 const gatos: Gato[] = []
 
@@ -114,6 +125,27 @@ class Gato {
                 return gatos[window.id].stopFind(params)
             }
         })
+
+        electron.protocol.registerHttpProtocol('gato', (req, cb) => {
+
+            try {
+
+                const asked = new URL(req.url)
+                const base = new URL(map[asked.host])
+                const pathname = asked.pathname == '/' ? `/${asked.host}` : asked.pathname
+
+                const url = base.origin + pathname + asked.search
+
+                console.log('asked', asked, 'got', url)
+
+                cb({ url })
+            }
+            catch (e) {
+                console.log(e, req.url)
+
+                cb({ url: req.url })
+            }
+        })
     }
 
     static async create({ q }: { q?: string } = {}) {
@@ -187,7 +219,11 @@ class Gato {
 
     async choose({ q }: { q: string }): Promise<IPersona> {
 
-        if (isURL(q, { require_tld: true, require_protocol: false }) || isURL(q, { require_protocol: true, require_tld: false, require_port: true })) {
+        if (isURL(q, { require_protocol: true, protocols: ['gato'], require_tld: false })) {
+
+            return { snack: 'web', params: { url: q } }
+
+        } else if (isURL(q, { require_tld: true, require_protocol: false }) || isURL(q, { require_protocol: true, require_tld: false, require_port: true })) {
 
             let url = q
 
@@ -220,7 +256,7 @@ class Gato {
                 }
             }
             catch (e) {
-                
+
                 return { snack: 'search', params: { q } }
             }
         }
@@ -250,14 +286,14 @@ class Gato {
 
             case 'home': {
 
-                href = `${SNACKS_WEBPACK_ENTRY}?snack=home`
+                href = `gato://home`
             }
                 break;
 
             case 'search': {
                 const { q } = params
 
-                href = `${SNACKS_WEBPACK_ENTRY}?snack=search&q=${q}`
+                href = `gato://search?q=${q}`
             }
                 break;
 
@@ -265,14 +301,14 @@ class Gato {
 
                 const { url } = params
 
-                href = `${SNACKS_WEBPACK_ENTRY}?snack=read&url=${url}`
+                href = `gato://reader?url=${url}`
             }
                 break;
 
             case 'youtubeVideo': {
                 const { v } = params
 
-                href = `${SNACKS_WEBPACK_ENTRY}?snack=youtubeVideo&v=${v}`
+                href = `gato://youtube?v=${v}`
             }
                 break;
 
@@ -317,12 +353,11 @@ class Gato {
 
     async createWindow() {
 
-        // Create the browser window.
         this.window = new electron.BrowserWindow({
             webPreferences: {
-                preload: SNACKS_PRELOAD_WEBPACK_ENTRY,
+                preload: PERSONA_SHARED_PRELOAD_WEBPACK_ENTRY,
                 spellcheck: true,
-                sandbox: true,
+                // sandbox: true,
             }
         });
 
@@ -341,8 +376,6 @@ class Gato {
         })
 
         this.window.webContents.setVisualZoomLevelLimits(1, 4);
-
-        this.window.loadURL(SNACKS_WEBPACK_ENTRY)
 
         this.paletteView = new electron.BrowserView({ webPreferences: { preload: MAIN_PRELOAD_WEBPACK_ENTRY } })
 
@@ -382,8 +415,9 @@ class Gato {
                     ...details.responseHeaders,
                     'Content-Security-Policy': [
                         [
+                            // TODO: fix this
                             // "default-src 'unsafe-inline' 'self' 'unsafe-eval' blob: data: *.sentry.io *.cloudfront.net *.youtube.com *.google.com *.ytimg.com *.ggpht.com *.googlevideo.com",
-                            "*"
+                            "default-src * 'unsafe-eval' 'unsafe-inline' ws:"
                         ].join(';')
                     ]
                 }
@@ -397,16 +431,6 @@ class Gato {
             console.log('youtube', details)
 
             // cb({redirectURL: 'https://example.com'})
-        })
-
-        this.window.webContents.on('found-in-page', (event, result) => {
-
-            // console.log('we', event, result)
-
-            // if (result.finalUpdate) {
-
-            //     this.window.webContents.stopFindInPage('clearSelection')
-            // }
         })
 
         this.window.webContents.setWindowOpenHandler(({ url }) => {
