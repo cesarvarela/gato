@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Modal from "./Modal";
 import Palette from "./Palette";
-
-const { gato: { gato: { choose, open, hide, show, status, find, stopFind }, on, off, } } = window
+const { gato: { gato: { choose, open, hide, show, status, find, stopFind }, on, off } } = window
 
 const paletteSize = { width: 640, height: 720 }
 
@@ -89,7 +88,7 @@ export default function App() {
             off('call', handleCall)
         }
 
-    }, [on])
+    }, [handleCall])
 
     useEffect(() => {
 

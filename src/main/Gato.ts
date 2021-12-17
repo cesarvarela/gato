@@ -18,7 +18,7 @@ class Gato {
     id: number
     contextMenuDispose: () => void
 
-    static gatos: Gato[] = []
+    static gatos: Record<number, Gato> = {}
 
     static async setup() {
 

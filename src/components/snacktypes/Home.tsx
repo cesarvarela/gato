@@ -11,7 +11,7 @@ function Command({ accelerator }) {
     }
 
     return <div className="gap-2 flex items-center">
-        {accelerator.split('+').map(a => <kbd className="kbd">{a}</kbd>)}
+        {accelerator.split('+').map(a => <kbd key={a} className="kbd">{a}</kbd>)}
     </div>
 }
 
@@ -34,10 +34,10 @@ function Home() {
     return <div className="dark:bg-gray-800 min-h-full text-center p-6 flex flex-col ">
         <img src={logo} alt="logo" className="w-16 m-auto" />
         <div className="mt-6 m-auto text-gray-500 flex flex-col gap-2 w-96 justify-center">
-            {commands.map(({ type, label, accelerator }) => {
+            {commands.map(({ type, label, accelerator }, index) => {
 
                 if (type === 'separator') {
-                    return <div className="border-b border-gray-300 my-2" />
+                    return <div key={type + index} className="border-b border-gray-300 my-2" />
                 }
 
                 return <div key={label} className="flex justify-between">{label}  <Command accelerator={accelerator} /> </div>
