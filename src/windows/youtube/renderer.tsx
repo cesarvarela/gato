@@ -2,7 +2,7 @@ import "../../styles/snack.css"
 import React from "react";
 import ReactDOM from "react-dom";
 import { IGato } from "../../interfaces";
-import YoutubeVideo from "../../components/snacktypes/YoutubeVideo";
+import YoutubeVideo from "../../components/personas/YoutubeVideo";
 import { QueryParamProvider } from "use-query-params";
 
 declare global {
