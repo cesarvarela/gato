@@ -21,17 +21,17 @@ class Youtube implements IPersona {
 
                 if (parsed.searchParams.has('v')) {
 
-                    return { name: this.name, confidence: 10, params: { v: parsed.searchParams.get('v') } }
+                    return { name: this.name, confidence: 10, href: `gato://youtube?v${parsed.searchParams.get('v')}` }
                 }
             }
             catch (e) {
 
-                return { name: this.name, confidence: 0 }
+                return { name: this.name, confidence: 0, href: null }
             }
 
         }
 
-        return { name: this.name, confidence: 0 }
+        return { name: this.name, confidence: 0, href: null }
     }
 }
 

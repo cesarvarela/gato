@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import Modal from "./Modal";
 import Palette from "./Palette";
 const { gato: { gato: { choose, open, hide, show, status }, find: { find, stopFind }, on, off } } = window
 
@@ -93,10 +92,10 @@ export default function App() {
     useEffect(() => {
 
         async function update(q) {
-            const { snack } = await choose({ q })
+            const { name } = await choose({ q })
 
-            setMode(snack)
-            showPalette(snack, ref)
+            setMode(name)
+            showPalette(name, ref)
         }
 
         update(q)

@@ -11,9 +11,9 @@ export default function Search() {
 
     const onOpen = async ({ result, target }) => {
 
-        const { snack, params } = await choose({ q: result.link })
+        const { href, name, params } = await choose({ q: result.link })
 
-        open({ snack, params: { ...params, target } })
+        open({ href, name, params: { ...params, target } })
     }
 
     useEffect(() => {
@@ -21,15 +21,12 @@ export default function Search() {
         async function fetch() {
 
             const results = await search({ q })
-
             setResults(results)
-
-            console.log(results)
         }
 
         fetch()
 
-    }, []);
+    }, [search]);
 
     return <div>
         {results && <SearchResults value={results} onOpen={onOpen} onCancel={() => false} />}

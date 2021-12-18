@@ -22,7 +22,7 @@ export default function Reader() {
             }
             catch (e) {
 
-                open({ snack: null, params: { url } })
+                open({ href: url })
             }
         }
 
@@ -32,7 +32,7 @@ export default function Reader() {
 
     const exitReader = () => {
 
-        open({ snack: null, params: { url } })
+        open({ href: url })
     }
 
     return <div className="bg-white dark:bg-gray-900 min-h-full p-4">

@@ -1,5 +1,5 @@
 import electron from 'electron'
-import { IFind, IGatoWindow, IPersona, IStatus, IStopFind, IWindows, PersonaName } from '../interfaces';
+import { IGatoWindow, IPersona, IStatus, IParseResult, IWindows, PersonaName } from '../interfaces';
 import contextMenu from 'electron-context-menu'
 import { handleApi, listen } from '../utils/bridge';
 import Menu from './Menu';
@@ -8,19 +8,20 @@ import Youtube from './Youtube';
 import GoogleSearch from './GoogleSearch';
 import Find from './Find';
 import WhatsApp from './WhatsApp';
+import Web from './Web';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
 
 declare const HOME_WEBPACK_ENTRY: string;
 declare const SEARCH_WEBPACK_ENTRY: string;
-declare const READER_WEBPACK_ENTRY: string;
+declare const READ_WEBPACK_ENTRY: string;
 declare const YOUTUBE_WEBPACK_ENTRY: string;
 
 const map = {
     search: SEARCH_WEBPACK_ENTRY,
     home: HOME_WEBPACK_ENTRY,
-    reader: READER_WEBPACK_ENTRY,
+    read: READ_WEBPACK_ENTRY,
     youtube: YOUTUBE_WEBPACK_ENTRY,
 }
 
@@ -147,12 +148,14 @@ class Gato {
         const search = await GoogleSearch.getInstance()
         const find = await Find.getInstance()
         const whatsapp = await WhatsApp.getInstance()
+        const web = await Web.getInstance()
 
         personas.push(youtube)
         personas.push(reader)
         personas.push(search)
         personas.push(find)
         personas.push(whatsapp)
+        personas.push(web)
     }
 
     static async create({ q }: { q?: string } = {}) {
@@ -163,7 +166,8 @@ class Gato {
         gatos[gato.id] = gato
 
         if (q) {
-            await gato.open({ q })
+            const result = await gato.choose({ q })
+            await gato.open(result)
         }
 
         return gato
@@ -229,90 +233,36 @@ class Gato {
         this.paletteView.webContents.openDevTools()
     }
 
-    async choose({ q }: { q: string }): Promise<{ snack: string, params: Record<string, unknown> }> {
+    async choose({ q }: { q: string }): Promise<IParseResult> {
+
+        console.log('choose', q)
 
         if (q.startsWith('gato://')) {
 
-            return { snack: 'gato', params: { q } }
+            return { href: q, confidence: 10 }
         }
 
         const results = await Promise.all(personas.map(async (persona) => persona.parse(q)))
 
         const sorted = results.sort((a, b) => b.confidence - a.confidence)
 
-        const result = { snack: sorted[0].name, params: sorted[0].params }
+        const result = { name: sorted[0].name, ...sorted[0] }
+
+        console.log('chosen', result)
 
         return result
     }
 
-    async open({ q, snack, params = {} }: { q?: string, snack?: string, params?: Record<string, unknown> }) {
+    async open({ href, params = {} }: IParseResult) {
 
-        if (q) {
-
-            const { snack: chosenSnack, params: chosenParams } = await this.choose({ q })
-
-            snack = chosenSnack
-            params = chosenParams
-        }
-
-        let href = null
-
-        switch (snack) {
-
-            case 'home': {
-
-                href = `gato://home`
-            }
-                break;
-
-            case 'search': {
-                const { q } = params
-
-                href = `gato://search?q=${q}`
-            }
-                break;
-
-            case 'read': {
-
-                const { url } = params
-
-                href = `gato://reader?url=${url}`
-            }
-                break;
-
-            case 'youtube': {
-                const { v } = params
-
-                href = `gato://youtube?v=${v}`
-            }
-                break;
-
-            case 'web': {
-                const { url } = params
-
-                href = (url as string).startsWith('http') ? url : `https://${url}`
-            }
-                break;
-
-            case 'gato': {
-                href = q
-            }
-                break;
-
-            default: {
-
-                throw 'Unknown snack'
-            }
-        }
-
+        console.log('open', href, params)
 
         if (params.target == "_blank") {
 
             console.log('loading', params.target, href)
 
             const gato = await Gato.create()
-
-            gato.open({ snack, params: { ...params, target: '_self' } })
+            gato.open({ href, params: { ...params, target: '_self' } })
 
         } else {
 
@@ -354,8 +304,10 @@ class Gato {
                 {
                     label: 'Search for “{selection}”',
                     visible: parameters.selectionText.trim().length > 0,
-                    click: () => {
-                        this.open({ q: parameters.selectionText })
+                    click: async () => {
+
+                        const result = await this.choose({ q: parameters.selectionText })
+                        this.open(result)
                     }
                 }
             ]
@@ -423,6 +375,11 @@ class Gato {
         await this.createWindow()
 
         this.id = this.window.id
+
+        this.window.webContents.on('did-start-loading', (params) => {
+
+            console.log('did-start-loading', params)
+        })
     }
 
 }

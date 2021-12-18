@@ -48,7 +48,7 @@ class Find implements IPersona {
 
         if (q.startsWith(':')) {
 
-            return { name: this.name, confidence: 10, params: { q } }
+            return { name: this.name, confidence: 10, params: { q }, href: null }
         }
     }
 }

@@ -49,7 +49,7 @@ class Reader implements IPersona {
 
             const whitelisted = await this.isWhitelisted({ url: q })
 
-            return { name: this.name, confidence: 7, params: { url: q, whitelisted } }
+            return { name: this.name, confidence: whitelisted ? 5 : 7, href: `gato://read?url=${encodeURI(q)}` }
         }
     }
 }

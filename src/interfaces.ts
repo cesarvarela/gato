@@ -12,9 +12,10 @@ interface IPersona {
 }
 
 type IParseResult = {
-    name: PersonaName
-    confidence: number
+    name?: PersonaName
+    confidence?: number
     params?: Record<string, unknown>
+    href: string
 }
 
 interface IStatus {
@@ -70,7 +71,7 @@ interface IReader {
 
 interface IGatoWindow {
     open: (params, e?) => Promise<void>
-    choose: (params, e?) => Promise<{ snack: string, params: Record<string, unknown> }>
+    choose: (params, e?) => Promise<IParseResult>
     status: (params?, e?) => Promise<IStatus>
     hide: (params?, e?) => Promise<void>
     show: (params, e?) => Promise<void>
