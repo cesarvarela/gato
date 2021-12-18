@@ -54,7 +54,7 @@ class Gato {
             },
             new: async () => {
 
-                await Gato.create()
+                await Gato.create({ q: 'gato://home' })
             },
             back: async ({ window }) => {
 
@@ -131,8 +131,6 @@ class Gato {
                 const pathname = asked.pathname == '/' ? `/${asked.host}` : asked.pathname
 
                 const url = base.origin + pathname + asked.search
-
-                console.log('asked', asked, 'got', url)
 
                 cb({ url })
             }
@@ -235,8 +233,6 @@ class Gato {
 
     async choose({ q }: { q: string }): Promise<IParseResult> {
 
-        console.log('choose', q)
-
         if (q.startsWith('gato://')) {
 
             return { href: q, confidence: 10 }
@@ -248,25 +244,17 @@ class Gato {
 
         const result = { name: sorted[0].name, ...sorted[0] }
 
-        console.log('chosen', result)
-
         return result
     }
 
     async open({ href, params = {} }: IParseResult) {
 
-        console.log('open', href, params)
-
         if (params.target == "_blank") {
-
-            console.log('loading', params.target, href)
 
             const gato = await Gato.create()
             gato.open({ href, params: { ...params, target: '_self' } })
 
         } else {
-
-            console.log('loading', params.target, href)
 
             this.window.loadURL(href)
             this.window.webContents.focus()
