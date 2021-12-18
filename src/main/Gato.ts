@@ -1,5 +1,5 @@
 import electron from 'electron'
-import { IGatoWindow, IPersona, IStatus, IParseResult, IWindows, PersonaName } from '../interfaces';
+import { IGatoWindow, IPersona, IStatus, IParseResult, IWindows } from '../interfaces';
 import contextMenu from 'electron-context-menu'
 import { handleApi, listen } from '../utils/bridge';
 import Menu from './Menu';
@@ -368,16 +368,12 @@ class Gato {
 
             const title = `loading: ${this.window.webContents.getURL()}`
             this.window.setTitle(title)
-
-            console.log('did-start-loading', title)
         })
 
         this.window.webContents.on('did-finish-load', (params) => {
 
             const title = `${this.window.webContents.getURL()}`
             this.window.setTitle(title)
-            
-            console.log('did-finish-load', params)
         })
     }
 
