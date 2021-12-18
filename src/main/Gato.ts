@@ -394,37 +394,12 @@ class Gato {
             })
         });
 
-        this.window.webContents.session.webRequest.onBeforeRequest({
-            urls: ['*://*.youtube.com/watch*']
-        }, (details, cb) => {
-
-            console.log('youtube', details)
-
-            // cb({redirectURL: 'https://example.com'})
-        })
-
         this.window.webContents.setWindowOpenHandler(({ url }) => {
 
             Gato.create({ q: url })
 
             return { action: 'deny' }
         })
-    }
-
-    async find({ text, forward = true, findNext = false, matchCase = false }: IFind) {
-
-        console.log('find', text, forward, findNext, matchCase,)
-
-        return this.window.webContents.findInPage(text, {
-            forward,
-            matchCase,
-            findNext
-        })
-    }
-
-    async stopFind({ action }: IStopFind) {
-
-        this.window.webContents.stopFindInPage(action)
     }
 
     async init() {
