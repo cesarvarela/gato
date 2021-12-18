@@ -282,10 +282,21 @@ class Gato {
             }
                 break;
 
-            default: {
+            case 'web': {
                 const { url } = params
 
-                href = url
+                href = (url as string).startsWith('http') ? url : `https://${url}`
+            }
+                break;
+
+            case 'gato': {
+                href = q
+            }
+                break;
+
+            default: {
+
+                throw 'Unknown snack'
             }
         }
 
