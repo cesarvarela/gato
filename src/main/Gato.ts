@@ -1,10 +1,13 @@
 import electron from 'electron'
-import isURL from "validator/es/lib/isURL";
 import { IFind, IGatoWindow, IPersona, IStatus, IStopFind, IWindows, PersonaName } from '../interfaces';
 import contextMenu from 'electron-context-menu'
 import { handleApi, listen } from '../utils/bridge';
 import Menu from './Menu';
 import Reader from './Reader';
+import Youtube from './Youtube';
+import GoogleSearch from './GoogleSearch';
+import Find from './Find';
+import WhatsApp from './WhatsApp';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -25,12 +28,16 @@ declare const PERSONA_SHARED_PRELOAD_WEBPACK_ENTRY: string
 
 const gatos: Gato[] = []
 
+const personas: IPersona[] = []
+
 class Gato {
 
     window: electron.BrowserWindow = null
     paletteView: electron.BrowserView = null
     id: number
     contextMenuDispose: () => void
+
+    static personas: IPersona[] = []
 
     static gatos: Record<number, Gato> = {}
 
@@ -112,18 +119,6 @@ class Gato {
 
                 return gatos[window.id].status()
             },
-            find: async (params, e) => {
-
-                const window = electron.BrowserWindow.fromWebContents(e.sender)
-
-                return gatos[window.id].find(params)
-            },
-            stopFind: async (params, e) => {
-
-                const window = electron.BrowserWindow.fromWebContents(e.sender)
-
-                return gatos[window.id].stopFind(params)
-            }
         })
 
         electron.protocol.registerHttpProtocol('gato', (req, cb) => {
@@ -146,6 +141,18 @@ class Gato {
                 cb({ url: req.url })
             }
         })
+
+        const youtube = await Youtube.getInstance()
+        const reader = await Reader.getInstance()
+        const search = await GoogleSearch.getInstance()
+        const find = await Find.getInstance()
+        const whatsapp = await WhatsApp.getInstance()
+
+        personas.push(youtube)
+        personas.push(reader)
+        personas.push(search)
+        personas.push(find)
+        personas.push(whatsapp)
     }
 
     static async create({ q }: { q?: string } = {}) {
@@ -160,6 +167,11 @@ class Gato {
         }
 
         return gato
+    }
+
+    static getFocused() {
+
+        return gatos[electron.BrowserWindow.getFocusedWindow().id]
     }
 
     call({ params }: { params?} = {}) {
@@ -217,57 +229,15 @@ class Gato {
         this.paletteView.webContents.openDevTools()
     }
 
-    async choose({ q }: { q: string }): Promise<IPersona> {
+    async choose({ q }: { q: string }): Promise<{ snack: string, params: Record<string, unknown> }> {
 
-        if (isURL(q, { require_protocol: true, protocols: ['gato'], require_tld: false })) {
+        const results = await Promise.all(personas.map(async (persona) => persona.parse(q)))
 
-            return { snack: 'web', params: { url: q } }
+        const sorted = results.sort((a, b) => b.confidence - a.confidence)
 
-        } else if (isURL(q, { require_tld: true, require_protocol: false }) || isURL(q, { require_protocol: true, require_tld: false, require_port: true })) {
+        const result = { snack: sorted[0].name, params: sorted[0].params }
 
-            let url = q
-
-            if (!url.startsWith('http')) {
-
-                url = `https://${url}`
-            }
-
-            try {
-                const parsed = new URL(url)
-
-                if (parsed.host.includes('youtube')) {
-
-                    const matches = url.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/)
-
-                    return { snack: 'youtube', params: { v: matches[5] } }
-                }
-                else {
-
-                    const reader = await Reader.getInstance()
-
-                    if (await reader.isWhitelisted({ url })) {
-
-                        return { snack: 'web', params: { url } }
-                    }
-                    else {
-
-                        return { snack: 'read', params: { url } }
-                    }
-                }
-            }
-            catch (e) {
-
-                return { snack: 'search', params: { q } }
-            }
-        }
-        else if (q.startsWith(':')) {
-
-            return { snack: 'find', params: { q } }
-        }
-        else {
-
-            return { snack: 'search', params: { q } }
-        }
+        return result
     }
 
     async open({ q, snack, params = {} }: { q?: string, snack?: string, params?: Record<string, unknown> }) {
@@ -305,7 +275,7 @@ class Gato {
             }
                 break;
 
-            case 'youtubeVideo': {
+            case 'youtube': {
                 const { v } = params
 
                 href = `gato://youtube?v=${v}`
@@ -417,7 +387,7 @@ class Gato {
                         [
                             // TODO: fix this
                             // "default-src 'unsafe-inline' 'self' 'unsafe-eval' blob: data: *.sentry.io *.cloudfront.net *.youtube.com *.google.com *.ytimg.com *.ggpht.com *.googlevideo.com",
-                            "default-src * 'unsafe-eval' 'unsafe-inline' ws:"
+                            "default-src * 'unsafe-eval' 'unsafe-inline' ws: data:"
                         ].join(';')
                     ]
                 }

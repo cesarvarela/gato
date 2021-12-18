@@ -1,6 +1,11 @@
 import electron from "electron";
+import { IParseResult, IPersona, PersonaName } from "../interfaces";
+import isURL from "validator/lib/isURL";
 
-class WhatsApp {
+class WhatsApp implements IPersona {
+
+    name: PersonaName = 'whatsapp'
+
     static instance: WhatsApp;
 
     static async getInstance() {
@@ -11,6 +16,17 @@ class WhatsApp {
         }
 
         return WhatsApp.instance;
+    }
+
+    isWhatsAppURL(url: string) {
+        return isURL(url, { require_protocol: false, host_whitelist: ['whatsapp.com', 'web.whatsapp.com'] })
+    }
+
+    async parse(q: string): Promise<IParseResult> {
+
+        if (this.isWhatsAppURL(q)) {
+            return { name: 'web', confidence: 10 }
+        }
     }
 
     async init() {

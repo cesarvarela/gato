@@ -12,8 +12,11 @@ const api: Partial<IGato> = {
         open: (...args) => ipcRenderer.invoke('gato:open', ...args),
         choose: (...args) => ipcRenderer.invoke('gato:choose', ...args),
         status: (...args) => ipcRenderer.invoke('gato:status', ...args),
-        find: (...args) => ipcRenderer.invoke('gato:find', ...args),
-        stopFind: (...args) => ipcRenderer.invoke('gato:stopFind', ...args),
+    },
+
+    find: {
+        find: (...args) => ipcRenderer.invoke('find:find', ...args),
+        stopFind: (...args) => ipcRenderer.invoke('find:stopFind', ...args),
     }
 }
 

@@ -1,9 +1,5 @@
 import electron from 'electron';
-import Reader from './main/Reader';
-import GoogleSearch from './main/GoogleSearch';
-import Menu from './main/Menu';
 import { download } from 'electron-dl'
-import WhatsApp from './main/WhatsApp';
 import Gato from './main/Gato';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -20,11 +16,6 @@ electron.protocol.registerSchemesAsPrivileged([
 ])
 
 electron.app.on('ready', async () => {
-
-  await Menu.getInstance()
-  await GoogleSearch.create()
-  await Reader.getInstance()
-  await WhatsApp.getInstance()
 
   await Gato.setup()
 

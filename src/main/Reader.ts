@@ -1,11 +1,14 @@
 import Mercury from '@postlight/mercury-parser';
-import { IReader } from '../interfaces';
+import { IParseResult, IPersona, IReader, PersonaName } from '../interfaces';
 import { handleApi } from '../utils/bridge';
 import settings from './settings';
 import matchUrl from 'match-url-wildcard'
+import isURL from 'validator/lib/isURL';
 
-class Reader {
+class Reader implements IPersona {
+
     api: IReader
+    name: PersonaName = 'read'
 
     static instance: Reader
 
@@ -38,6 +41,16 @@ class Reader {
         const list: string[] = settings.get('reader.whitelist')
 
         return list.some(pattern => matchUrl(url, pattern))
+    }
+
+    async parse(q: string): Promise<IParseResult> {
+
+        if (isURL(q, { require_protocol: false })) {
+
+            const whitelisted = await this.isWhitelisted({ url: q })
+
+            return { name: this.name, confidence: 7, params: { url: q, whitelisted } }
+        }
     }
 }
 

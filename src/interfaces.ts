@@ -4,11 +4,17 @@ interface ISearchResult {
     title: string
 }
 
-type PersonaName = 'search' | 'web' | 'read' | 'youtube' | 'find' | 'home'
+type PersonaName = 'search' | 'web' | 'read' | 'youtube' | 'find' | 'home' | 'whatsapp'
 
-type IPersona = {
-    snack: PersonaName
-    params: Record<string, unknown>
+interface IPersona {
+    name: PersonaName
+    parse: (q: string) => Promise<IParseResult>
+}
+
+type IParseResult = {
+    name: PersonaName
+    confidence: number
+    params?: Record<string, unknown>
 }
 
 interface IStatus {
@@ -21,6 +27,11 @@ interface IFind {
     forward?: boolean
     matchCase?: boolean
     findNext?: boolean
+}
+
+interface IFinder {
+    find: (params: IFind) => Promise<number>
+    stopFind: ({ action }: IStopFind) => void
 }
 
 interface IStopFind {
@@ -41,6 +52,8 @@ interface IGato {
 
     gato: Partial<IGatoWindow>,
 
+    find: IFinder,
+
     ethereum: any
 }
 
@@ -57,12 +70,10 @@ interface IReader {
 
 interface IGatoWindow {
     open: (params, e?) => Promise<void>
-    choose: (params, e?) => Promise<IPersona>
+    choose: (params, e?) => Promise<{ snack: string, params: Record<string, unknown> }>
     status: (params?, e?) => Promise<IStatus>
     hide: (params?, e?) => Promise<void>
     show: (params, e?) => Promise<void>
-    find: (params, e?) => Promise<number>
-    stopFind: (params, e?) => Promise<void>
 }
 
 type GatoEvents = keyof IGatoWindow
@@ -91,10 +102,12 @@ export {
     ITarget,
     IReader,
     IReaderResult,
-    IPersona,
+    IParseResult,
     PersonaName,
     WindowEvent,
     GatoEvents,
     IGatoWindow,
     IWindows,
+    IPersona,
+    IFinder,
 }
