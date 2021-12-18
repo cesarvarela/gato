@@ -1,6 +1,4 @@
 import { IParseResult, IPersona, PersonaName } from '../interfaces';
-import settings from './settings';
-import matchUrl from 'match-url-wildcard'
 import isURL from 'validator/lib/isURL';
 import Reader from './Reader';
 
