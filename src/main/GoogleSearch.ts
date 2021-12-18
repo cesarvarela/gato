@@ -52,7 +52,7 @@ class GoogleSearch implements IPersona {
 
         if (!isURL(q, { require_protocol: false })) {
 
-            return { name: this.name, confidence: 7, href: `gato://search?q=${q}` }
+            return { name: this.name, confidence: 6, href: `gato://search?q=${q}` }
         }
 
         return { name: this.name, confidence: 1, href: `gato://search?q=${q}` }

@@ -366,7 +366,18 @@ class Gato {
 
         this.window.webContents.on('did-start-loading', (params) => {
 
-            console.log('did-start-loading', params)
+            const title = `loading: ${this.window.webContents.getURL()}`
+            this.window.setTitle(title)
+
+            console.log('did-start-loading', title)
+        })
+
+        this.window.webContents.on('did-finish-load', (params) => {
+
+            const title = `${this.window.webContents.getURL()}`
+            this.window.setTitle(title)
+            
+            console.log('did-finish-load', params)
         })
     }
 

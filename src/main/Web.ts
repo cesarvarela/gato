@@ -26,11 +26,17 @@ class Web implements IPersona {
 
     async parse(q: string): Promise<IParseResult> {
 
-        if (isURL(q, { require_protocol: false })) {
+        if (isURL(q, { require_protocol: false })
+            || isURL(q, { require_tld: false, require_protocol: false, host_whitelist: ['localhost'] })
+        ) {
 
             const whitelisted = await this.reader.isWhitelisted({ url: q })
 
-            return { name: this.name, confidence: whitelisted ? 7 : 5, href: q }
+            const href = q.startsWith('http')
+                ? q
+                : q.startsWith('localhost') ? `http://${q}` : `https://${q}`
+
+            return { name: this.name, confidence: whitelisted ? 7 : 5, href }
         }
     }
 }

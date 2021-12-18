@@ -79,8 +79,8 @@
                 },
                 {
                   "html": "./src/windows/persona_shared/index.html",
-                  "js": "./src/windows/reader/renderer.tsx",
-                  "name": "reader"
+                  "js": "./src/windows/read/renderer.tsx",
+                  "name": "read"
                 },
                 {
                   "html": "./src/windows/persona_shared/index.html",
