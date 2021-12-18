@@ -231,6 +231,11 @@ class Gato {
 
     async choose({ q }: { q: string }): Promise<{ snack: string, params: Record<string, unknown> }> {
 
+        if (q.startsWith('gato://')) {
+
+            return { snack: 'gato', params: { q } }
+        }
+
         const results = await Promise.all(personas.map(async (persona) => persona.parse(q)))
 
         const sorted = results.sort((a, b) => b.confidence - a.confidence)
