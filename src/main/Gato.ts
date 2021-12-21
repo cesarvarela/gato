@@ -50,7 +50,6 @@ class Gato {
             close: async ({ window }) => {
 
                 gatos[window.id].close()
-                delete gatos[window.id]
             },
             new: async () => {
 
@@ -156,7 +155,7 @@ class Gato {
         personas.push(web)
     }
 
-    static async create({ q }: { q?: string } = {}) {
+    static async create({ q = 'gato://home' }: { q?: string } = {}) {
 
         const gato = new Gato()
         await gato.init()
@@ -194,8 +193,20 @@ class Gato {
     }
 
     close() {
+
+        //TODO: check that we are cleaning up everything
+
+        this.window.removeBrowserView(this.paletteView)
+        this.paletteView.webContents.closeDevTools()
+
+        this.window.webContents.removeAllListeners()
         this.window.close()
+
         this.contextMenuDispose()
+
+        this.window = null
+        this.paletteView = null
+        gatos[this.id] = null
     }
 
     canGoBack() {
@@ -356,6 +367,12 @@ class Gato {
 
             return { action: 'deny' }
         })
+
+        this.window.once('close', (e) => {
+
+            e.preventDefault();
+            this.close()
+        });
     }
 
     async init() {
