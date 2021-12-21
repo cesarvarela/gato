@@ -3,8 +3,13 @@ import { IGato } from "../../interfaces";
 
 const api: Partial<IGato> = {
 
-    on: (channel, callback) => ipcRenderer.on(`gato:${channel}`, callback),
-    off: (channel, callback) => ipcRenderer.off(`gato:${channel}`, callback),
+    on: (name, callback) => {
+        ipcRenderer.addListener(`gato:${name}`, callback)
+
+        return () => {
+            ipcRenderer.removeListener(`gato:${name}`, callback)
+        }
+    },
 
     gato: {
         hide: () => ipcRenderer.invoke('gato:hide'),

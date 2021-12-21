@@ -46,8 +46,7 @@ interface IGato {
     search: ({ q }: { q: string }) => Promise<ISearchResult[]>
     menu: () => Promise<Record<string, MenuItemConstructorOptions>>,
 
-    on: (channel: string, cb: (e, params) => void) => void,
-    off: (channel: string, cb: (e, params) => void) => void,
+    on: (name: string, cb: (e, params) => void) => () => void,
 
     reader: IReader,
 

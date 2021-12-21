@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Palette from "./Palette";
-const { gato: { gato: { choose, open, hide, show, status }, find: { find, stopFind }, on, off } } = window
+const { gato: { gato: { choose, open, hide, show, status }, find: { find, stopFind }, on } } = window
 
 const paletteSize = { width: 640, height: 720 }
 
@@ -41,53 +41,55 @@ export default function App() {
     const [currentSerch, setCurrentSerch] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
 
-    const handleCall = useCallback(async (e, { params }: { params }) => {
-
-        const { url } = await status()
-
-        switch (params.mode) {
-
-            case "location": {
-
-                setQ(url.href)
-                showPalette(params.mode, ref)
-            }
-                break;
-
-            case "hide": {
-
-                if (mode === 'find') {
-                    stopFind({ action: 'keepSelection' })
-                }
-
-                hide()
-            }
-                break;
-
-            case "find": {
-
-                setQ(':')
-                showPalette(params.mode, ref)
-            }
-                break;
-
-            case 'show': {
-
-                showPalette(params.mode, ref)
-            }
-                break;
-        }
-    }, [mode, ref])
-
     useEffect(() => {
 
-        on('call', handleCall)
+        const handleCall = async (e, { params }: { params }) => {
 
-        return () => {
-            off('call', handleCall)
+            console.log('handleCall')
+
+            const { url } = await status()
+
+            switch (params.mode) {
+
+                case "location": {
+
+                    setQ(url.href)
+                    showPalette(params.mode, ref)
+                }
+                    break;
+
+                case "hide": {
+
+                    if (mode === 'find') {
+                        stopFind({ action: 'keepSelection' })
+                    }
+
+                    hide()
+                }
+                    break;
+
+                case "find": {
+
+                    setQ(':')
+                    showPalette(params.mode, ref)
+                }
+                    break;
+
+                case 'show': {
+
+                    showPalette(params.mode, ref)
+                }
+                    break;
+            }
         }
 
-    }, [handleCall])
+        const dispose = on('call', handleCall)
+
+        return () => {
+
+            dispose()
+        }
+    }, [mode, ref])
 
     useEffect(() => {
 
