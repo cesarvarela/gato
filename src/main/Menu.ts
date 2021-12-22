@@ -1,7 +1,7 @@
 import electron, { MenuItemConstructorOptions } from "electron"
 import EventEmiter from "events"
 import { WindowEvent } from "../interfaces"
-import settings from "./settings"
+import settings from "./Settings"
 
 class Menu extends EventEmiter {
 
@@ -135,6 +135,14 @@ class Menu extends EventEmiter {
                     label: "Select All",
                     accelerator: "CmdOrCtrl+A",
                     role: "selectAll"
+                },
+                {
+                    role: 'zoomin',
+                    accelerator: 'CommandOrControl+='
+                },
+                {
+                    role: 'zoomout',
+                    accelerator: 'CommandOrControl+-'
                 }
             ]
         }

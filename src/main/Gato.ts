@@ -293,6 +293,7 @@ class Gato {
                 preload: PERSONA_SHARED_PRELOAD_WEBPACK_ENTRY,
                 spellcheck: true,
                 // sandbox: true,
+                webviewTag: true,
             }
         });
 
@@ -346,20 +347,20 @@ class Gato {
             // }
         })
 
-        this.window.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-            callback({
-                responseHeaders: {
-                    ...details.responseHeaders,
-                    'Content-Security-Policy': [
-                        [
-                            // TODO: fix this
-                            // "default-src 'unsafe-inline' 'self' 'unsafe-eval' blob: data: *.sentry.io *.cloudfront.net *.youtube.com *.google.com *.ytimg.com *.ggpht.com *.googlevideo.com",
-                            "default-src * 'unsafe-eval' 'unsafe-inline' ws: data:"
-                        ].join(';')
-                    ]
-                }
-            })
-        });
+        // this.window.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+        //     callback({
+        //         responseHeaders: {
+        //             ...details.responseHeaders,
+        //             'Content-Security-Policy': [
+        //                 [
+        //                     // TODO: fix this
+        //                     // "default-src 'unsafe-inline' 'self' 'unsafe-eval' blob: data: *.sentry.io *.cloudfront.net *.youtube.com *.google.com *.ytimg.com *.ggpht.com *.googlevideo.com",
+        //                     "default-src * 'unsafe-eval' 'unsafe-inline' ws: data:"
+        //                 ].join(';')
+        //             ]
+        //         }
+        //     })
+        // });
 
         this.window.webContents.setWindowOpenHandler(({ url }) => {
 

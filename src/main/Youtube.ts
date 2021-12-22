@@ -4,11 +4,15 @@ import isURL from "validator/lib/isURL";
 class Youtube implements IPersona {
 
     name: PersonaName = 'youtube'
+    static instance: Youtube
 
     static async getInstance() {
-        const instance = new Youtube()
 
-        return instance
+        if (!Youtube.instance) {
+
+            Youtube.instance = new Youtube()
+            return Youtube.instance
+        }
     }
 
     async parse(q): Promise<IParseResult> {
@@ -21,7 +25,7 @@ class Youtube implements IPersona {
 
                 if (parsed.searchParams.has('v')) {
 
-                    return { name: this.name, confidence: 10, href: `gato://youtube?v${parsed.searchParams.get('v')}` }
+                    return { name: this.name, confidence: 10, href: `gato://youtube?v=${parsed.searchParams.get('v')}` }
                 }
             }
             catch (e) {

@@ -8,6 +8,7 @@ export default function Search() {
 
     const [q] = useQueryParam('q', StringParam);
     const [results, setResults] = useState(null)
+    const [error, setError] = useState(null)
 
     const onOpen = async ({ result, target }) => {
 
@@ -20,8 +21,15 @@ export default function Search() {
 
         async function fetch() {
 
-            const results = await search({ q })
-            setResults(results)
+            try {
+
+                const results = await search({ q })
+                setResults(results)
+            }
+            catch (e) {
+                
+                setError(e.message)
+            }
         }
 
         fetch()
@@ -29,6 +37,7 @@ export default function Search() {
     }, [search]);
 
     return <div>
+        {error && <div>{error}</div>}
         {results && <SearchResults value={results} onOpen={onOpen} onCancel={() => false} />}
     </div>;
 }

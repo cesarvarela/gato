@@ -13,14 +13,7 @@ function YoutubeVideo() {
         <Helmet>
             <title>{v}</title>
         </Helmet>
-        <YouTube
-            video={v}
-            height={'100%'}
-            width={'100%'}
-            modestBranding={true}
-            showRelatedVideos={false}
-            autoplay
-        />
+        <webview className="h-full" id="youtube" src={`https://www.youtube.com/embed/${v}?autoplay=0`}></webview>
     </div>
 }
 

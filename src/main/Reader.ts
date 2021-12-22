@@ -1,7 +1,7 @@
 import Mercury from '@postlight/mercury-parser';
 import { IParseResult, IPersona, IReader, PersonaName } from '../interfaces';
 import { handleApi } from '../utils/bridge';
-import settings from './settings';
+import settings from './Settings';
 import matchUrl from 'match-url-wildcard'
 import isURL from 'validator/lib/isURL';
 

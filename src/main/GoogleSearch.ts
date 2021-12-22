@@ -1,4 +1,4 @@
-import settings from "./settings"
+import settings from "./Settings"
 import { google } from 'googleapis'
 import electron from 'electron'
 import secureListener from "../utils/secureHandle";
