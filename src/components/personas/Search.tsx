@@ -27,7 +27,7 @@ export default function Search() {
                 setResults(results)
             }
             catch (e) {
-                
+
                 setError(e.message)
             }
         }
@@ -38,6 +38,7 @@ export default function Search() {
 
     return <div>
         {error && <div>{error}</div>}
+        {results && results.length == 0 && <div>No results for {q}!</div>}
         {results && <SearchResults value={results} onOpen={onOpen} onCancel={() => false} />}
     </div>;
 }

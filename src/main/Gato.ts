@@ -292,9 +292,10 @@ class Gato {
             webPreferences: {
                 preload: PERSONA_SHARED_PRELOAD_WEBPACK_ENTRY,
                 spellcheck: true,
-                // sandbox: true,
+                sandbox: true,
                 webviewTag: true,
-            }
+            },
+            backgroundColor: '#1C1C1C'
         });
 
         this.contextMenuDispose = contextMenu({
@@ -320,47 +321,6 @@ class Gato {
         this.paletteView.setBounds({ x: 0, y: 0, width: this.window.getBounds().width, height: 0 })
         this.paletteView.webContents.loadURL(MAIN_WEBPACK_ENTRY)
         this.window.addBrowserView(this.paletteView)
-
-        this.window.webContents.on('will-navigate', function (e, reqUrl) {
-
-            console.log('will-navigate', reqUrl)
-
-            // let getHost = url=>require('url').parse(url).host;
-            // let reqHost = getHost(reqUrl);
-            // let isExternal = reqHost && reqHost !== getHost(wc.getURL());
-            // if(isExternal) {
-            //   e.preventDefault();
-            //   shell.openExternal(reqUrl, {});
-            // }
-        })
-
-        this.window.webContents.on('will-redirect', function (e, reqUrl) {
-
-            console.log('will-redirect', reqUrl)
-
-            // let getHost = url=>require('url').parse(url).host;
-            // let reqHost = getHost(reqUrl);
-            // let isExternal = reqHost && reqHost !== getHost(wc.getURL());
-            // if(isExternal) {
-            //   e.preventDefault();
-            //   shell.openExternal(reqUrl, {});
-            // }
-        })
-
-        // this.window.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-        //     callback({
-        //         responseHeaders: {
-        //             ...details.responseHeaders,
-        //             'Content-Security-Policy': [
-        //                 [
-        //                     // TODO: fix this
-        //                     // "default-src 'unsafe-inline' 'self' 'unsafe-eval' blob: data: *.sentry.io *.cloudfront.net *.youtube.com *.google.com *.ytimg.com *.ggpht.com *.googlevideo.com",
-        //                     "default-src * 'unsafe-eval' 'unsafe-inline' ws: data:"
-        //                 ].join(';')
-        //             ]
-        //         }
-        //     })
-        // });
 
         this.window.webContents.setWindowOpenHandler(({ url }) => {
 

@@ -11,7 +11,7 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 electron.protocol.registerSchemesAsPrivileged([
   {
     scheme: 'gato',
-    privileges: { bypassCSP: true, stream: true, standard: true, supportFetchAPI: true }
+    privileges: { bypassCSP: true, stream: true, standard: true, supportFetchAPI: true, allowServiceWorkers: true }
   }
 ])
 
