@@ -17,10 +17,6 @@ electron.protocol.registerSchemesAsPrivileged([
 
 electron.app.on('ready', async () => {
 
-  await Gato.setup()
-
-  await Gato.create({ q: 'gato://home' })
-
   electron.ipcMain.on('download-button', async (event, { url }) => {
     const window = electron.BrowserWindow.getFocusedWindow();
     console.log('download', await download(window, url));
@@ -38,5 +34,9 @@ electron.app.on('ready', async () => {
       await Gato.create()
     }
   });
+
+  await Gato.setup()
+
+  await Gato.create({ q: 'gato://home' })
 });
 

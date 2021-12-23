@@ -1,4 +1,4 @@
-import electron from 'electron'
+import electron, { app } from 'electron'
 import { IGatoWindow, IPersona, IStatus, IParseResult, IWindows } from '../interfaces';
 import contextMenu from 'electron-context-menu'
 import { handleApi, listen } from '../utils/bridge';
@@ -129,16 +129,35 @@ class Gato {
                 const base = new URL(map[asked.host])
                 const pathname = asked.pathname == '/' ? `/${asked.host}` : asked.pathname
 
-                const url = base.origin + pathname + asked.search
+                let url = null
+
+                if (electron.app.isPackaged) {
+
+                    url = 'http://127.0.0.1:3000' + pathname + asked.search
+                }
+                else {
+
+                    url = base.origin + pathname + asked.search
+                }
 
                 cb({ url })
             }
             catch (e) {
-                console.log(e, req.url)
 
                 cb({ url: req.url })
             }
         })
+
+        if (electron.app.isPackaged) {
+
+            const express = require('express')
+            const app = express()
+            const path = require('path')
+
+            app.use('/', express.static(path.join(electron.app.getAppPath(), '.webpack', 'renderer')))
+
+            app.listen(3000)
+        }
 
         const youtube = await Youtube.getInstance()
         const reader = await Reader.getInstance()
