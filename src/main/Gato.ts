@@ -353,6 +353,8 @@ class Gato {
             e.preventDefault();
             this.close()
         });
+
+        this.window.gato = this
     }
 
     async init() {

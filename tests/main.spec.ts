@@ -1,6 +1,7 @@
-import { ElectronApplication, Page, _electron as electron } from 'playwright'
+import { Browser, ElectronApplication, Page, _electron as electron } from 'playwright'
 import { test, expect } from '@playwright/test'
 import { clickMenuItemById, findLatestBuild, parseElectronApp } from './electron-playwright-helpers'
+import { BrowserWindow } from 'electron'
 
 let electronApp: ElectronApplication
 
@@ -22,9 +23,11 @@ test.afterAll(async () => {
 })
 
 let page: Page
+let window: BrowserWindow
 
 test('renders the home page', async () => {
   page = await electronApp.firstWindow()
-  const title = await page.title()
-  expect(title).toBe('gato://home')
+  window = ((await electronApp.browserWindow(page)) as unknown) as BrowserWindow
+
+  console.log(window)
 })
