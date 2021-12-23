@@ -1,6 +1,5 @@
 import { MenuItemConstructorOptions } from "electron";
 import React, { useEffect, useState } from "react";
-import logo from '../../assets/logo.png'
 
 const { menu } = window.gato
 
