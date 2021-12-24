@@ -20,6 +20,8 @@ function handleApi<T>(key: string, api: T): void {
 
             electron.ipcMain.handle(channel, (e, ...args) => {
 
+                // TODO: check e is from gato://protocol
+                
                 return api[k](...args, e)
             });
         }
