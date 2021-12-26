@@ -66,7 +66,7 @@ class Web implements IPersona {
         return { name: this.name, confidence: 0, href: q }
     }
 
-    async getOptions({ url }: { url: string }): Promise<{ trustCertificate: boolean } {
+    async getOptions({ url }: { url: string }): Promise<{ trustCertificate: boolean }> {
 
         const list: any[] = settings.get('web.options')
         const result = list.find(option => matchUrl(url, option.url))
