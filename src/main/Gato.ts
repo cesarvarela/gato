@@ -377,6 +377,16 @@ class Gato {
             const title = `${this.window.webContents.getURL()}`
             this.window.setTitle(title)
         })
+
+        this.window.webContents.on('certificate-error', async (e, url, error, certificate, callback) => {
+
+            const options: any = await (await Web.getInstance()).getOptions({ url })
+
+            if (options && options.trustCertificate) {
+
+                callback(true)
+            }
+        })
     }
 }
 

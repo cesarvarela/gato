@@ -7,6 +7,9 @@ interface ISettings {
     }
     reader: {
         whitelist: string[],
+    },
+    web: {
+        options: Array<{ url: URL, trustCertificate: boolean }>
     }
 }
 
@@ -30,6 +33,14 @@ const store = new Store<ISettings>({
                     type: 'array',
                 }
             }
+        },
+        web: {
+            type: 'object',
+            default: {
+                options: {
+                    type: 'array',
+                }
+            }
         }
     },
     defaults: {
@@ -39,9 +50,12 @@ const store = new Store<ISettings>({
         },
         reader: {
             whitelist: [],
+        },
+        web: {
+            options: []
         }
     }
 })
 
 export default store
-
+export { ISettings }

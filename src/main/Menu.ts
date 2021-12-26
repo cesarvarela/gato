@@ -53,7 +53,12 @@ class Menu extends EventEmiter {
                 {
                     label: "New Window",
                     accelerator: 'Cmd+N',
-                    click: (item, window, event) => this.paletteEvent('new', { window, event, item })
+                    click: (item, window, event) => this.paletteEvent('new', { window, event, item, params: {} })
+                },
+                {
+                    label: "New Window with Web Security = false",
+                    accelerator: 'Cmd+Alt+N',
+                    click: (item, window, event) => this.paletteEvent('new', { window, event, item, params: { windowOptions: { webPreferences: { webSecurity: false, sandbox: false } } } })
                 },
                 {
                     label: "Close Window",

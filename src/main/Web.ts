@@ -1,6 +1,8 @@
+import matchUrl from 'match-url-wildcard';
 import { IParseResult, IPersona, PersonaName } from '../interfaces';
 import isURL from 'validator/lib/isURL';
 import Reader from './Reader';
+import settings from './Settings'
 
 const fixHTTP = href => href.startsWith('http')
     ? href
@@ -8,9 +10,8 @@ const fixHTTP = href => href.startsWith('http')
 
 class Web implements IPersona {
 
-    name: PersonaName = 'web'
-    reader: Reader
-
+    readonly name: PersonaName = 'web'
+    private reader: Reader
     static instance: Web
 
     static async getInstance() {
@@ -63,6 +64,20 @@ class Web implements IPersona {
         }
 
         return { name: this.name, confidence: 0, href: q }
+    }
+
+    async getOptions({ url }: { url: string }): Promise<{ trustCertificate: boolean } {
+
+        const list: any[] = settings.get('web.options')
+        const result = list.find(option => matchUrl(url, option.url))
+
+        if (result) {
+
+            const { url: _, ...options } = result
+            return options
+        }
+
+        return null
     }
 }
 
