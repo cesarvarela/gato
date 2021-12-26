@@ -10,6 +10,7 @@ import Find from './Find';
 import WhatsApp from './WhatsApp';
 import Web from './Web';
 import getPort from 'get-port';
+import { merge } from 'lodash';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -54,9 +55,9 @@ class Gato {
 
                 gatos[window.id].close()
             },
-            new: async () => {
+            new: async ({ params: { windowOptions } }) => {
 
-                await Gato.create({ q: 'gato://home' })
+                await Gato.create({ q: 'gato://home', windowOptions })
             },
             back: async ({ window }) => {
 
@@ -179,11 +180,10 @@ class Gato {
         personas.push(web)
     }
 
-    static async create({ q = 'gato://home' }: { q?: string } = {}) {
+    static async create({ q, windowOptions }: { q: string, windowOptions?: electron.BrowserWindowConstructorOptions }) {
 
         const gato = new Gato()
-        await gato.init()
-
+        await gato.init({ windowOptions })
         gatos[gato.id] = gato
 
         if (q) {
@@ -286,7 +286,8 @@ class Gato {
 
         if (params.target == "_blank") {
 
-            const gato = await Gato.create()
+            const gato = await Gato.create({ q: href })
+
             gato.open({ href, params: { ...params, target: '_self' } })
 
         } else {
@@ -310,9 +311,9 @@ class Gato {
         return response
     }
 
-    async createWindow() {
+    async init({ windowOptions }) {
 
-        this.window = new electron.BrowserWindow({
+        const defaults = {
             webPreferences: {
                 preload: PERSONA_SHARED_PRELOAD_WEBPACK_ENTRY,
                 spellcheck: true,
@@ -320,7 +321,13 @@ class Gato {
                 webviewTag: true,
             },
             backgroundColor: '#1C1C1C'
-        });
+        }
+
+        const options = merge({}, defaults, windowOptions)
+
+        this.window = new electron.BrowserWindow(options)
+
+        this.id = this.window.id
 
         this.contextMenuDispose = contextMenu({
             window: this.window,
@@ -358,13 +365,6 @@ class Gato {
             e.preventDefault();
             this.close()
         });
-    }
-
-    async init() {
-
-        await this.createWindow()
-
-        this.id = this.window.id
 
         this.window.webContents.on('did-start-loading', (params) => {
 
@@ -378,7 +378,6 @@ class Gato {
             this.window.setTitle(title)
         })
     }
-
 }
 
 export default Gato

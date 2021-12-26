@@ -34,7 +34,7 @@ electron.app.on('ready', async () => {
   electron.app.on('activate', async () => {
     if (electron.BrowserWindow.getAllWindows().length === 0) {
 
-      await Gato.create()
+      await Gato.create({ q: 'gato://home' })
     }
   });
 
