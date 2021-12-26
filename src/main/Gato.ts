@@ -9,6 +9,7 @@ import GoogleSearch from './GoogleSearch';
 import Find from './Find';
 import WhatsApp from './WhatsApp';
 import Web from './Web';
+import getPort from 'get-port';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -123,6 +124,8 @@ class Gato {
             },
         })
 
+        const port = await getPort()
+
         electron.protocol.registerHttpProtocol('gato', (req, cb) => {
 
             try {
@@ -135,7 +138,7 @@ class Gato {
 
                 if (electron.app.isPackaged) {
 
-                    url = 'http://127.0.0.1:3000' + pathname + asked.search
+                    url = 'http://127.0.0.1:' + port + pathname + asked.search
                 }
                 else {
 
@@ -158,7 +161,7 @@ class Gato {
 
             app.use('/', express.static(path.join(electron.app.getAppPath(), '.webpack', 'renderer')))
 
-            app.listen(3000)
+            app.listen(port)
         }
 
         const youtube = await Youtube.getInstance()
