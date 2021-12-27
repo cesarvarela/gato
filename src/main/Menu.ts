@@ -67,12 +67,12 @@ class Menu extends EventEmiter {
                 },
                 {
                     label: "Back",
-                    accelerator: 'Ctrl+Cmd+Left',
+                    accelerator: 'Cmd+[',
                     click: (item, window, event) => this.paletteEvent('back', { window, event, item })
                 },
                 {
                     label: "Forward",
-                    accelerator: 'Ctrl+Cmd+Right',
+                    accelerator: 'Cmd+]',
                     click: (item, window, event) => this.paletteEvent('forward', { window, event, item })
                 },
                 {
