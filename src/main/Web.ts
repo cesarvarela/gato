@@ -2,7 +2,7 @@ import matchUrl from 'match-url-wildcard';
 import { IParseResult, IPersona, PersonaName } from '../interfaces';
 import isURL from 'validator/lib/isURL';
 import Reader from './Reader';
-import settings from './Settings'
+import settings, { IWebOptions } from './Settings'
 
 const fixHTTP = href => href.startsWith('http')
     ? href
@@ -66,18 +66,20 @@ class Web implements IPersona {
         return { name: this.name, confidence: 0, href: q }
     }
 
-    async getOptions({ url }: { url: string }): Promise<{ trustCertificate: boolean }> {
+    async getOptions({ url }: { url: string }): Promise<IWebOptions> {
 
         const list: any[] = settings.get('web.options')
-        const result = list.find(option => matchUrl(url, option.url))
 
-        if (result) {
+        let result = null
 
-            const { url: _, ...options } = result
-            return options
+        result = list.find(option => matchUrl(url, option.url)) || null
+
+        if (!result) {
+
+            result = list.find(option => option.url == '*') || null
         }
 
-        return null
+        return result
     }
 }
 

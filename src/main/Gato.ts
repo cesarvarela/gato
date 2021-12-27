@@ -313,14 +313,14 @@ class Gato {
 
     async init({ windowOptions }) {
 
-        const defaults = {
+        const defaults: electron.BrowserWindowConstructorOptions = {
             webPreferences: {
                 preload: PERSONA_SHARED_PRELOAD_WEBPACK_ENTRY,
                 spellcheck: true,
                 sandbox: true,
                 webviewTag: true,
             },
-            backgroundColor: '#1C1C1C'
+            backgroundColor: '#1C1C1C',
         }
 
         const options = merge({}, defaults, windowOptions)
@@ -332,6 +332,10 @@ class Gato {
         this.contextMenuDispose = contextMenu({
             window: this.window,
             showSearchWithGoogle: false,
+            showInspectElement: true,
+            showCopyImage: true,
+            showCopyImageAddress: true,
+            showSaveImageAs: true,
             prepend: (defaultActions, parameters) => [
                 {
                     label: 'Search for “{selection}”',
@@ -366,7 +370,19 @@ class Gato {
             this.close()
         });
 
-        this.window.webContents.on('did-start-loading', (params) => {
+        const web = await Web.getInstance()
+
+        this.window.webContents.on('did-navigate', async (e, url) => {
+
+            const options = await web.getOptions({ url })
+
+            if (options && options.customCSS) {
+
+                this.window.webContents.insertCSS(options.customCSS)
+            }
+        })
+
+        this.window.webContents.on('did-start-loading', async () => {
 
             const title = `loading: ${this.window.webContents.getURL()}`
             this.window.setTitle(title)
@@ -380,7 +396,7 @@ class Gato {
 
         this.window.webContents.on('certificate-error', async (e, url, error, certificate, callback) => {
 
-            const options: any = await (await Web.getInstance()).getOptions({ url })
+            const options: any = await web.getOptions({ url })
 
             if (options && options.trustCertificate) {
 
