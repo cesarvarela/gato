@@ -24,9 +24,17 @@ export default function Search() {
             setResults(results)
         }
 
-        fetch()
+        if (q) {
+
+            fetch()
+        }
 
     }, [search]);
+
+    if (!q) {
+        
+        return <div>No search query!</div>
+    }
 
     return <div>
         {results && <SearchResults value={results} onOpen={onOpen} onCancel={() => false} />}

@@ -86,6 +86,11 @@
                   "html": "./src/windows/persona_shared/index.html",
                   "js": "./src/windows/youtube/renderer.tsx",
                   "name": "youtube"
+                },
+                {
+                  "html": "./src/windows/persona_shared/index.html",
+                  "js": "./src/windows/error/renderer.tsx",
+                  "name": "error"
                 }
               ]
             }

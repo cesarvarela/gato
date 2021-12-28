@@ -17,12 +17,14 @@ declare const HOME_WEBPACK_ENTRY: string;
 declare const SEARCH_WEBPACK_ENTRY: string;
 declare const READ_WEBPACK_ENTRY: string;
 declare const YOUTUBE_WEBPACK_ENTRY: string;
+declare const ERROR_WEBPACK_ENTRY: string;
 
 const map = {
     search: SEARCH_WEBPACK_ENTRY,
     home: HOME_WEBPACK_ENTRY,
     read: READ_WEBPACK_ENTRY,
     youtube: YOUTUBE_WEBPACK_ENTRY,
+    error: ERROR_WEBPACK_ENTRY,
 }
 
 declare const PERSONA_SHARED_PRELOAD_WEBPACK_ENTRY: string
@@ -373,6 +375,16 @@ class Gato {
             e.preventDefault();
             this.close()
         });
+
+        this.window.webContents.on('did-fail-load', (event: Electron.Event, errorCode: number, errorDescription: string, validatedURL: string, isMainFrame: boolean) => {
+
+            if (errorCode && errorCode !== -3 && isMainFrame && validatedURL) {
+
+                const href = `gato://error?code=${encodeURIComponent(errorCode)}&description=${encodeURI(errorDescription)}&url=${encodeURIComponent(validatedURL)}`
+
+                this.open({ href })
+            }
+        })
     }
 
     async init() {

@@ -126,11 +126,13 @@ export default function App() {
 
     }, [q, currentSerch])
 
-    return <Modal open={true}>
+    return <>
         <div className="flex flex-col items-stretch justify-start w-full self-stretch">
             <Palette innerRef={ref} mode={mode} value={q} onChange={setQ} onAccept={onAccept} />
-            <div className="flex flex-1" />
+            <div className="flex flex-1 dark:text-white">
+                {mode}
+            </div>
         </div>
-    </Modal>
+    </>
 }
 
