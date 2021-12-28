@@ -125,6 +125,11 @@ class Gato {
 
                 return gatos[window.id].status()
             },
+            parse: async (params, e) => {
+                const window = electron.BrowserWindow.fromWebContents(e.sender)
+
+                return gatos[window.id].parse(params)
+            }
         })
 
         const port = await getPort()
@@ -270,18 +275,22 @@ class Gato {
 
     async choose({ q }: { q: string }): Promise<IParseResult> {
 
+        const results = await this.parse({ q })
+
+        return results[0]
+    }
+
+    async parse({ q }: { q: string }): Promise<IParseResult[]> {
+
         if (q.startsWith('gato://')) {
 
-            return { href: q, confidence: 10 }
+            return [{ href: q, confidence: 10 }]
         }
 
         const results = await Promise.all(personas.map(async (persona) => persona.parse(q)))
+        const sorted = results.filter(suggestion => suggestion).sort((a, b) => b.confidence - a.confidence)
 
-        const sorted = results.sort((a, b) => b.confidence - a.confidence)
-
-        const result = { name: sorted[0].name, ...sorted[0] }
-
-        return result
+        return sorted
     }
 
     async open({ href, params = {} }: IParseResult) {

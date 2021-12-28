@@ -79,6 +79,7 @@ interface IGatoWindow {
     status: (params?, e?) => Promise<IStatus>
     hide: (params?, e?) => Promise<void>
     show: (params, e?) => Promise<void>
+    parse: (params, e?) => Promise<IParseResult[]>
 }
 
 type GatoEvents = keyof IGatoWindow

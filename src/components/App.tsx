@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { IParseResult } from "../interfaces";
 import Palette from "./Palette";
-const { gato: { gato: { choose, open, hide, show, status }, find: { find, stopFind }, on } } = window
+import Suggestions from "./ui/Suggestions";
+const { gato: { gato: { choose, parse, open, hide, show, status }, find: { find, stopFind }, on } } = window
 
 const paletteSize = { width: 640, height: 720 }
 
@@ -40,6 +42,7 @@ export default function App() {
     const [mode, setMode] = useState("show")
     const [currentSerch, setCurrentSerch] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
+    const [suggestions, setSuggestions] = useState<IParseResult[]>([])
 
     useEffect(() => {
 
@@ -95,7 +98,9 @@ export default function App() {
 
         async function update(q) {
             const { name } = await choose({ q })
+            const suggestions = await parse({ q })
 
+            setSuggestions(suggestions)
             setMode(name)
             showPalette(name, ref)
         }
@@ -126,13 +131,11 @@ export default function App() {
 
     }, [q, currentSerch])
 
-    return <>
-        <div className="flex flex-col items-stretch justify-start w-full self-stretch">
-            <Palette innerRef={ref} mode={mode} value={q} onChange={setQ} onAccept={onAccept} />
-            <div className="flex flex-1 dark:text-white">
-                {mode}
-            </div>
-        </div>
-    </>
+    console.log(suggestions)
+
+    return <div className="flex flex-col items-stretch justify-start w-full self-stretch">
+        <Palette innerRef={ref} mode={mode} value={q} onChange={setQ} onAccept={onAccept} />
+        <Suggestions items={suggestions} />
+    </div>
 }
 
