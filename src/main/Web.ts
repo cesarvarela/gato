@@ -66,7 +66,7 @@ class Web implements IPersona {
         return { name: this.name, confidence: 0, href: q }
     }
 
-    async getOptions({ url }: { url: string }): Promise<IWebOptions> {
+    getOptions({ url }: { url: string }): IWebOptions {
 
         const list: any[] = settings.get('web.options')
 

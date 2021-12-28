@@ -44,7 +44,7 @@ class Gato {
 
     static personas: IPersona[] = []
 
-    static gatos: Record<number, Gato> = {}
+    static gatos: Record<string, Gato> = {}
 
     static async setup() {
 
@@ -357,11 +357,33 @@ class Gato {
         this.paletteView.webContents.loadURL(MAIN_WEBPACK_ENTRY)
         this.window.addBrowserView(this.paletteView)
 
-        this.window.webContents.setWindowOpenHandler(({ url }) => {
+        const web = await Web.getInstance()
 
-            Gato.create({ q: url })
+        this.window.webContents.setWindowOpenHandler((details) => {
 
-            return { action: 'deny' }
+            const { url, features } = details
+
+            console.log('setWindowOpenHandler', details)
+
+            if (features) { // asume a popup
+
+                const options = web.getOptions({ url })
+
+                if (options && options.allowPopups) {
+                    return {
+                        action: 'allow',
+                        overrideBrowserWindowOptions: {
+                            fullscreenable: false,
+                        }
+                    }
+                }
+            }
+            else {
+
+                Gato.create({ q: url })
+
+                return { action: 'deny' }
+            }
         })
 
         this.window.once('close', (e) => {
@@ -370,15 +392,22 @@ class Gato {
             this.close()
         });
 
-        const web = await Web.getInstance()
-
         this.window.webContents.on('did-navigate', async (e, url) => {
 
-            const options = await web.getOptions({ url })
+            const options = web.getOptions({ url })
 
             if (options && options.customCSS) {
 
                 this.window.webContents.insertCSS(options.customCSS)
+            }
+        })
+
+        this.window.webContents.on('page-title-updated', (e) => {
+
+            if (!this.window.getTitle().startsWith('loading')) {
+
+                const title = `${this.window.webContents.getURL()}`
+                this.window.setTitle(title)
             }
         })
 
@@ -390,13 +419,12 @@ class Gato {
 
         this.window.webContents.on('did-finish-load', (params) => {
 
-            const title = `${this.window.webContents.getURL()}`
-            this.window.setTitle(title)
+
         })
 
         this.window.webContents.on('certificate-error', async (e, url, error, certificate, callback) => {
 
-            const options: any = await web.getOptions({ url })
+            const options: any = web.getOptions({ url })
 
             if (options && options.trustCertificate) {
 

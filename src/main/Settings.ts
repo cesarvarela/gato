@@ -1,5 +1,12 @@
 import Store from 'electron-store'
 
+interface IWebOptions {
+    url: URL | '*',
+    trustCertificate?: boolean,
+    customCSS?: string,
+    allowPopups?: boolean,
+}
+
 interface ISettings {
     googleSearch: {
         key: string,
@@ -9,7 +16,7 @@ interface ISettings {
         whitelist: string[],
     },
     web: {
-        options: Array<{ url: URL, trustCertificate: boolean }>
+        options: Array<IWebOptions>
     }
 }
 
@@ -17,30 +24,30 @@ const store = new Store<ISettings>({
     schema: {
         googleSearch: {
             type: 'object',
-            default: {
-                key: {
+            properties: {
+                "key": {
                     type: 'string',
                 },
-                cx: {
+                "cx": {
                     type: 'string',
                 }
-            }
+            },
         },
         reader: {
             type: 'object',
-            default: {
-                whitelist: {
+            properties: {
+                "whitelist": {
                     type: 'array',
                 }
-            }
+            },
         },
         web: {
             type: 'object',
-            default: {
-                options: {
+            properties: {
+                "options": {
                     type: 'array',
                 }
-            }
+            },
         }
     },
     defaults: {
@@ -49,13 +56,20 @@ const store = new Store<ISettings>({
             key: ''
         },
         reader: {
-            whitelist: [],
+            whitelist: [
+                'github.com',
+            ],
         },
         web: {
-            options: []
+            options: [
+                {
+                    url: '*',
+                    customCSS: "html { background-color: #FFFFFF; }",
+                }
+            ]
         }
     }
 })
 
 export default store
-export { ISettings }
+export { ISettings, IWebOptions }
