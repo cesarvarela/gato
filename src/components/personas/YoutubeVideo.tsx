@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StringParam, useQueryParam } from "use-query-params";
 import { Helmet } from "react-helmet";
+import Comment, { mapSnippet } from "../ui/Comment";
 
 const { gato: { youtube } } = window
 
@@ -36,14 +37,13 @@ function YoutubeVideo() {
         <div>
             {`https://www.youtube.com/watch?v=${v}`}
         </div>
-        
+
         <div className="p-4">
-            {comments.map(comment => <div
+            {comments.map(comment => <Comment
                 key={comment.id}
-                className="my-4"
-            >
-                <h4 dangerouslySetInnerHTML={{ __html: comment.snippet.topLevelComment.snippet.textDisplay }} />
-            </div>)}
+                {...mapSnippet(comment.snippet.topLevelComment.snippet)}
+                replies={comment.replies ? comment.replies.comments.map(reply => reply.snippet) : []}
+            />)}
         </div>
     </div>
 }
