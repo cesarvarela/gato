@@ -1,6 +1,19 @@
 import electron from 'electron';
 import { download } from 'electron-dl'
 import Gato from './main/Gato';
+import unhandled from 'electron-unhandled';
+import { openNewGitHubIssue, debugInfo } from 'electron-util';
+
+unhandled({
+  showDialog: true,
+  reportButton: error => {
+    openNewGitHubIssue({
+      user: 'cesarvarela',
+      repo: 'gato',
+      body: `\`\`\`\n${error.stack}\n\`\`\`\n\n---\n\n${debugInfo()}`
+    });
+  }
+});
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -37,6 +50,12 @@ electron.app.on('ready', async () => {
       await Gato.create({ q: 'gato://home' })
     }
   });
+
+  electron.app.on('quit', () => {
+    // TODO: this might not be necessary
+    Object.keys(Gato.gatos).forEach(id => Gato.gatos[id] && Gato.gatos[id].close())
+    electron.app.quit();
+  })
 
   await Gato.setup()
 

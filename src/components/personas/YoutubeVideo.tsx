@@ -32,6 +32,11 @@ function YoutubeVideo() {
             <title>{v}</title>
         </Helmet>
         <webview className="h-full" id="youtube" src={`https://www.youtube.com/embed/${v}?autoplay=0`}></webview>
+
+        <div>
+            {`https://www.youtube.com/watch?v=${v}`}
+        </div>
+        
         <div className="p-4">
             {comments.map(comment => <div
                 key={comment.id}
