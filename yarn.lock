@@ -5083,7 +5083,7 @@ googleapis-common@^5.0.2:
 
 googleapis@^92.0.0:
   version "92.0.0"
-  resolved "https://registry.npmjs.org/googleapis/-/googleapis-92.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/googleapis/-/googleapis-92.0.0.tgz#291b9826a5a4509a9e9a6974ef942328857bfe18"
   integrity sha512-5HgJg7XvqEEJ+GO+2gvnzd5cAcDuSS/VB6nW7thoyj2GMq9nH4VvJwncSevinjLCnv06a+VSxrXNiL5vePHojA==
   dependencies:
     google-auth-library "^7.0.2"

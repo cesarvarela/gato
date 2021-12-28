@@ -17,6 +17,9 @@ interface ISettings {
     },
     web: {
         options: Array<IWebOptions>
+    },
+    youtube: {
+        key: string,
     }
 }
 
@@ -48,6 +51,14 @@ const store = new Store<ISettings>({
                     type: 'array',
                 }
             },
+        },
+        youtube: {
+            type: 'object',
+            properties: {
+                "key": {
+                    type: 'string',
+                }
+            }
         }
     },
     defaults: {
@@ -67,6 +78,9 @@ const store = new Store<ISettings>({
                     customCSS: "html { background-color: #FFFFFF; }",
                 }
             ]
+        },
+        youtube: {
+            key: ''
         }
     }
 })

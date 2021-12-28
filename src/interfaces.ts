@@ -54,7 +54,8 @@ interface IGato {
 
     find: IFinder,
 
-    ethereum: any
+    youtube: IYoutube,
+
 }
 
 interface IReaderResult {
@@ -66,6 +67,10 @@ interface IReaderResult {
 
 interface IReader {
     read: ({ url }: { url: string }) => Promise<IReaderResult>
+}
+
+interface IYoutube {
+    getComments: ({ v: string }) => Promise<any[]>
 }
 
 interface IGatoWindow {
@@ -110,4 +115,5 @@ export {
     IWindows,
     IPersona,
     IFinder,
+    IYoutube,
 }

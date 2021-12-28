@@ -15,6 +15,10 @@ const api: Partial<IGato> = {
     gato: {
         open: (...args) => ipcRenderer.invoke('gato:open', ...args),
         choose: (...args) => ipcRenderer.invoke('gato:choose', ...args),
+    },
+
+    youtube: {
+        getComments: (...args) => ipcRenderer.invoke('youtube:getComments', ...args),
     }
 }
 
