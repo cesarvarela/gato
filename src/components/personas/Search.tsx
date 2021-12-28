@@ -32,9 +32,17 @@ export default function Search() {
             }
         }
 
-        fetch()
+        if (q) {
+
+            fetch()
+        }
 
     }, [search]);
+
+    if (!q) {
+        
+        return <div>No search query!</div>
+    }
 
     return <div>
         {error && <div>{error}</div>}

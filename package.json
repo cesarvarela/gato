@@ -92,6 +92,11 @@
                   "html": "./src/windows/persona_shared/index.html",
                   "js": "./src/windows/wallet/renderer.tsx",
                   "name": "wallet"
+                },
+                {
+                  "html": "./src/windows/persona_shared/index.html",
+                  "js": "./src/windows/error/renderer.tsx",
+                  "name": "error"
                 }
               ]
             },
