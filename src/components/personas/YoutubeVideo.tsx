@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StringParam, useQueryParam } from "use-query-params";
 import { Helmet } from "react-helmet";
 
@@ -7,14 +7,15 @@ const { gato: { youtube } } = window
 function YoutubeVideo() {
 
     const [v] = useQueryParam("v", StringParam)
-
+    const [comments, setComments] = useState([])
     useEffect(() => {
 
         async function fetch() {
 
             try {
                 const items = await youtube.getComments({ v })
-                console.log(items)
+                console.log('bue', items)
+                setComments(items)
             }
             catch (e) {
 
@@ -31,6 +32,14 @@ function YoutubeVideo() {
             <title>{v}</title>
         </Helmet>
         <webview className="h-full" id="youtube" src={`https://www.youtube.com/embed/${v}?autoplay=0`}></webview>
+        <div className="p-4">
+            {comments.map(comment => <div
+                key={comment.id}
+                className="my-4"
+            >
+                <h4 dangerouslySetInnerHTML={{ __html: comment.snippet.topLevelComment.snippet.textDisplay }} />
+            </div>)}
+        </div>
     </div>
 }
 
