@@ -2,22 +2,23 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IParseResult } from "../interfaces";
 import SearchInput from "./ui/SearchInput";
 import Suggestions from "./ui/Suggestions";
-const { gato: { gato: { choose, parse, open, hide, show, status }, find: { find, stopFind }, on } } = window
+const { gato: { gato: { parse, open, hide, show, status }, find: { find, stopFind }, on } } = window
 
 const paletteSize = { width: 640, height: 720 }
 
-const showPalette = async (mode, ref) => {
+const resizePalette = async (mode) => {
 
     const { bounds: windowBounds } = await status()
     let bounds
 
     switch (mode) {
+        case 'empty':
         case 'find':
             bounds = {
                 x: Math.round(windowBounds.width / 2 - paletteSize.width / 2),
                 y: 0,
                 width: paletteSize.width,
-                height: 80,
+                height: 65,
             }
             break;
 
@@ -30,8 +31,6 @@ const showPalette = async (mode, ref) => {
             }
             break;
     }
-
-    ref.current.focus()
 
     await show({ bounds })
 }
@@ -58,7 +57,8 @@ export default function App() {
                 case "location": {
 
                     setQ(url.href)
-                    showPalette(params.mode, ref)
+                    resizePalette(params.mode)
+                    ref.current.focus()
                 }
                     break;
 
@@ -75,13 +75,15 @@ export default function App() {
                 case "find": {
 
                     setQ(':')
-                    showPalette(params.mode, ref)
+                    resizePalette(params.mode)
+                    ref.current.focus()
                 }
                     break;
 
                 case 'show': {
 
-                    showPalette(params.mode, ref)
+                    resizePalette(params.mode)
+                    ref.current.focus()
                 }
                     break;
             }
@@ -104,7 +106,12 @@ export default function App() {
             const first = suggestions[0]
 
             if (first && first.params && first.params.paletteMode) {
+
                 setMode(first.params.paletteMode as string)
+            }
+            else if (suggestions.length === 0) {
+
+                setMode('empty')
             }
             else {
                 setMode('default')
@@ -114,6 +121,10 @@ export default function App() {
         update()
 
     }, [q])
+
+    useEffect(() => {
+        resizePalette(mode)
+    }, [mode])
 
     const onAccept = useCallback(async () => {
 
