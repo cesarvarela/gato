@@ -4,7 +4,7 @@ import SearchInput from "./ui/SearchInput";
 import Suggestions from "./ui/Suggestions";
 const { gato: { gato: { parse, open, hide, show, status }, find: { find, stopFind }, on } } = window
 
-const paletteSize = { width: 640, height: 720 }
+const paletteSize = { width: 640, height: 400 }
 
 const resizePalette = async (mode) => {
 
@@ -18,7 +18,7 @@ const resizePalette = async (mode) => {
                 x: Math.round(windowBounds.width / 2 - paletteSize.width / 2),
                 y: 0,
                 width: paletteSize.width,
-                height: 65,
+                height: 76,
             }
             break;
 
@@ -27,7 +27,7 @@ const resizePalette = async (mode) => {
                 x: Math.round(windowBounds.width / 2 - paletteSize.width / 2),
                 y: 0,
                 width: paletteSize.width,
-                height: Math.min(paletteSize.height, Math.round(windowBounds.height / 2)),
+                height: 240,
             }
             break;
     }
@@ -37,8 +37,8 @@ const resizePalette = async (mode) => {
 
 export default function App() {
 
-    const [q, setQ] = useState("")
-    const [mode, setMode] = useState("show")
+    const [q, setQ] = useState("youtube.com")
+    const [mode, setMode] = useState("")
     const [currentSerch, setCurrentSerch] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
     const [suggestions, setSuggestions] = useState<IParseResult[]>([])
@@ -171,10 +171,8 @@ export default function App() {
         hide()
     }
 
-    console.log(mode, q, suggestions, suggestions[selected])
-
-    return <div className="p-2 border h-full w-full">
-        <div className="flex flex-col items-stretch justify-start w-full bg-white shadow">
+    return <div className="p-2 h-full w-full">
+        <div className="flex flex-col dark:bg-stone-900 shadow-lg h-full w-full rounded-xl p-2">
             <SearchInput
                 innerRef={ref}
                 value={q}
@@ -184,7 +182,9 @@ export default function App() {
                 onAccept={onAccept}
             />
             {mode !== 'find' &&
-                <Suggestions items={suggestions} selected={selected} onClick={onSuggestionsClick} />
+                <div className="overflow-y-scroll flex-1 mt-2">
+                    <Suggestions items={suggestions} selected={selected} onClick={onSuggestionsClick} />
+                </div>
             }
         </div>
     </div>

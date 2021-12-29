@@ -6,10 +6,12 @@ function SearchInput({ innerRef, value, onChange, onAccept, onUp, onDown }) {
 
         if(e.key === 'ArrowDown') {
             onDown()
+            e.preventDefault()
         }
 
         if(e.key === 'ArrowUp') {
             onUp()
+            e.preventDefault()
         }
 
         if (e.key === "Enter") {
@@ -31,7 +33,7 @@ function SearchInput({ innerRef, value, onChange, onAccept, onUp, onDown }) {
             onChange={onChange}
             onKeyDown={onKeyDown}
             type="text"
-            className="p-2 pl-10 w-full text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+            className="p-2 pl-10 w-full rounded-lg bg-stone-800 text-stone-300 placeholder:text-stone-600 focus:outline-none font-normal text-sm"
             placeholder="Type search queries, URLs or something else"
         />
     </div>
