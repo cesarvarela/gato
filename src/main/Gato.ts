@@ -282,11 +282,6 @@ class Gato {
 
     async parse({ q }: { q: string }): Promise<IParseResult[]> {
 
-        if (q.startsWith('gato://')) {
-
-            return [{ href: q, confidence: 10 }]
-        }
-
         const results = await Promise.all(personas.map(async (persona) => persona.parse(q)))
         const filtered = results.filter(suggestion => !!suggestion)
         const sorted = filtered.sort((a, b) => b.confidence - a.confidence)

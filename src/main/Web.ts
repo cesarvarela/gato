@@ -35,6 +35,11 @@ class Web implements IPersona {
             return null
         }
 
+        if (q.startsWith('gato://')) {
+
+            return { name: this.name, confidence: 10, href: q }
+        }
+
         const isSomeURL = isURL(q, { require_protocol: false, require_tld: false, require_port: false })
 
         if (isSomeURL) {
