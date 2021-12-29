@@ -61,8 +61,6 @@ class Youtube implements IPersona {
                 return { name: this.name, confidence: 0, href: null }
             }
         }
-
-        return { name: this.name, confidence: 0, href: null }
     }
 }
 

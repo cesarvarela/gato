@@ -6,9 +6,7 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-const Suggestion = ({ text }) => {
-
-    const active = false
+const Suggestion = ({ text, active }) => {
 
     return <a
         href="#"
@@ -22,9 +20,13 @@ const Suggestion = ({ text }) => {
     </a>
 }
 
-export default function Suggestions({ items }: { items: IParseResult[] }) {
+export default function Suggestions({ items, selected }: { items: IParseResult[], selected: number }) {
 
     return <div>
-        {items.map(item => <Suggestion key={item.name} text={item.name} />)}
+        {items.map((item, index) => <Suggestion
+            key={item.name}
+            text={item.name}
+            active={selected === index}
+        />)}
     </div>
 }

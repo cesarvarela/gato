@@ -1,9 +1,16 @@
 import React from 'react'
 
-
-function SearchInput({ innerRef, value, onChange, onAccept }) {
+function SearchInput({ innerRef, value, onChange, onAccept, onUp, onDown }) {
 
     const onKeyDown = (e) => {
+
+        if(e.key === 'ArrowDown') {
+            onDown()
+        }
+
+        if(e.key === 'ArrowUp') {
+            onUp()
+        }
 
         if (e.key === "Enter") {
 

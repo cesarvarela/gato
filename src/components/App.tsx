@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IParseResult } from "../interfaces";
-import Palette from "./Palette";
+import SearchInput from "./ui/SearchInput";
 import Suggestions from "./ui/Suggestions";
 const { gato: { gato: { choose, parse, open, hide, show, status }, find: { find, stopFind }, on } } = window
 
@@ -43,6 +43,7 @@ export default function App() {
     const [currentSerch, setCurrentSerch] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
     const [suggestions, setSuggestions] = useState<IParseResult[]>([])
+    const [selected, setSelected] = useState(0)
 
     useEffect(() => {
 
@@ -99,7 +100,7 @@ export default function App() {
         async function update(q) {
             const { name } = await choose({ q })
             const suggestions = await parse({ q })
-
+            
             setSuggestions(suggestions)
             setMode(name)
             showPalette(name, ref)
@@ -131,11 +132,36 @@ export default function App() {
 
     }, [q, currentSerch])
 
-    console.log(suggestions)
+    const onDown = useCallback(() => {
+
+        if (selected < suggestions.length - 1) {
+            setSelected(selected + 1)
+        }
+        else {
+            setSelected(0)
+        }
+    }, [selected, suggestions])
+
+    const onUp = useCallback(() => {
+
+        if (selected > 0) {
+            setSelected(selected - 1)
+        }
+        else {
+            setSelected(suggestions.length - 1)
+        }
+    }, [selected, suggestions])
 
     return <div className="flex flex-col items-stretch justify-start w-full self-stretch">
-        <Palette innerRef={ref} mode={mode} value={q} onChange={setQ} onAccept={onAccept} />
-        <Suggestions items={suggestions} />
+        <SearchInput
+            innerRef={ref}
+            value={q}
+            onChange={e => setQ(e.target.value)}
+            onUp={onUp}
+            onDown={onDown}
+            onAccept={onAccept}
+        />
+        <Suggestions items={suggestions} selected={selected} />
     </div>
 }
 

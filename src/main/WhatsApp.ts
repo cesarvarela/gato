@@ -25,7 +25,7 @@ class WhatsApp implements IPersona {
     async parse(q: string): Promise<IParseResult> {
 
         if (this.isWhatsAppURL(q)) {
-            return { name: 'web', confidence: 10, href: q }
+            return { name: this.name, confidence: 10, href: q }
         }
     }
 
