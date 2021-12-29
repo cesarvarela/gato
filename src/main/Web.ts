@@ -31,6 +31,10 @@ class Web implements IPersona {
 
     async parse(q: string): Promise<IParseResult> {
 
+        if (!q) {
+            return null
+        }
+
         const isSomeURL = isURL(q, { require_protocol: false, require_tld: false, require_port: false })
 
         if (isSomeURL) {

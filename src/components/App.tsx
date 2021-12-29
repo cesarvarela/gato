@@ -97,18 +97,23 @@ export default function App() {
 
     useEffect(() => {
 
-        async function update(q) {
-            const { name } = await choose({ q })
+        async function update() {
             const suggestions = await parse({ q })
-            
             setSuggestions(suggestions)
-            setMode(name)
-            showPalette(name, ref)
+
+            const first = suggestions[0]
+
+            if (first && first.params && first.params.paletteMode) {
+                setMode(first.params.paletteMode as string)
+            }
+            else {
+                setMode('default')
+            }
         }
 
-        update(q)
+        update()
 
-    }, [q, ref])
+    }, [q])
 
     const onAccept = useCallback(async () => {
 
@@ -120,17 +125,15 @@ export default function App() {
             await find({ text, findNext: currentSerch !== text })
 
             setCurrentSerch(text)
-        }
-        else {
+        } else {
 
-            const chosen = await choose({ q })
-
+            const chosen = suggestions[selected]
             open(chosen)
 
             hide()
         }
 
-    }, [q, currentSerch])
+    }, [q, selected, suggestions, currentSerch])
 
     const onDown = useCallback(() => {
 
@@ -152,16 +155,27 @@ export default function App() {
         }
     }, [selected, suggestions])
 
-    return <div className="flex flex-col items-stretch justify-start w-full self-stretch">
-        <SearchInput
-            innerRef={ref}
-            value={q}
-            onChange={e => setQ(e.target.value)}
-            onUp={onUp}
-            onDown={onDown}
-            onAccept={onAccept}
-        />
-        <Suggestions items={suggestions} selected={selected} />
+    const onSuggestionsClick = (item) => {
+        open(item)
+        hide()
+    }
+
+    console.log(mode, q, suggestions, suggestions[selected])
+
+    return <div className="p-2 border h-full w-full">
+        <div className="flex flex-col items-stretch justify-start w-full bg-white shadow">
+            <SearchInput
+                innerRef={ref}
+                value={q}
+                onChange={e => setQ(e.target.value)}
+                onUp={onUp}
+                onDown={onDown}
+                onAccept={onAccept}
+            />
+            {mode !== 'find' &&
+                <Suggestions items={suggestions} selected={selected} onClick={onSuggestionsClick} />
+            }
+        </div>
     </div>
 }
 

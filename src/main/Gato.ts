@@ -288,7 +288,8 @@ class Gato {
         }
 
         const results = await Promise.all(personas.map(async (persona) => persona.parse(q)))
-        const sorted = results.filter(suggestion => suggestion).sort((a, b) => b.confidence - a.confidence)
+        const filtered = results.filter(suggestion => !!suggestion)
+        const sorted = filtered.sort((a, b) => b.confidence - a.confidence)
 
         return sorted
     }

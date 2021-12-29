@@ -32,7 +32,7 @@ function SearchInput({ innerRef, value, onChange, onAccept, onUp, onDown }) {
             onKeyDown={onKeyDown}
             type="text"
             className="p-2 pl-10 w-full text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
-            placeholder="Search"
+            placeholder="Type search queries, URLs or something else"
         />
     </div>
 }
