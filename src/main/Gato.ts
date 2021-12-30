@@ -397,12 +397,24 @@ class Gato {
             this.close()
         });
 
+        function insert(errorCode, errorDescription) {
+
+            const content = `
+                <div style="color:#fff;">${errorCode}</div>
+                <div style="color:#fff;">${errorDescription}</div>
+            `
+
+            document.getElementsByTagName('body')[0].innerHTML = content;
+        }
+
         this.window.webContents.on('did-fail-load', (event: Electron.Event, errorCode: number, errorDescription: string, validatedURL: string, isMainFrame: boolean) => {
 
             if (errorCode && errorCode !== -3 && isMainFrame && validatedURL) {
 
-                const href = `gato://error?code=${encodeURIComponent(errorCode)}&description=${encodeURI(errorDescription)}&url=${encodeURIComponent(validatedURL)}`
-                this.open({ href })
+                this.window.webContents.executeJavaScript(` 
+
+                    (${String(insert)})('${errorCode}', '${errorDescription}')
+                `)
             }
         })
 
