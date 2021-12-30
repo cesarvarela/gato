@@ -209,12 +209,16 @@ export default function App() {
 
             if (href === 'gato://home/') {
                 setMode('compact')
+                ref.current.focus()
             }
         }
 
-        fetch()
+        if (ref) {
 
-    }, [status])
+            fetch()
+        }
+
+    }, [status, ref])
 
     return <div className="h-full w-full">
         <div className="inset-x-6 inset-y-4 absolute z-10 bg-stone-900 dejame-vivir rounded-xl">
