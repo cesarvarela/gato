@@ -201,6 +201,21 @@ export default function App() {
         hide()
     }
 
+    useEffect(() => {
+
+        async function fetch() {
+
+            const { url: { href } } = await status()
+
+            if (href === 'gato://home/') {
+                setMode('compact')
+            }
+        }
+
+        fetch()
+
+    }, [status])
+
     return <div className="h-full w-full">
         <div className="inset-x-6 inset-y-4 absolute z-10 bg-stone-900 dejame-vivir rounded-xl">
             <div className="flex flex-col h-full w-full rounded-xl z-20 p-3 border border-stone-600">
