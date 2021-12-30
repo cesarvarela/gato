@@ -1,5 +1,5 @@
 import electron from 'electron'
-import { IGatoWindow, IPersona, IStatus, IParseResult, IWindows } from '../interfaces';
+import { IGatoWindow, IPersona, IStatus, IParseResult, IWindows, PaletteMode } from '../interfaces';
 import contextMenu from 'electron-context-menu'
 import { handleApi, listen } from '../utils/bridge';
 import Menu from './Menu';
@@ -78,7 +78,7 @@ class Gato {
             },
             show: async ({ window }) => {
 
-                gatos[window.id].call({ params: { mode: 'show' } })
+                gatos[window.id].call({ params: { mode: 'compact' } })
             },
             find: async ({ window }) => {
 
@@ -86,7 +86,7 @@ class Gato {
             },
             hide: async ({ window }) => {
 
-                gatos[window.id].call({ params: { mode: 'hide' } })
+                gatos[window.id].call({ params: { mode: 'hidden' } })
             },
             location: async ({ window }) => {
 
@@ -206,7 +206,7 @@ class Gato {
         return gatos[electron.BrowserWindow.getFocusedWindow().id]
     }
 
-    call({ params }: { params?} = {}) {
+    call({ params }: { params?: { mode: PaletteMode } } = {}) {
 
         this.paletteView.webContents.send('gato:call', { params });
     }
@@ -370,8 +370,6 @@ class Gato {
 
             const { url, features } = details
 
-            console.log('setWindowOpenHandler', details)
-
             if (features) { // asume a popup
 
                 const options = web.getOptions({ url })
@@ -429,13 +427,12 @@ class Gato {
 
         this.window.webContents.on('did-start-loading', async () => {
 
-            const title = `loading: ${this.window.webContents.getURL()}`
-            this.window.setTitle(title)
+            this.window.setTitle(`loading: ${this.window.title}`)
         })
 
         this.window.webContents.on('did-finish-load', (params) => {
 
-
+            this.window.setTitle(this.window.title.replace('loading:', ''))
         })
 
         this.window.webContents.on('certificate-error', async (e, url, error, certificate, callback) => {

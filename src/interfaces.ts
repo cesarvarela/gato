@@ -99,6 +99,8 @@ interface IWindows {
 
 type WindowEvent = keyof IWindows
 
+type PaletteMode = "compact" | "hidden" | "full" | "find" | "location"
+
 export {
     IGato,
     ISearchResult,
@@ -117,4 +119,5 @@ export {
     IPersona,
     IFinder,
     IYoutube,
+    PaletteMode,
 }

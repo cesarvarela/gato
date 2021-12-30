@@ -1,19 +1,20 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { IParseResult } from "../interfaces";
+import { IParseResult, PaletteMode } from "../interfaces";
 import SearchInput from "./ui/SearchInput";
 import Suggestions from "./ui/Suggestions";
 const { gato: { gato: { parse, open, hide, show, status }, find: { find, stopFind }, on } } = window
 
 const paletteSize = { width: 720, height: 400 }
 
-const resizePalette = async (mode) => {
+const resizePalette = async (mode: PaletteMode) => {
 
     const { bounds: windowBounds } = await status()
     let bounds
 
     switch (mode) {
-        case 'empty':
         case 'find':
+        case 'location':
+        case 'compact':
             bounds = {
                 x: Math.round(windowBounds.width / 2 - paletteSize.width / 2),
                 y: 0,
@@ -22,7 +23,7 @@ const resizePalette = async (mode) => {
             }
             break;
 
-        default:
+        case 'full':
             bounds = {
                 x: Math.round(windowBounds.width / 2 - paletteSize.width / 2),
                 y: 0,
@@ -30,6 +31,18 @@ const resizePalette = async (mode) => {
                 height: 240,
             }
             break;
+
+        case 'hidden':
+            bounds = {
+                x: Math.round(windowBounds.width / 2 - paletteSize.width / 2),
+                y: 0,
+                width: paletteSize.width,
+                height: 0,
+            }
+            break;
+
+        default:
+            throw new Error(`Unknown mode: ${mode}`)
     }
 
     await show({ bounds })
@@ -38,7 +51,7 @@ const resizePalette = async (mode) => {
 export default function App() {
 
     const [q, setQ] = useState("")
-    const [mode, setMode] = useState("")
+    const [mode, setMode] = useState<PaletteMode>("hidden")
     const [currentSerch, setCurrentSerch] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
     const [suggestions, setSuggestions] = useState<IParseResult[]>([])
@@ -46,11 +59,15 @@ export default function App() {
 
     useEffect(() => {
 
-        const handleCall = async (e, { params }: { params }) => {
+        const handleCall = async (e, { params }: { params: { mode: PaletteMode } }) => {
 
-            console.log('handleCall')
+            console.log('handleCall', params.mode)
 
             const { url } = await status()
+
+            if (params.mode) {
+                setMode(params.mode)
+            }
 
             switch (params.mode) {
 
@@ -62,13 +79,13 @@ export default function App() {
                 }
                     break;
 
-                case "hide": {
+                case "hidden": {
 
                     if (mode === 'find') {
                         stopFind({ action: 'keepSelection' })
                     }
 
-                    hide()
+                    resizePalette(params.mode)
                 }
                     break;
 
@@ -80,7 +97,8 @@ export default function App() {
                 }
                     break;
 
-                case 'show': {
+                case 'compact':
+                case 'full': {
 
                     resizePalette(params.mode)
                     ref.current.focus()
@@ -107,20 +125,23 @@ export default function App() {
 
             if (first && first.params && first.params.paletteMode) {
 
-                setMode(first.params.paletteMode as string)
+                setMode(first.params.paletteMode as PaletteMode)
             }
             else if (suggestions.length === 0) {
 
-                setMode('empty')
+                setMode('compact')
             }
             else {
-                setMode('default')
+
+                setMode('full')
             }
         }
 
-        update()
+        if (mode !== 'hidden') {
+            update()
+        }
 
-    }, [q])
+    }, [q, mode])
 
     useEffect(() => {
         if (suggestions.length == 0) {
@@ -153,7 +174,7 @@ export default function App() {
             hide()
         }
 
-    }, [q, selected, suggestions, currentSerch])
+    }, [q, mode, selected, suggestions, currentSerch])
 
     const onDown = useCallback(() => {
 
