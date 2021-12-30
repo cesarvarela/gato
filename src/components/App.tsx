@@ -4,7 +4,7 @@ import SearchInput from "./ui/SearchInput";
 import Suggestions from "./ui/Suggestions";
 const { gato: { gato: { parse, open, hide, show, status }, find: { find, stopFind }, on } } = window
 
-const paletteSize = { width: 640, height: 400 }
+const paletteSize = { width: 720, height: 400 }
 
 const resizePalette = async (mode) => {
 
@@ -18,7 +18,7 @@ const resizePalette = async (mode) => {
                 x: Math.round(windowBounds.width / 2 - paletteSize.width / 2),
                 y: 0,
                 width: paletteSize.width,
-                height: 76,
+                height: 96,
             }
             break;
 
@@ -37,7 +37,7 @@ const resizePalette = async (mode) => {
 
 export default function App() {
 
-    const [q, setQ] = useState("youtube.com")
+    const [q, setQ] = useState("")
     const [mode, setMode] = useState("")
     const [currentSerch, setCurrentSerch] = useState<string>("")
     const ref = useRef<HTMLInputElement>(null)
@@ -123,6 +123,15 @@ export default function App() {
     }, [q])
 
     useEffect(() => {
+        if (suggestions.length == 0) {
+            setSelected(0)
+        }
+        else if (selected > suggestions.length - 1) {
+            setSelected(suggestions.length - 1)
+        }
+    }, [selected, suggestions])
+
+    useEffect(() => {
         resizePalette(mode)
     }, [mode])
 
@@ -171,21 +180,23 @@ export default function App() {
         hide()
     }
 
-    return <div className="p-2 h-full w-full">
-        <div className="flex flex-col dark:bg-stone-900 shadow-lg h-full w-full rounded-xl p-2">
-            <SearchInput
-                innerRef={ref}
-                value={q}
-                onChange={e => setQ(e.target.value)}
-                onUp={onUp}
-                onDown={onDown}
-                onAccept={onAccept}
-            />
-            {mode !== 'find' &&
-                <div className="overflow-y-scroll flex-1 mt-2">
-                    <Suggestions items={suggestions} selected={selected} onClick={onSuggestionsClick} />
-                </div>
-            }
+    return <div className="h-full w-full">
+        <div className="inset-x-6 inset-y-4 absolute z-10 bg-stone-900 dejame-vivir rounded-xl">
+            <div className="flex flex-col h-full w-full rounded-xl z-20 p-3 border border-stone-600">
+                <SearchInput
+                    innerRef={ref}
+                    value={q}
+                    onChange={e => setQ(e.target.value)}
+                    onUp={onUp}
+                    onDown={onDown}
+                    onAccept={onAccept}
+                />
+                {mode !== 'find' && suggestions.length > 0 &&
+                    <div className="overflow-y-scroll flex-1 mt-2 z-10">
+                        <Suggestions items={suggestions} selected={selected} onClick={onSuggestionsClick} />
+                    </div>
+                }
+            </div>
         </div>
     </div>
 }

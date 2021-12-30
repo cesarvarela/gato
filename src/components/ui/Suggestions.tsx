@@ -21,14 +21,14 @@ const Suggestion = ({ text, name, active, onClick, innerRef }) => {
         ref={innerRef}
         href="#"
         className={classnames({
-            ['bg-stone-800 text-stone-400 ring-2 ring-purple-500 ring-inset']: active,
-            ['bg-stone-800 text-stone-500']: !active
+            ['bg-purple-700 text-stone-100']: active,
+            ['bg-stone-900 text-stone-400']: !active
         },
-            'group flex items-center px-4 py-2 text-sm rounded-sm'
+            'group flex border border-stone-700 items-center px-4 py-2 text-xs rounded-lg cursor-pointer'
         )}
         onClick={onClick}
     >
-        <Icon className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
+        <Icon className={classnames("mr-3 h-5 w-5", { ['text-stone-100']: active, ['text-stone-400']: !active })} aria-hidden="true" />
         {text}
     </a >
 }
@@ -52,7 +52,7 @@ export default function Suggestions({ items, selected, onClick }: { items: IPars
 
     }, [selected])
 
-    return <div className="flex flex-col gap-2">
+    return <div className="flex flex-col gap-1">
         {items.map((item, index) => <Suggestion
             name={item.name}
             innerRef={refs[index]}
