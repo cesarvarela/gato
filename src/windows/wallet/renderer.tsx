@@ -3,7 +3,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { IGato } from "../../interfaces";
 import { QueryParamProvider } from "use-query-params";
-import Wallet from "../../components/wallet/Wallet";
+import WalletRouter from "./router";
+import { store } from '../../components/wallet/store'
+import { Provider } from 'react-redux'
 
 declare global {
     interface Window {
@@ -12,7 +14,9 @@ declare global {
 }
 
 ReactDOM.render(
-    <QueryParamProvider>
-        <Wallet />
-    </QueryParamProvider>
+    <Provider store={store}>
+        <QueryParamProvider>
+            <WalletRouter />
+        </QueryParamProvider>
+    </Provider>
     , document.getElementById("root"));
