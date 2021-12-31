@@ -393,7 +393,6 @@ class Gato {
 
         this.window.once('close', (e) => {
 
-            e.preventDefault();
             this.close()
         });
 
