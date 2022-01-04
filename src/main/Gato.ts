@@ -91,7 +91,7 @@ class Gato {
             location: async ({ window }) => {
 
                 gatos[window.id].call({ params: { mode: 'location' } })
-            }
+            },
         })
 
         handleApi<IGatoWindow>('gato', {
@@ -223,22 +223,23 @@ class Gato {
         this.window.webContents.focus()
     }
 
-    close() {
-
-        //TODO: check that we are cleaning up everything
+    close(e?: electron.Event) {
 
         this.window.removeBrowserView(this.paletteView)
         this.paletteView.webContents.closeDevTools()
-
-        this.window.webContents.removeAllListeners()
-        this.window.close()
+        //TODO: using destroy instead of close prevents onbeforeunload to fire
+        { (this.paletteView.webContents as any).destroy() }
 
         this.contextMenuDispose()
+        this.window.webContents.removeAllListeners()
+        this.window.webContents.closeDevTools()
+        this.window.destroy()
 
         this.window = null
         this.paletteView = null
         gatos[this.id] = null
     }
+
 
     canGoBack() {
         return this.window.webContents.canGoBack()
@@ -391,9 +392,9 @@ class Gato {
             }
         })
 
-        this.window.once('close', (e) => {
+        this.window.on('close', (e) => {
 
-            this.close()
+            this.close(e)
         });
 
         function insert(errorCode, errorDescription) {

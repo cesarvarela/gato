@@ -3,6 +3,8 @@ import { download } from 'electron-dl'
 import Gato from './main/Gato';
 import unhandled from 'electron-unhandled';
 import { openNewGitHubIssue, debugInfo } from 'electron-util';
+import { listen } from './utils/bridge';
+import Menu from './main/Menu';
 
 unhandled({
   showDialog: true,
@@ -51,14 +53,21 @@ electron.app.on('ready', async () => {
     }
   });
 
-  electron.app.on('quit', () => {
-    // TODO: this might not be necessary
-    Object.keys(Gato.gatos).forEach(id => Gato.gatos[id] && Gato.gatos[id].close())
-    electron.app.quit();
-  })
-
   await Gato.setup()
 
   await Gato.create({ q: 'gato://home' })
+
+  electron.app.on('quit', () => {
+    // TODO: this might not be necessary
+    electron.app.quit();
+  })
+
+  const menu = await Menu.getInstance()
+
+  listen(menu, {
+    quit: async () => {
+      electron.app.quit();
+    }
+  })
 });
 
