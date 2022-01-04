@@ -4,8 +4,6 @@ import { IGato } from "../../interfaces";
 
 const api: Partial<IGato> = {
 
-    search: (query) => ipcRenderer.invoke('search', query),
-
     menu: () => ipcRenderer.invoke('menu'),
 
     reader: {
@@ -19,6 +17,10 @@ const api: Partial<IGato> = {
 
     youtube: {
         getComments: (...args) => ipcRenderer.invoke('youtube:getComments', ...args),
+    },
+
+    search: {
+        query: (...args) => ipcRenderer.invoke('search:query', ...args),
     }
 }
 

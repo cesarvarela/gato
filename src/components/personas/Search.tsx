@@ -23,7 +23,7 @@ export default function Search() {
 
             try {
 
-                const results = await search({ q })
+                const results = await search.query({ q })
                 setResults(results)
             }
             catch (e) {
@@ -40,7 +40,7 @@ export default function Search() {
     }, [search]);
 
     if (!q) {
-        
+
         return <div>No search query!</div>
     }
 

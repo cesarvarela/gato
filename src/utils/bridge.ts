@@ -1,6 +1,8 @@
 import EventEmiter from 'events';
 import electron from "electron";
 
+declare const MAIN_WEBPACK_ENTRY: string;
+
 function listen<T>(emitter: EventEmiter, api: T) {
 
     Object.keys(api).forEach(event => {
@@ -20,10 +22,18 @@ function handleApi<T>(key: string, api: T): void {
 
             electron.ipcMain.handle(channel, (e, ...args) => {
 
-                // TODO: check e is from gato://protocol
-                console.log(e.sender.getURL())
+                if (e.sender.getURL().startsWith('gato://') || e.sender.getURL().startsWith(MAIN_WEBPACK_ENTRY)) {
 
-                return api[k](...args, e)
+                    console.log('allowed request from ', e.sender.getURL())
+
+                    return api[k](...args, e)
+                }
+                else {
+
+                    console.log('cancelled request from ', e.sender.getURL())
+
+                    return null
+                }
             });
         }
     })

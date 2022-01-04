@@ -1,9 +1,8 @@
 import settings from "./Settings"
 import { google } from 'googleapis'
-import electron from 'electron'
-import secureListener from "../utils/secureHandle";
-import { IParseResult, IPersona, PersonaName } from "../interfaces";
+import { IParseResult, IPersona, ISearch, PersonaName } from "../interfaces";
 import isURL from "validator/lib/isURL";
+import { handleApi } from "../utils/bridge";
 
 const customsearch = google.customsearch('v1');
 
@@ -12,6 +11,7 @@ const cache = new Map<string, unknown>();
 class GoogleSearch implements IPersona {
 
     name: PersonaName = 'search'
+    api: ISearch
 
     static instance: GoogleSearch
 
@@ -27,12 +27,20 @@ class GoogleSearch implements IPersona {
 
     async init() {
 
-        electron.ipcMain.handle('search', secureListener(async (e, { q }) => {
+        this.api = {
+            query: async ({ q }) => {
 
-            const { data: { items } } = await this.search({ q })
+                if (!(q in cache)) {
+                    const { data: { items } } = await this.search({ q })
 
-            return items
-        }))
+                    cache[q] = items
+                }
+
+                return cache[q]
+            }
+        }
+
+        handleApi('search', this.api)
     }
 
     async search({ q }) {

@@ -43,7 +43,6 @@ type ITarget = '_blank' | '_self'
 
 interface IGato {
 
-    search: ({ q }: { q: string }) => Promise<ISearchResult[]>
     menu: () => Promise<Record<string, MenuItemConstructorOptions>>,
 
     on: (name: string, cb: (e, params) => void) => () => void,
@@ -56,6 +55,7 @@ interface IGato {
 
     youtube: IYoutube,
 
+    search: ISearch,
 }
 
 interface IReaderResult {
@@ -67,6 +67,10 @@ interface IReaderResult {
 
 interface IReader {
     read: ({ url }: { url: string }) => Promise<IReaderResult>
+}
+
+interface ISearch {
+    query: ({ q }: { q: string }) => Promise<ISearchResult[]>
 }
 
 interface IYoutube {
@@ -120,4 +124,5 @@ export {
     IFinder,
     IYoutube,
     PaletteMode,
+    ISearch,
 }
