@@ -150,6 +150,16 @@ class Menu extends EventEmiter {
                     accelerator: 'CommandOrControl+-'
                 }
             ]
+        },
+        file: {
+            label: "File",
+            submenu: [
+                {
+                    label: "Reopen Closed window",
+                    accelerator: "CmdOrCtrl+Shift+T",
+                    click: (item, window) => this.emit("reopen", { window })
+                }
+            ]
         }
     }
 
@@ -157,8 +167,9 @@ class Menu extends EventEmiter {
 
         const application = new electron.MenuItem(this.menu.application as MenuItemConstructorOptions)
         const edit = new electron.MenuItem(this.menu.edit as MenuItemConstructorOptions)
+        const file = new electron.MenuItem(this.menu.file as MenuItemConstructorOptions)
 
-        electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate([application, edit]))
+        electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate([application, edit, file]))
 
         electron.ipcMain.handle('menu', (e) => {
             const menu = JSON.parse(JSON.stringify(this.menu))

@@ -62,6 +62,10 @@ class Gato {
 
                 await Gato.create({ q: 'gato://home', windowOptions })
             },
+            reopen: async ({ window }) => {
+
+                gatos[window.id].reopen()
+            },
             back: async ({ window }) => {
 
                 gatos[window.id].back()
@@ -310,6 +314,16 @@ class Gato {
         }
 
         this.hide()
+    }
+
+    async reopen() {
+
+        // TODO: this is a very naive implementation, should cycle through all history items
+
+        const history = await History.getInstance()
+        const last = await history.getLast()
+
+        this.open({ href: last.href, params: { target: '_blank' } })
     }
 
     async status(): Promise<IStatus> {

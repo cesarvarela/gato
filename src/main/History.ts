@@ -18,10 +18,20 @@ class History {
 
         const items: string[] = settings.get("history.items")
 
-        items.unshift(href)
-        const updated = items.slice(0, 27)
+        if (href !== 'gato://home' && items[0] !== href) {
 
-        settings.set("history.items", updated)
+            items.unshift(href)
+            const updated = items.slice(0, 27)
+
+            settings.set("history.items", updated)
+        }
+    }
+
+    async getLast(): Promise<Partial<IParseResult>> {
+
+        const items: string[] = settings.get("history.items")
+
+        return { href: items[0] }
     }
 }
 
