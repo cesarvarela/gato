@@ -8,6 +8,7 @@ import Youtube from './Youtube';
 import GoogleSearch from './GoogleSearch';
 import Find from './Find';
 import WhatsApp from './WhatsApp';
+import History from './History';
 import Web from './Web';
 import getPort from 'get-port';
 import { merge } from 'lodash';
@@ -302,6 +303,10 @@ class Gato {
 
             this.window.loadURL(href)
             this.window.webContents.focus()
+
+            const history = await History.getInstance()
+
+            history.save({ href })
         }
 
         this.hide()

@@ -20,6 +20,9 @@ interface ISettings {
     },
     youtube: {
         key: string,
+    },
+    history: {
+        items: string[]
     }
 }
 
@@ -59,6 +62,14 @@ const store = new Store<ISettings>({
                     type: 'string',
                 }
             }
+        },
+        history: {
+            type: 'object',
+            properties: {
+                "items": {
+                    type: 'array',
+                }
+            }
         }
     },
     defaults: {
@@ -81,6 +92,9 @@ const store = new Store<ISettings>({
         },
         youtube: {
             key: ''
+        },
+        history: {
+            items: []
         }
     }
 })
