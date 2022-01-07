@@ -160,6 +160,16 @@ class Menu extends EventEmiter {
                     click: (item, window) => this.emit("reopen", { window })
                 }
             ]
+        },
+        window: {
+            label: "Window",
+            submenu: [
+                {
+                    label: "Bookmark this Window",
+                    accelerator: "CmdOrCtrl+Shift+B",
+                    click: (item, window) => this.emit("bookmark", { window })
+                }
+            ]
         }
     }
 
@@ -168,8 +178,9 @@ class Menu extends EventEmiter {
         const application = new electron.MenuItem(this.menu.application as MenuItemConstructorOptions)
         const edit = new electron.MenuItem(this.menu.edit as MenuItemConstructorOptions)
         const file = new electron.MenuItem(this.menu.file as MenuItemConstructorOptions)
+        const window = new electron.MenuItem(this.menu.window as MenuItemConstructorOptions)
 
-        electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate([application, edit, file]))
+        electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate([application, file, edit, window]))
 
         electron.ipcMain.handle('menu', (e) => {
             const menu = JSON.parse(JSON.stringify(this.menu))

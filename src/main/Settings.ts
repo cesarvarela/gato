@@ -22,6 +22,7 @@ interface ISettings {
         key: string,
     },
     history: {
+        bookmarks: string[],
         items: string[]
     }
 }
@@ -66,6 +67,9 @@ const store = new Store<ISettings>({
         history: {
             type: 'object',
             properties: {
+                "bookmarks": {
+                    type: 'array',
+                },
                 "items": {
                     type: 'array',
                 }
@@ -94,6 +98,7 @@ const store = new Store<ISettings>({
             key: ''
         },
         history: {
+            bookmarks: [],
             items: []
         }
     }

@@ -97,6 +97,11 @@ class Gato {
 
                 gatos[window.id].call({ params: { mode: 'location' } })
             },
+
+            bookmark: async ({ window }) => {
+
+                gatos[window.id].bookmark()
+            }
         })
 
         handleApi<IGatoWindow>('gato', {
@@ -245,6 +250,10 @@ class Gato {
         gatos[this.id] = null
     }
 
+    notify({ title, body }: { title: string, body: string }) {
+
+        new electron.Notification({ title, body }).show()
+    }
 
     canGoBack() {
         return this.window.webContents.canGoBack()
@@ -310,7 +319,7 @@ class Gato {
 
             const history = await History.getInstance()
 
-            history.save({ href })
+            history.add({ href })
         }
 
         this.hide()
@@ -324,6 +333,16 @@ class Gato {
         const last = await history.getLast()
 
         this.open({ href: last.href, params: { target: '_blank' } })
+    }
+
+    async bookmark() {
+
+        const history = await History.getInstance()
+        const href = this.window.webContents.getURL()
+
+        await history.save({ href })
+
+        this.notify({ title: 'Bookmark Added', body: `${href}` })
     }
 
     async status(): Promise<IStatus> {

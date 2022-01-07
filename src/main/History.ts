@@ -16,6 +16,14 @@ class History {
 
     async save({ href }: Partial<IParseResult>) {
 
+        const bookmarks: string[] = settings.get("history.bookmarks")
+
+        bookmarks.unshift(href)
+        settings.set("history.bookmarks", bookmarks)
+    }
+
+    async add({ href }: Partial<IParseResult>) {
+
         const items: string[] = settings.get("history.items")
 
         if (href !== 'gato://home' && items[0] !== href) {

@@ -91,6 +91,7 @@ type GatoEvents = keyof IGatoWindow
 interface IWindows {
     new: (params) => Promise<void>
     reopen: (params) => Promise<void>
+    bookmark: (params) => Promise<void>
     close: (params) => Promise<void>
     back: (params) => Promise<void>
     forward: (params) => Promise<void>
