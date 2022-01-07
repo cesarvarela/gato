@@ -24,13 +24,9 @@ function handleApi<T>(key: string, api: T): void {
 
                 if (e.sender.getURL().startsWith('gato://') || e.sender.getURL().startsWith(MAIN_WEBPACK_ENTRY)) {
 
-                    console.log('allowed request from ', e.sender.getURL())
-
                     return api[k](...args, e)
                 }
                 else {
-
-                    console.log('cancelled request from ', e.sender.getURL())
 
                     return null
                 }
@@ -39,4 +35,21 @@ function handleApi<T>(key: string, api: T): void {
     })
 }
 
-export { handleApi, listen }
+function secureInvoke(key: string, events: string[]): any {
+
+    const api = { [key]: {} };
+
+    events.forEach(event => {
+
+        const channel = `${key}:${event}`;
+
+        api[key][event] = (...args) => {
+
+            return electron.ipcRenderer.invoke(channel, ...args)
+        }
+    })
+
+    return api
+}
+
+export { handleApi, listen, secureInvoke }

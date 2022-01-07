@@ -1,4 +1,5 @@
 import { ipcRenderer, contextBridge } from "electron";
+import { secureInvoke } from "../../utils/bridge";
 import { IGato } from "../../interfaces";
 // import { EthereumProvider } from 'eip1193-provider'
 
@@ -6,22 +7,13 @@ const api: Partial<IGato> = {
 
     menu: () => ipcRenderer.invoke('menu'),
 
-    reader: {
-        read: (...args) => ipcRenderer.invoke('reader:read', ...args),
-    },
+    ...secureInvoke('reader', ['read']),
 
-    gato: {
-        open: (...args) => ipcRenderer.invoke('gato:open', ...args),
-        choose: (...args) => ipcRenderer.invoke('gato:choose', ...args),
-    },
+    ...secureInvoke('gato', ['open', 'choose']),
 
-    youtube: {
-        getComments: (...args) => ipcRenderer.invoke('youtube:getComments', ...args),
-    },
+    ...secureInvoke('youtube', ['getComments']),
 
-    search: {
-        query: (...args) => ipcRenderer.invoke('search:query', ...args),
-    }
+    ...secureInvoke('search', ['query']),
 }
 
 contextBridge.exposeInMainWorld("gato", api);

@@ -1,4 +1,5 @@
 import { ipcRenderer, contextBridge } from "electron";
+import { secureInvoke } from "../../utils/bridge";
 import { IGato } from "../../interfaces";
 
 const api: Partial<IGato> = {
@@ -11,19 +12,9 @@ const api: Partial<IGato> = {
         }
     },
 
-    gato: {
-        hide: () => ipcRenderer.invoke('gato:hide'),
-        show: (...args) => ipcRenderer.invoke('gato:show', ...args),
-        open: (...args) => ipcRenderer.invoke('gato:open', ...args),
-        choose: (...args) => ipcRenderer.invoke('gato:choose', ...args),
-        status: (...args) => ipcRenderer.invoke('gato:status', ...args),
-        parse: (...args) => ipcRenderer.invoke('gato:parse', ...args),
-    },
+    ...secureInvoke('gato', ['hide', 'show', 'open', 'choose', 'status', 'parse']),
 
-    find: {
-        find: (...args) => ipcRenderer.invoke('find:find', ...args),
-        stopFind: (...args) => ipcRenderer.invoke('find:stopFind', ...args),
-    }
+    ...secureInvoke('find', ['find', 'stopFind']),
 }
 
 contextBridge.exposeInMainWorld("gato", api);
