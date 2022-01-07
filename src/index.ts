@@ -1,10 +1,11 @@
-import electron from 'electron';
+import electron, { app } from 'electron';
 import { download } from 'electron-dl'
 import Gato from './main/Gato';
 import unhandled from 'electron-unhandled';
 import { openNewGitHubIssue, debugInfo } from 'electron-util';
 import { listen } from './utils/bridge';
 import Menu from './main/Menu';
+import path from 'path';
 
 unhandled({
   showDialog: true,
@@ -32,6 +33,17 @@ electron.protocol.registerSchemesAsPrivileged([
     }
   }
 ])
+
+if (app.isPackaged) {
+
+  if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+      electron.app.setAsDefaultProtocolClient('gato', process.execPath, [path.resolve(process.argv[1])])
+    }
+  } else {
+    electron.app.setAsDefaultProtocolClient('gato')
+  }
+}
 
 electron.app.on('ready', async () => {
 
