@@ -29,7 +29,7 @@ class Web implements IPersona {
         this.reader = await Reader.getInstance()
     }
 
-    async parse(q: string): Promise<IParseResult> {
+    async parse(q: string): Promise<IParseResult[]> {
 
         if (!q) {
             return null
@@ -37,7 +37,7 @@ class Web implements IPersona {
 
         if (q.startsWith('gato://')) {
 
-            return { name: this.name, confidence: 10, href: q }
+            return [{ name: this.name, confidence: 10, href: q }]
         }
 
         const isSomeURL = isURL(q, { require_protocol: false, require_tld: false, require_port: false })
@@ -69,10 +69,10 @@ class Web implements IPersona {
 
             href = fixHTTP(href)
 
-            return { name: this.name, confidence, href }
+            return [{ name: this.name, confidence, href }]
         }
 
-        return { name: this.name, confidence: 0, href: q }
+        return [{ name: this.name, confidence: 0, href: q }]
     }
 
     getOptions({ url }: { url: string }): IWebOptions {

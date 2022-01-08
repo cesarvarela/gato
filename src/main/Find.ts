@@ -44,11 +44,11 @@ class Find implements IPersona {
         Gato.getFocused().window.webContents.stopFindInPage(action)
     }
 
-    async parse(q: string): Promise<IParseResult> {
+    async parse(q: string): Promise<IParseResult[]> {
 
         if (q.startsWith(':')) {
 
-            return { name: this.name, confidence: 10, params: { q, paletteMode: 'find' }, href: null }
+            return [{ name: this.name, confidence: 10, params: { q, paletteMode: 'find' }, href: null }]
         }
     }
 }

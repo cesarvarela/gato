@@ -43,7 +43,7 @@ class Youtube implements IPersona {
         handleApi('youtube', this.api)
     }
 
-    async parse(q): Promise<IParseResult> {
+    async parse(q): Promise<IParseResult[]> {
 
         if (isURL(q, { host_whitelist: ['youtube.com', 'www.youtube.com'], require_protocol: false })) {
 
@@ -53,12 +53,12 @@ class Youtube implements IPersona {
 
                 if (parsed.searchParams.has('v')) {
 
-                    return { name: this.name, confidence: 10, href: `gato://youtube?v=${parsed.searchParams.get('v')}` }
+                    return [{ name: this.name, confidence: 10, href: `gato://youtube?v=${parsed.searchParams.get('v')}` }]
                 }
             }
             catch (e) {
 
-                return { name: this.name, confidence: 0, href: null }
+                return [{ name: this.name, confidence: 0, href: null }]
             }
         }
     }

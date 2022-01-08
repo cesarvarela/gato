@@ -43,13 +43,13 @@ class Reader implements IPersona {
         return list.some(pattern => matchUrl(url, pattern))
     }
 
-    async parse(q: string): Promise<IParseResult> {
+    async parse(q: string): Promise<IParseResult[]> {
 
         if (isURL(q, { require_protocol: false })) {
 
             const whitelisted = await this.isWhitelisted({ url: q })
 
-            return { name: this.name, confidence: whitelisted ? 5 : 7, href: `gato://read?url=${encodeURI(q)}` }
+            return [{ name: this.name, confidence: whitelisted ? 5 : 7, href: `gato://read?url=${encodeURI(q)}` }]
         }
     }
 }

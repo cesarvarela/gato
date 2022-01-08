@@ -188,6 +188,7 @@ class Gato {
         const find = await Find.getInstance()
         const whatsapp = await WhatsApp.getInstance()
         const web = await Web.getInstance()
+        const history = await History.getInstance()
 
         personas.push(youtube)
         personas.push(reader)
@@ -195,6 +196,7 @@ class Gato {
         personas.push(find)
         personas.push(whatsapp)
         personas.push(web)
+        personas.push(history)
     }
 
     static async create({ q, windowOptions }: { q: string, windowOptions?: electron.BrowserWindowConstructorOptions }) {
@@ -298,7 +300,8 @@ class Gato {
     async parse({ q }: { q: string }): Promise<IParseResult[]> {
 
         const results = await Promise.all(personas.map(async (persona) => persona.parse(q)))
-        const filtered = results.filter(suggestion => !!suggestion)
+        const flattened = results.reduce((a, b) => a.concat(b), [])
+        const filtered = flattened.filter(suggestion => !!suggestion)
         const sorted = filtered.sort((a, b) => b.confidence - a.confidence)
 
         return sorted

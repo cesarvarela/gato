@@ -56,7 +56,7 @@ class GoogleSearch implements IPersona {
         return cache[q]
     }
 
-    async parse(q: string): Promise<IParseResult> {
+    async parse(q: string): Promise<IParseResult[]> {
 
         if (!q) {
 
@@ -65,11 +65,11 @@ class GoogleSearch implements IPersona {
 
         if (!isURL(q, { require_protocol: false })) {
 
-            return { name: this.name, confidence: 6, href: `gato://search?q=${q}` }
+            return [{ name: this.name, confidence: 6, href: `gato://search?q=${q}` }]
         }
         else {
 
-            return { name: this.name, confidence: 1, href: `gato://search?q=${q}` }
+            return [{ name: this.name, confidence: 1, href: `gato://search?q=${q}` }]
         }
     }
 }

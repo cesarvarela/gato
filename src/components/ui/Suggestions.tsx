@@ -1,5 +1,5 @@
 import React, { createRef, useEffect, useState } from "react";
-import { SearchIcon, DocumentSearchIcon, GlobeAltIcon, VideoCameraIcon, HomeIcon, DocumentTextIcon, ChatIcon } from '@heroicons/react/solid'
+import { SearchIcon, DocumentSearchIcon, GlobeAltIcon, VideoCameraIcon, HomeIcon, DocumentTextIcon, ChatIcon, BookmarkIcon } from '@heroicons/react/solid'
 import { IParseResult, PersonaName } from "../../interfaces";
 import classnames from "classnames";
 
@@ -11,9 +11,10 @@ const iconsMap: Record<Partial<PersonaName>, unknown> = {
     home: HomeIcon,
     read: DocumentTextIcon,
     whatsapp: ChatIcon,
+    history: BookmarkIcon,
 }
 
-const Suggestion = ({ text, name, active, onClick, innerRef }) => {
+const Suggestion = ({ title, text, name, active, onClick, innerRef }) => {
 
     const Icon = iconsMap[name]
 
@@ -29,7 +30,8 @@ const Suggestion = ({ text, name, active, onClick, innerRef }) => {
         onClick={onClick}
     >
         <Icon className={classnames("mr-3 h-5 w-5", { ['text-stone-100']: active, ['text-stone-400']: !active })} aria-hidden="true" />
-        {text}
+        <span className="font-thin">{title}</span>
+        <span className="ml-2">{text}</span>
     </a >
 }
 
@@ -56,8 +58,9 @@ export default function Suggestions({ items, selected, onClick }: { items: IPars
         {items.map((item, index) => <Suggestion
             name={item.name}
             innerRef={refs[index]}
-            key={item.name}
-            text={item.name}
+            key={`${item.name}:${item.href}`}
+            title={item.name}
+            text={item.href}
             active={selected === index}
             onClick={() => onClick(item)}
         />)}

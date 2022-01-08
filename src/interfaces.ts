@@ -4,11 +4,11 @@ interface ISearchResult {
     title: string
 }
 
-type PersonaName = 'search' | 'web' | 'read' | 'youtube' | 'find' | 'home' | 'whatsapp'
+type PersonaName = 'search' | 'web' | 'read' | 'youtube' | 'find' | 'home' | 'whatsapp' | 'history'
 
 interface IPersona {
     name: PersonaName
-    parse: (q: string) => Promise<IParseResult>
+    parse: (q: string) => Promise<IParseResult[]>
 }
 
 type IParseResult = {

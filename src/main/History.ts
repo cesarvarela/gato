@@ -1,9 +1,17 @@
-import { IParseResult } from "../interfaces"
+import { IParseResult, IPersona, PersonaName } from "../interfaces"
 import settings from "./Settings"
+import Fuse from 'fuse.js'
 
-class History {
+interface IHistoryApi {
+
+}
+
+class History implements IPersona {
 
     static instance: History
+
+    api: IHistoryApi
+    name: PersonaName = 'history'
 
     static async getInstance() {
 
@@ -40,6 +48,18 @@ class History {
         const items: string[] = settings.get("history.items")
 
         return { href: items[0] }
+    }
+
+    async parse(q: string): Promise<IParseResult[]> {
+
+        const items: string[] = settings.get("history.items")
+        const fuse = new Fuse([...new Set(items)], { includeScore: true, keys: ['href'], threshold: 0.3, ignoreLocation: true })
+
+        const result = fuse.search(q)
+
+        return result
+            .slice(0, 5)
+            .map(({ item, score }) => ({ name: this.name, confidence: 10 - score * 10, href: item }))
     }
 }
 

@@ -22,10 +22,10 @@ class WhatsApp implements IPersona {
         return isURL(url, { require_protocol: false, host_whitelist: ['whatsapp.com', 'web.whatsapp.com'] })
     }
 
-    async parse(q: string): Promise<IParseResult> {
+    async parse(q: string): Promise<IParseResult[]> {
 
         if (this.isWhatsAppURL(q)) {
-            return { name: this.name, confidence: 10, href: q }
+            return [{ name: this.name, confidence: 10, href: q }]
         }
     }
 
