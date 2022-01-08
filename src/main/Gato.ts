@@ -12,6 +12,7 @@ import History from './History';
 import Web from './Web';
 import getPort from 'get-port';
 import { merge } from 'lodash';
+import TitleUpdater from './gato/TItleUpdater';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -43,6 +44,7 @@ class Gato {
     window: electron.BrowserWindow = null
     paletteView: electron.BrowserView = null
     id: number
+    titleUpdater: TitleUpdater
     contextMenuDispose: () => void
 
     static personas: IPersona[] = []
@@ -475,25 +477,6 @@ class Gato {
             }
         })
 
-        this.window.webContents.on('page-title-updated', (e) => {
-
-            if (!this.window.getTitle().startsWith('loading')) {
-
-                const title = `${this.window.webContents.getURL()}`
-                this.window.setTitle(title)
-            }
-        })
-
-        this.window.webContents.on('did-start-loading', async () => {
-
-            this.window.setTitle(`loading: ${this.window.title}`)
-        })
-
-        this.window.webContents.on('did-finish-load', (params) => {
-
-            this.window.setTitle(this.window.title.replace('loading:', ''))
-        })
-
         this.window.webContents.on('certificate-error', async (e, url, error, certificate, callback) => {
 
             const options: any = web.getOptions({ url })
@@ -503,6 +486,8 @@ class Gato {
                 callback(true)
             }
         })
+
+        this.titleUpdater = new TitleUpdater(this.window)
     }
 }
 
