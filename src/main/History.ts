@@ -55,11 +55,20 @@ class History implements IPersona {
         const items: string[] = settings.get("history.items")
         const fuse = new Fuse([...new Set(items)], { includeScore: true, keys: ['href'], threshold: 0.3, ignoreLocation: true })
 
-        const result = fuse.search(q)
-
-        return result
-            .slice(0, 5)
+        const historyResults = fuse
+            .search(q)
+            .slice(0, 3)
             .map(({ item, score }) => ({ name: this.name, confidence: 10 - score * 10, href: item }))
+
+        const bookmarks: string[] = settings.get("history.bookmarks")
+        fuse.setCollection([...new Set(bookmarks)])
+
+        const bookmarksResults = fuse
+            .search(q)
+            .slice(0, 3)
+            .map(({ item, score }) => ({ name: this.name, confidence: 10 - (score + 0.1) * 10, href: item }))
+
+        return [...historyResults, ...bookmarksResults]
     }
 }
 
