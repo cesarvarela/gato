@@ -35,14 +35,14 @@ export default function Reader() {
         open({ href: url })
     }
 
-    return <div className="bg-white dark:bg-gray-900 min-h-full p-4">
+    return <div className="bg-stone-900 min-h-full p-4">
         <Helmet>
             <title>{url}</title>
         </Helmet>
 
         <SnackHeader title={url} onSettings={null} onClose={exitReader} />
 
-        <article className="prose dark:prose-invert max-w-none mt-4">
+        <article className="prose dark:prose-invert prose-stone max-w-none mt-4">
             <h1 className=""> {result.title}</h1>
             <p>{result.author} {result.date_published}</p>
             <div dangerouslySetInnerHTML={{ __html: result.content }} />

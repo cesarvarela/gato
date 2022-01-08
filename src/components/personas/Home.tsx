@@ -3,6 +3,11 @@ import React, { useEffect, useState } from "react";
 
 const { menu } = window.gato
 
+function Kbd({ children }) {
+
+    return <kbd className="py-1 px-2 rounded-lg text-stone-400 bg-stone-700 border-stone-600 text-xs">{children}</kbd>
+}
+
 function Command({ accelerator }) {
 
     if (!accelerator) {
@@ -10,7 +15,7 @@ function Command({ accelerator }) {
     }
 
     return <div className="gap-2 flex items-center">
-        {accelerator.split('+').map(a => <kbd key={a} className="kbd">{a}</kbd>)}
+        {accelerator.split('+').map(a => <Kbd key={a}>{a}</Kbd>)}
     </div>
 }
 
@@ -31,13 +36,13 @@ function Home() {
     }, [menu])
 
     // TODO: image webpack url
-    return <div className="dark:bg-gray-800 min-h-full text-center p-6 flex flex-col ">
+    return <div className="bg-stone-900 min-h-full text-center p-6 flex flex-col ">
         {/* <img src={logo} alt="logo" className="w-16 m-auto" /> */}
-        <div className="mt-6 m-auto text-gray-500 flex flex-col gap-2 w-96 justify-center">
+        <div className="mt-24 m-auto text-stone-500 flex flex-col gap-2 w-96 justify-center">
             {commands.map(({ type, label, accelerator }, index) => {
 
                 if (type === 'separator') {
-                    return <div key={type + index} className="border-b border-gray-300 my-2" />
+                    return <div key={type + index} className="border-b border-stone-700 my-2" />
                 }
 
                 return <div key={label} className="flex justify-between">{label}  <Command accelerator={accelerator} /> </div>
