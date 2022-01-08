@@ -92,6 +92,7 @@ class Gato {
             hide: async ({ window }) => {
 
                 gatos[window.id].call({ params: { mode: 'hidden' } })
+                gatos[window.id].stop()
             },
             location: async ({ window }) => {
 
@@ -281,6 +282,11 @@ class Gato {
     reload() {
 
         this.window.webContents.reload()
+    }
+
+    stop() {
+
+        this.window.webContents.stop()
     }
 
     openDevTools() {
