@@ -37,7 +37,7 @@ class History implements IPersona {
         if (href !== 'gato://home' && items[0] !== href) {
 
             items.unshift(href)
-            const updated = items.slice(0, 27)
+            const updated = items.slice(0, 100)
 
             settings.set("history.items", updated)
         }

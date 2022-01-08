@@ -23,6 +23,7 @@ export default function Search() {
                 setLoading(true)
                 const results = await search.query({ q, start: (page - 1) * 10 + 1 })
                 setResults(results)
+                setSelectedIndex(0)
             }
             catch (e) {
 
@@ -59,15 +60,20 @@ export default function Search() {
 
     const up = useCallback(() => {
 
-        setSelectedIndex(index => index > 0 ? index - 1 : results.length - 1)
+        if (selectedIndex > 0) {
+            setSelectedIndex(selectedIndex - 1)
+        }
 
-    }, [results])
+    }, [results, selectedIndex])
 
     const down = useCallback(() => {
 
-        setSelectedIndex(index => index < results.length - 1 ? index + 1 : 0)
+        if (selectedIndex < results.length - 1) {
 
-    }, [results])
+            setSelectedIndex(selectedIndex + 1)
+        }
+
+    }, [results, selectedIndex])
 
     const onOpen = useCallback(async ({ target }) => {
 
@@ -102,7 +108,7 @@ export default function Search() {
 
     return <div className="bg-stone-900 text-stone-300 p-4 min-h-full">
         {error && <div>{error}</div>}
-        {results && results.length == 0 && <div>No results for {q}!</div>}
+        {results === undefined && <div>No results for {q}!</div>}
         {results && <>
             <SnackHeader title={<>Showing {results.length} results for <span className="font-bold">{q}</span>, page {page}</>} onSettings={null} onClose={null} />
             <div className="mt-4">

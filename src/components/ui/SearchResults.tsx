@@ -1,5 +1,6 @@
 import React, { createRef, useEffect, useState } from 'react'
 import classnames from 'classnames'
+import Kbd from './Kbd'
 
 function SearchResults({ value: results, selectedIndex }) {
 
@@ -44,16 +45,16 @@ function SearchResults({ value: results, selectedIndex }) {
         <div>
             {results.map((result, index) =>
                 <div
-                    tabIndex={-1}
+                    tabIndex={index}
                     ref={refs[index]}
                     key={result.link}
                     className={classnames(
                         "rounded-lg ring-inset focus:ring-2 focus:ring-pink-500 outline-none"
                     )} >
 
-                    <div className="py-4">
+                    <div className="p-4">
                         <div className="flex items-center">
-                            <div className="ml-4">
+                            <div>
                                 <a tabIndex={-1} href={result.link} className="text-sm text-gray-500" dangerouslySetInnerHTML={{ __html: result.htmlFormattedUrl }} />
                                 <div
                                     className="text-sm text-stone-300"
@@ -68,6 +69,11 @@ function SearchResults({ value: results, selectedIndex }) {
                     </div>
                 </div>
             )}
+            {results.length &&
+                <div className='m-4 flex justify-center'>
+                    <Kbd>&lt;</Kbd>&nbsp;<Kbd>&gt; </Kbd>
+                </div>
+            }
         </div>
     </div>
 }

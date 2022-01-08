@@ -1,12 +1,8 @@
 import { MenuItemConstructorOptions } from "electron";
 import React, { useEffect, useState } from "react";
+import Kbd from "../ui/Kbd";
 
 const { menu } = window.gato
-
-function Kbd({ children }) {
-
-    return <kbd className="py-1 px-2 rounded-lg text-stone-400 bg-stone-700 border-stone-600 text-xs">{children}</kbd>
-}
 
 function Command({ accelerator }) {
 
