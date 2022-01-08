@@ -42,13 +42,15 @@ class TitleUpdater {
             this.update()
         })
 
+        window.webContents.on('did-fail-load', (tabId, errorCode, errorDesc, validatedURL, isMainFrame) => {
+            if (isMainFrame && validatedURL) {
+                this.loading = false
+                this.url = validatedURL
+                this.update()
+            }
+        })
+
         // TODO: get this working
-
-        // window.on('did-fail-load', function (tabId, errorCode, errorDesc, validatedURL, isMainFrame) {
-        //     if (isMainFrame && validatedURL) {
-
-        //     }
-        // })
 
         // window.on('crashed', function (tabId, isKilled) {
 
@@ -57,7 +59,7 @@ class TitleUpdater {
 
     update() {
 
-        this.window.setTitle(`${this.loading ? '--' : 'OK'} : ${this.url}`)
+        this.window.setTitle(`[${this.loading ? 'L' : 'D'}] : ${this.url}`)
     }
 }
 
