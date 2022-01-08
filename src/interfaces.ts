@@ -70,7 +70,7 @@ interface IReader {
 }
 
 interface ISearch {
-    query: ({ q }: { q: string }) => Promise<ISearchResult[]>
+    query: ({ q, start }: { q: string, start?: number }) => Promise<ISearchResult[]>
 }
 
 interface IYoutube {

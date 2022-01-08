@@ -45,6 +45,7 @@ function secureInvoke(key: string, events: string[]): any {
 
         api[key][event] = (...args) => {
 
+            // TODO: check if the sender is a gato app
             return electron.ipcRenderer.invoke(channel, ...args)
         }
     })

@@ -1,15 +1,11 @@
-import Mousetrap from 'mousetrap'
-import React, { createRef, useCallback, useEffect, useState } from 'react'
+import React, { createRef, useEffect, useState } from 'react'
 import classnames from 'classnames'
 
-function SearchResults({ value: results, onOpen, onCancel }) {
+function SearchResults({ value: results, selectedIndex }) {
 
-    const [selectedIndex, setSelectedIndex] = useState(0)
     const [refs, setRefs] = useState([])
 
     useEffect(() => {
-
-        setSelectedIndex(0)
         setRefs(results.map(r => createRef()))
 
     }, [results])
@@ -32,41 +28,6 @@ function SearchResults({ value: results, onOpen, onCancel }) {
 
     }, [selectedIndex])
 
-    const up = useCallback(() => {
-
-        setSelectedIndex(index => index > 0 ? index - 1 : results.length - 1)
-
-    }, [results])
-
-    const down = useCallback(() => {
-
-        setSelectedIndex(index => index < results.length - 1 ? index + 1 : 0)
-
-    }, [results])
-
-    const open = useCallback(({ target }) => {
-
-        const result = results[selectedIndex]
-
-        onOpen({ result, target })
-
-    }, [results, selectedIndex])
-
-    useEffect(() => {
-
-        Mousetrap.bind('up', up)
-        Mousetrap.bind('down', down)
-        Mousetrap.bind('enter', () => open({ target: '_self' }))
-        Mousetrap.bind('command+enter', () => open({ target: '_blank' }))
-        Mousetrap.bind('esc', onCancel)
-
-        return () => {
-
-            Mousetrap.unbind(['up', 'down', 'esc', 'enter'])
-        }
-
-    }, [Mousetrap, selectedIndex, results])
-
     if (results.length === 0) {
 
         return <div className="text-center">
@@ -79,30 +40,36 @@ function SearchResults({ value: results, onOpen, onCancel }) {
         </div>
     }
 
-    return <table className="w-full">
-        <tbody>
+    return <div className="w-full">
+        <div>
             {results.map((result, index) =>
-                <tr tabIndex={-1}
+                <div
+                    tabIndex={-1}
                     ref={refs[index]}
                     key={result.link}
                     className={classnames(
                         "rounded-lg ring-inset focus:ring-2 focus:ring-pink-500 outline-none"
                     )} >
 
-                    <td className="py-4 whitespace-nowrap">
+                    <div className="py-4">
                         <div className="flex items-center">
                             <div className="ml-4">
-                                <div className="text-sm font-medium text-stone-300">
-                                    {result.title}
-                                </div>
                                 <a tabIndex={-1} href={result.link} className="text-sm text-gray-500" dangerouslySetInnerHTML={{ __html: result.htmlFormattedUrl }} />
+                                <div
+                                    className="text-sm text-stone-300"
+                                    dangerouslySetInnerHTML={{ __html: result.htmlTitle }}
+                                />
+                                <div
+                                    className="text-xs text-stone-500 mt-2 break-words"
+                                    dangerouslySetInnerHTML={{ __html: result.htmlSnippet }}
+                                />
                             </div>
                         </div>
-                    </td>
-                </tr>
+                    </div>
+                </div>
             )}
-        </tbody>
-    </table>
+        </div>
+    </div>
 }
 
 export default SearchResults

@@ -28,9 +28,9 @@ class GoogleSearch implements IPersona {
     async init() {
 
         this.api = {
-            query: async ({ q }) => {
+            query: async ({ q, start }) => {
 
-                const { data: { items } } = await this.search({ q })
+                const { data: { items } } = await this.search({ q, start })
 
                 return items
             }
@@ -39,17 +39,18 @@ class GoogleSearch implements IPersona {
         handleApi('search', this.api)
     }
 
-    async search({ q }) {
+    async search({ q, start = 1 }: { q: string, start?: number }) {
 
         const { googleSearch: { key, cx } } = settings.store
+        const cacheKey = `${q}:${start}`
 
-        if (!(q in cache)) {
-            const result = await customsearch.cse.list({ key, cx, q })
+        if (!(cacheKey in cache)) {
+            const result = await customsearch.cse.list({ key, cx, q, start })
 
-            cache[q] = result
+            cache[cacheKey] = result
         }
 
-        return cache[q]
+        return cache[cacheKey]
     }
 
     async parse(q: string): Promise<IParseResult[]> {
