@@ -30,13 +30,9 @@ class GoogleSearch implements IPersona {
         this.api = {
             query: async ({ q }) => {
 
-                if (!(q in cache)) {
-                    const { data: { items } } = await this.search({ q })
+                const { data: { items } } = await this.search({ q })
 
-                    cache[q] = items
-                }
-
-                return cache[q]
+                return items
             }
         }
 

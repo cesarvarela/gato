@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StringParam, useQueryParam } from "use-query-params";
 import SearchResults from "../ui/SearchResults";
+import SnackHeader from "../ui/SnackHeader";
 
 const { gato: { search, gato: { open, choose } } } = window
 
@@ -44,9 +45,14 @@ export default function Search() {
         return <div>No search query!</div>
     }
 
-    return <div>
+    return <div className="bg-stone-900 text-stone-300 p-4 min-h-full">
         {error && <div>{error}</div>}
         {results && results.length == 0 && <div>No results for {q}!</div>}
-        {results && <SearchResults value={results} onOpen={onOpen} onCancel={() => false} />}
-    </div>;
+        {results && <>
+            <SnackHeader title={<>Showing {results.length} results for {q}</>} onSettings={null} onClose={null} />
+            <div className="mt-4">
+                <SearchResults value={results} onOpen={onOpen} onCancel={() => false} />
+            </div>
+        </>}
+    </div>
 }

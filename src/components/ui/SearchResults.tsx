@@ -1,6 +1,6 @@
 import Mousetrap from 'mousetrap'
 import React, { createRef, useCallback, useEffect, useState } from 'react'
-import { classnames } from 'tailwindcss-classnames'
+import classnames from 'classnames'
 
 function SearchResults({ value: results, onOpen, onCancel }) {
 
@@ -13,6 +13,15 @@ function SearchResults({ value: results, onOpen, onCancel }) {
         setRefs(results.map(r => createRef()))
 
     }, [results])
+
+    useEffect(() => {
+
+        if (refs.length) {
+
+            refs[0].current.focus()
+        }
+
+    }, [refs])
 
     useEffect(() => {
 
@@ -70,14 +79,20 @@ function SearchResults({ value: results, onOpen, onCancel }) {
         </div>
     }
 
-    return <table className="min-w-full divide-y divide-gray-200">
-        <tbody className="bg-white divide-y divide-gray-200">
+    return <table className="w-full">
+        <tbody>
             {results.map((result, index) =>
-                <tr tabIndex={-1} ref={refs[index]} key={result.link} className={classnames({ "bg-gray-300": index == selectedIndex })} >
-                    <td className="px-6 py-4 whitespace-nowrap">
+                <tr tabIndex={-1}
+                    ref={refs[index]}
+                    key={result.link}
+                    className={classnames(
+                        "rounded-lg ring-inset focus:ring-2 focus:ring-pink-500 outline-none"
+                    )} >
+
+                    <td className="py-4 whitespace-nowrap">
                         <div className="flex items-center">
                             <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900">
+                                <div className="text-sm font-medium text-stone-300">
                                     {result.title}
                                 </div>
                                 <a tabIndex={-1} href={result.link} className="text-sm text-gray-500" dangerouslySetInnerHTML={{ __html: result.htmlFormattedUrl }} />

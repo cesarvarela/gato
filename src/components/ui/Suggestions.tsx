@@ -25,7 +25,7 @@ const Suggestion = ({ title, text, name, active, onClick, innerRef }) => {
             ['bg-purple-700 text-stone-100']: active,
             ['bg-stone-900 text-stone-400']: !active
         },
-            'group flex border border-stone-700 items-center px-4 py-2 text-xs rounded-lg cursor-pointer'
+            'group flex items-center px-4 py-2 text-xs rounded-lg cursor-pointer'
         )}
         onClick={onClick}
     >
