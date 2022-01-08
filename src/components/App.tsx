@@ -19,7 +19,7 @@ const resizePalette = async (mode: PaletteMode) => {
                 x: Math.round(windowBounds.width / 2 - paletteSize.width / 2),
                 y: 0,
                 width: paletteSize.width,
-                height: 96,
+                height: 92,
             }
             break;
 
@@ -222,17 +222,19 @@ export default function App() {
 
     return <div className="h-full w-full">
         <div className="inset-x-6 inset-y-4 absolute z-10 bg-stone-900 dejame-vivir rounded-xl">
-            <div className="flex flex-col h-full w-full rounded-xl z-20 p-3 border border-stone-600">
-                <SearchInput
-                    innerRef={ref}
-                    value={q}
-                    onChange={e => setQ(e.target.value)}
-                    onUp={onUp}
-                    onDown={onDown}
-                    onAccept={onAccept}
-                />
+            <div className="flex flex-col h-full w-full rounded-xl z-20 p-3 border border-stone-600 gap-2">
+                <div className="flex-initial">
+                    <SearchInput
+                        innerRef={ref}
+                        value={q}
+                        onChange={e => setQ(e.target.value)}
+                        onUp={onUp}
+                        onDown={onDown}
+                        onAccept={onAccept}
+                    />
+                </div>
                 {mode !== 'find' && suggestions.length > 0 &&
-                    <div className="overflow-y-scroll flex-1 mt-2 z-10">
+                    <div className="overflow-y-scroll flex-1 z-10">
                         <Suggestions items={suggestions} selected={selected} onClick={onSuggestionsClick} />
                     </div>
                 }
