@@ -3,6 +3,7 @@ import { IParseResult, IPersona, PersonaName } from '../interfaces';
 import isURL from 'validator/lib/isURL';
 import Reader from './Reader';
 import settings, { IWebOptions } from './Settings'
+import { merge } from 'lodash';
 
 const fixHTTP = href => href.startsWith('http')
     ? href
@@ -54,16 +55,34 @@ class Web implements IPersona {
 
         const list: any[] = settings.get('web.options')
 
-        let result = null
+        const results = list.filter(option => matchUrl(url, option.url) || option.url === '*')
 
-        result = list.find(option => matchUrl(url, option.url)) || null
+        const options = results.reduce((result, current) => merge(current, result), {})
 
-        if (!result) {
+        return options
+    }
 
-            result = list.find(option => option.url == '*') || null
-        }
+    async applyOptions(window) {
 
-        return result
+        window.webContents.on('did-navigate', async (e, url) => {
+
+            const options = this.getOptions({ url })
+
+            if (options && options.customCSS) {
+
+                window.webContents.insertCSS(options.customCSS)
+            }
+        })
+
+        window.webContents.on('certificate-error', async (e, url, error, certificate, callback) => {
+
+            const options = this.getOptions({ url })
+
+            if (options && options.trustCertificate) {
+
+                callback(true)
+            }
+        })
     }
 }
 

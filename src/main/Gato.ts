@@ -524,26 +524,6 @@ class Gato {
             }
         })
 
-        this.window.webContents.on('did-navigate', async (e, url) => {
-
-            const options = web.getOptions({ url })
-
-            if (options && options.customCSS) {
-
-                this.window.webContents.insertCSS(options.customCSS)
-            }
-        })
-
-        this.window.webContents.on('certificate-error', async (e, url, error, certificate, callback) => {
-
-            const options: any = web.getOptions({ url })
-
-            if (options && options.trustCertificate) {
-
-                callback(true)
-            }
-        })
-
         this.window.webContents.on('will-navigate', async (e, url) => {
 
             e.preventDefault()
@@ -551,6 +531,8 @@ class Gato {
             const { href } = await this.choose({ q: url })
             this.open({ href })
         })
+
+        web.applyOptions(this.window)
 
         this.titleUpdater = new TitleUpdater(this.window)
     }
