@@ -544,6 +544,14 @@ class Gato {
             }
         })
 
+        this.window.webContents.on('will-navigate', async (e, url) => {
+
+            e.preventDefault()
+
+            const { href } = await this.choose({ q: url })
+            this.open({ href })
+        })
+
         this.titleUpdater = new TitleUpdater(this.window)
     }
 }
