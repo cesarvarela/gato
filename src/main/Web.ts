@@ -40,36 +40,11 @@ class Web implements IPersona {
             return [{ name: this.name, confidence: 10, href: q }]
         }
 
-        const isSomeURL = isURL(q, { require_protocol: false, require_tld: false, require_port: false })
+        if (isURL(q) && await this.reader.isWhitelisted({ url: q })) {
 
-        if (isSomeURL) {
+            const href = fixHTTP(q)
 
-            const hasProtocol = isURL(q, { require_protocol: true, require_tld: false, require_port: false })
-            const hasTLD = isURL(q, { require_protocol: false, require_tld: true, require_port: false })
-            const hasPort = isURL(q, { require_protocol: false, require_tld: false, require_port: true })
-
-            let href = q
-            let confidence = 5
-
-            if (await this.reader.isWhitelisted({ url: q })) {
-                confidence++
-            }
-
-            if (hasProtocol) {
-                confidence++
-            }
-
-            if (hasTLD) {
-                confidence++
-            }
-
-            if (hasPort) {
-                confidence++
-            }
-
-            href = fixHTTP(href)
-
-            return [{ name: this.name, confidence, href }]
+            return [{ name: this.name, confidence: 10, href }]
         }
 
         return [{ name: this.name, confidence: 0, href: q }]

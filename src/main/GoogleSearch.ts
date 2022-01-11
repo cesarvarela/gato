@@ -60,13 +60,19 @@ class GoogleSearch implements IPersona {
             return null
         }
 
+        let confidence = 5
+
         if (!isURL(q, { require_protocol: false })) {
 
-            return [{ name: this.name, confidence: 6, href: `gato://search?q=${q}` }]
+            const whiteSpaces = q.split(' ')
+
+            confidence += Math.min(whiteSpaces.length, 3)
+
+            return [{ name: this.name, confidence, href: `gato://search?q=${q}` }]
         }
         else {
 
-            return [{ name: this.name, confidence: 1, href: `gato://search?q=${q}` }]
+            return [{ name: this.name, confidence, href: `gato://search?q=${q}` }]
         }
     }
 }
