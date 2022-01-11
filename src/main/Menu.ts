@@ -29,7 +29,7 @@ class Menu extends EventEmiter {
             submenu: [
                 {
                     label: "Show palette",
-                    accelerator: process.platform === 'darwin' ? 'Cmd+P' : 'Ctrl+P',
+                    accelerator: 'CmdOrCtrl+P',
                     click: (item, window, event) => this.paletteEvent('show', { window, event, item })
                 },
                 {
@@ -39,12 +39,12 @@ class Menu extends EventEmiter {
                 },
                 {
                     label: "Open palette with location",
-                    accelerator: 'Cmd+L',
+                    accelerator: 'CmdOrCtrl+L',
                     click: (item, window, event) => this.paletteEvent('location', { window, event, item })
                 },
                 {
                     label: "Find",
-                    accelerator: 'Cmd+F',
+                    accelerator: 'CmdOrCtrl+F',
                     click: (item, window, event) => this.paletteEvent('find', { window, event, item })
                 },
                 {
@@ -52,43 +52,53 @@ class Menu extends EventEmiter {
                 },
                 {
                     label: "New Window",
-                    accelerator: 'Cmd+N',
+                    accelerator: 'CmdOrCtrl+N',
                     click: (item, window, event) => this.paletteEvent('new', { window, event, item, params: {} })
                 },
                 {
                     label: "Close Window",
-                    accelerator: 'Cmd+W',
+                    accelerator: 'CmdOrCtrl+W',
                     click: (item, window, event) => this.paletteEvent('close', { window, event, item })
                 },
                 {
+                    label: "Reopen Closed window",
+                    accelerator: "CmdOrCtrl+Shift+T",
+                    click: (item, window) => this.emit("reopen", { window })
+                },
+                {
                     label: "Back",
-                    accelerator: 'Cmd+[',
+                    accelerator: 'CmdOrCtrl+[',
                     click: (item, window, event) => this.paletteEvent('back', { window, event, item })
                 },
                 {
                     label: "Forward",
-                    accelerator: 'Cmd+]',
+                    accelerator: 'CmdOrCtrl+]',
                     click: (item, window, event) => this.paletteEvent('forward', { window, event, item })
                 },
                 {
                     label: "Reload",
-                    accelerator: 'Cmd+R',
+                    accelerator: 'CmdOrCtrl+R',
                     click: (item, window, event) => this.paletteEvent('reload', { window, event, item })
+                },
+                {
+                    label: "Add Bookmark",
+                    accelerator: "CmdOrCtrl+Shift+B",
+                    click: (item, window) => this.emit("bookmark", { window })
                 },
                 {
                     type: "separator"
                 },
                 {
                     label: "DevTools",
-                    accelerator: 'Cmd+Alt+I',
+                    accelerator: 'CmdOrCtrl+Alt+I',
                     click: (item, window, event) => this.paletteEvent('openDevTools', { window, event, item })
                 },
                 {
                     type: "separator"
                 },
                 {
-                    label: 'Open settings folder',
-                    accelerator: 'Cmd+,',
+                    label: 'Open settings file',
+                    accelerator: 'CmdOrCtrl+,',
                     click: () => {
                         settings.openInEditor()
                     }
@@ -145,26 +155,6 @@ class Menu extends EventEmiter {
                     accelerator: 'CommandOrControl+-'
                 }
             ]
-        },
-        file: {
-            label: "File",
-            submenu: [
-                {
-                    label: "Reopen Closed window",
-                    accelerator: "CmdOrCtrl+Shift+T",
-                    click: (item, window) => this.emit("reopen", { window })
-                }
-            ]
-        },
-        window: {
-            label: "Window",
-            submenu: [
-                {
-                    label: "Bookmark this Window",
-                    accelerator: "CmdOrCtrl+Shift+B",
-                    click: (item, window) => this.emit("bookmark", { window })
-                }
-            ]
         }
     }
 
@@ -172,10 +162,8 @@ class Menu extends EventEmiter {
 
         const application = new electron.MenuItem(this.menu.application as MenuItemConstructorOptions)
         const edit = new electron.MenuItem(this.menu.edit as MenuItemConstructorOptions)
-        const file = new electron.MenuItem(this.menu.file as MenuItemConstructorOptions)
-        const window = new electron.MenuItem(this.menu.window as MenuItemConstructorOptions)
 
-        electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate([application, file, edit, window]))
+        electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate([application, edit]))
 
         electron.ipcMain.handle('menu', (e) => {
             const menu = JSON.parse(JSON.stringify(this.menu))
