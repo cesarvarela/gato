@@ -39,6 +39,8 @@ const gatos: Gato[] = []
 
 const personas: IPersona[] = []
 
+const closedHistory: string[] = []
+
 class Gato {
 
     window: electron.BrowserWindow = null
@@ -64,9 +66,9 @@ class Gato {
 
                 await Gato.create({ q: 'gato://home', windowOptions })
             },
-            reopen: async ({ window }) => {
+            reopen: async () => {
 
-                gatos[window.id].reopen()
+                Gato.reopen()
             },
             back: async ({ window }) => {
 
@@ -221,6 +223,16 @@ class Gato {
         return gatos[electron.BrowserWindow.getFocusedWindow().id]
     }
 
+    static reopen() {
+
+        if (closedHistory.length > 0) {
+
+            const href = closedHistory.pop()
+
+            Gato.create({ q: href })
+        }
+    }
+
     call({ params }: { params?: { mode: PaletteMode } } = {}) {
 
         this.paletteView.webContents.send('gato:call', { params });
@@ -239,6 +251,8 @@ class Gato {
     }
 
     close(e?: electron.Event) {
+
+        closedHistory.push(this.window.webContents.getURL())
 
         this.window.removeBrowserView(this.paletteView)
         this.paletteView.webContents.closeDevTools()
@@ -334,16 +348,6 @@ class Gato {
         }
 
         this.hide()
-    }
-
-    async reopen() {
-
-        // TODO: this is a very naive implementation, should cycle through all history items
-
-        const history = await History.getInstance()
-        const last = await history.getLast()
-
-        this.open({ href: last.href, params: { target: '_blank' } })
     }
 
     async bookmark() {
