@@ -60,7 +60,19 @@ class Gato {
         listen<IWindows>(menu, {
             close: async ({ window }) => {
 
-                gatos[window.id].close()
+                if (!window) {
+
+                    const focused = electron.BrowserWindow.getFocusedWindow()
+
+                    if (focused && gatos[focused.id]) {
+
+                        gatos[focused.id].closeDevTools()
+                    }
+                }
+                else if (gatos[window.id]) {
+
+                    gatos[window.id].close()
+                }
             },
             new: async ({ params: { windowOptions } }) => {
 
@@ -72,40 +84,68 @@ class Gato {
             },
             back: async ({ window }) => {
 
-                gatos[window.id].back()
+                if (window) {
+
+                    gatos[window.id].back()
+                }
             },
             forward: async ({ window }) => {
 
-                gatos[window.id].forward()
+                if (window) {
+
+                    gatos[window.id].forward()
+                }
             },
             openDevTools: async ({ window }) => {
 
-                gatos[window.id].openDevTools()
+                if (window) {
+
+                    gatos[window.id].openDevTools()
+                }
             },
             reload: async ({ window }) => {
-                gatos[window.id].reload()
+
+                if (window) {
+
+                    gatos[window.id].reload()
+                }
             },
             show: async ({ window }) => {
 
-                gatos[window.id].call({ params: { mode: 'compact' } })
+                if (window) {
+
+                    gatos[window.id].call({ params: { mode: 'compact' } })
+                }
             },
             find: async ({ window }) => {
 
-                gatos[window.id].call({ params: { mode: 'find' } })
+                if (window) {
+
+                    gatos[window.id].call({ params: { mode: 'find' } })
+                }
             },
             hide: async ({ window }) => {
 
-                gatos[window.id].call({ params: { mode: 'hidden' } })
-                gatos[window.id].stop()
+                if (window) {
+
+                    gatos[window.id].call({ params: { mode: 'hidden' } })
+                    gatos[window.id].stop()
+                }
             },
             location: async ({ window }) => {
 
-                gatos[window.id].call({ params: { mode: 'location' } })
+                if (window) {
+
+                    gatos[window.id].call({ params: { mode: 'location' } })
+                }
             },
 
             bookmark: async ({ window }) => {
 
-                gatos[window.id].bookmark()
+                if (window) {
+
+                    gatos[window.id].bookmark()
+                }
             }
         })
 
@@ -250,7 +290,7 @@ class Gato {
         this.window.webContents.focus()
     }
 
-    close(e?: electron.Event) {
+    close() {
 
         closedHistory.push(this.window.webContents.getURL())
 
@@ -309,7 +349,20 @@ class Gato {
 
         this.window.webContents.openDevTools()
 
-        this.paletteView.webContents.openDevTools()
+        if (!electron.app.isPackaged) {
+
+            this.paletteView.webContents.openDevTools()
+        }
+    }
+
+    closeDevTools() {
+
+        this.window.webContents.closeDevTools()
+
+        if (!electron.app.isPackaged) {
+
+            this.paletteView.webContents.closeDevTools()
+        }
     }
 
     async choose({ q }: { q: string }): Promise<IParseResult> {
@@ -445,9 +498,9 @@ class Gato {
             }
         })
 
-        this.window.on('close', (e) => {
+        this.window.once('close', () => {
 
-            this.close(e)
+            this.close()
         });
 
         function insert(errorCode, errorDescription) {
