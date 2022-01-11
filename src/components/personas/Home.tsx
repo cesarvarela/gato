@@ -2,7 +2,7 @@ import { MenuItemConstructorOptions } from "electron";
 import React, { useEffect, useState } from "react";
 import Kbd from "../ui/Kbd";
 
-const { menu } = window.gato
+const { menu, platform } = window.gato
 
 function Command({ accelerator }) {
 
@@ -11,7 +11,9 @@ function Command({ accelerator }) {
     }
 
     return <div className="gap-2 flex items-center">
-        {accelerator.split('+').map(a => <Kbd key={a}>{a}</Kbd>)}
+        {accelerator.split('+').map(a => <Kbd key={a}>
+            {platform == 'darwin' ? a.replace('CmdOrCtrl', 'Command') : a.replace('CmdOrCtrl', 'Control')}
+        </Kbd>)}
     </div>
 }
 

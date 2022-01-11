@@ -105,7 +105,7 @@ class Menu extends EventEmiter {
                 },
                 {
                     label: "Quit",
-                    accelerator: "Command+Q",
+                    accelerator: "CmdOrCtrl+Q",
                     click: () => this.emit("quit")
                 }
             ]
@@ -148,11 +148,11 @@ class Menu extends EventEmiter {
                 },
                 {
                     role: 'zoomin',
-                    accelerator: 'CommandOrControl+='
+                    accelerator: 'CmdOrCtrl+='
                 },
                 {
                     role: 'zoomout',
-                    accelerator: 'CommandOrControl+-'
+                    accelerator: 'CmdOrCtrl+-'
                 }
             ]
         }

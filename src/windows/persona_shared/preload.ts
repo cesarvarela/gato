@@ -5,6 +5,8 @@ import { IGato } from "../../interfaces";
 
 const api: Partial<IGato> = {
 
+    platform: process.platform,
+    
     menu: () => ipcRenderer.invoke('menu'),
 
     ...secureInvoke('reader', ['read']),

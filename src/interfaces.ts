@@ -56,6 +56,8 @@ interface IGato {
     youtube: IYoutube,
 
     search: ISearch,
+
+    platform: string,
 }
 
 interface IReaderResult {
