@@ -477,7 +477,7 @@ class Gato {
 
             const { url, features } = details
 
-            if (features) { // asume a popup
+            if (features) {
 
                 const options = web.getOptions({ url })
 

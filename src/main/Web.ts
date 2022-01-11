@@ -62,7 +62,7 @@ class Web implements IPersona {
         return options
     }
 
-    async applyOptions(window) {
+    applyOptions(window) {
 
         window.webContents.on('did-navigate', async (e, url) => {
 
