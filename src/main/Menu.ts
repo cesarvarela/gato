@@ -66,6 +66,12 @@ class Menu extends EventEmiter {
                     click: (item, window) => this.emit("reopen", { window })
                 },
                 {
+                    label: "Duplicate window",
+                    accelerator: "CmdOrCtrl+D",
+                    click: (item, window) => this.emit("duplicate", { window })
+                },
+
+                {
                     label: "Back",
                     accelerator: 'CmdOrCtrl+[',
                     click: (item, window, event) => this.paletteEvent('back', { window, event, item })

@@ -82,6 +82,12 @@ class Gato {
 
                 Gato.reopen()
             },
+            duplicate: async ({ window }) => {
+
+                if (window) {
+                    gatos[window.id].duplicate()
+                }
+            },
             back: async ({ window }) => {
 
                 if (window) {
@@ -244,7 +250,7 @@ class Gato {
         personas.push(history)
     }
 
-    static async create({ q, windowOptions }: { q: string, windowOptions?: electron.BrowserWindowConstructorOptions }) {
+    static async create({ q, windowOptions }: { q?: string, windowOptions?: electron.BrowserWindowConstructorOptions }) {
 
         const gato = new Gato()
         await gato.init({ windowOptions })
@@ -307,6 +313,11 @@ class Gato {
         this.window = null
         this.paletteView = null
         gatos[this.id] = null
+    }
+
+    duplicate() {
+
+        Gato.create({ q: this.window.webContents.getURL() })
     }
 
     notify({ title, body }: { title: string, body: string }) {
@@ -383,6 +394,8 @@ class Gato {
     }
 
     async open({ href, params = {} }: IParseResult) {
+
+        console.log('open', href, params)
 
         if (params.target == "_blank") {
 
@@ -477,6 +490,8 @@ class Gato {
 
             const { url, features } = details
 
+            console.log('setWindowOpenHandler', url, features)
+
             if (features) {
 
                 const options = web.getOptions({ url })
@@ -524,13 +539,13 @@ class Gato {
             }
         })
 
-        this.window.webContents.on('will-navigate', async (e, url) => {
+        // this.window.webContents.on('will-navigate', async (e, url) => {
 
-            e.preventDefault()
+        //     e.preventDefault()
 
-            const { href } = await this.choose({ q: url })
-            this.open({ href })
-        })
+        //     const { href } = await this.choose({ q: url })
+        //     this.open({ href })
+        // })
 
         web.applyOptions(this.window)
 
