@@ -1,7 +1,7 @@
 {
   "name": "gato",
   "productName": "gato",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
