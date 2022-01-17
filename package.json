@@ -106,6 +106,16 @@
             },
             "port": 3001,
             "loggerPort": 9001
+          },
+          {
+            "name": "@electron-forge/publisher-github",
+            "config": {
+              "repository": {
+                "owner": "cesarvarela",
+                "name": "gato"
+              },
+              "prerelease": true
+            }
           }
         ]
       ]
@@ -118,7 +128,8 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
     "@electron-forge/maker-zip": "^6.0.0-beta.61",
     "@electron-forge/plugin-webpack": "6.0.0-beta.61",
-    "@playwright/test": "^1.18.1",
+    "@electron-forge/publisher-github": "^6.0.0-beta.63",
+    "@playwright/test": "^1.18.0-rc1",
     "@tailwindcss/typography": "^0.5.0-alpha.3",
     "@types/mousetrap": "^1.6.8",
     "@types/react-dom": "^17.0.11",
