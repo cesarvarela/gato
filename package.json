@@ -106,18 +106,20 @@
             },
             "port": 3001,
             "loggerPort": 9001
-          },
-          {
-            "name": "@electron-forge/publisher-github",
-            "config": {
-              "repository": {
-                "owner": "cesarvarela",
-                "name": "gato"
-              },
-              "prerelease": true
-            }
           }
         ]
+      ],
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "cesarvarela",
+              "name": "gato"
+            },
+            "prerelease": true
+          }
+        }
       ]
     }
   },
