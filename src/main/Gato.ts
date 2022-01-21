@@ -231,19 +231,20 @@ class Gato {
             app.listen(port)
         }
 
-        const youtube = await Youtube.getInstance()
-        const reader = await Reader.getInstance()
-        const search = await GoogleSearch.getInstance()
-        const find = await Find.getInstance()
         const whatsapp = await WhatsApp.getInstance()
+        const find = await Find.getInstance()
         const web = await Web.getInstance()
+        const search = await GoogleSearch.getInstance()
         const history = await History.getInstance()
+        const reader = await Reader.getInstance()
+        const youtube = await Youtube.getInstance()
 
+        // order of results if same score
+        personas.push(find)
+        personas.push(whatsapp)
         personas.push(youtube)
         personas.push(reader)
         personas.push(search)
-        personas.push(find)
-        personas.push(whatsapp)
         personas.push(web)
         personas.push(history)
     }
