@@ -13,7 +13,7 @@ interface IPersona {
 
 type IParseResult = {
     name?: PersonaName
-    confidence?: number
+    confidence?: Confidence,
     params?: Record<string, unknown>
     href: string
 }
@@ -110,6 +110,14 @@ type WindowEvent = keyof IWindows
 
 type PaletteMode = "compact" | "hidden" | "full" | "find" | "location"
 
+enum Confidence {
+    None = 0,
+    Low,
+    Medium,
+    High,
+    VeryHigh,
+}
+
 export {
     IGato,
     ISearchResult,
@@ -130,4 +138,5 @@ export {
     IYoutube,
     PaletteMode,
     ISearch,
+    Confidence,
 }

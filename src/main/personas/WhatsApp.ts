@@ -1,5 +1,5 @@
 import electron from "electron";
-import { IParseResult, IPersona, PersonaName } from "../interfaces";
+import { Confidence, IParseResult, IPersona, PersonaName } from "../../interfaces";
 import isURL from "validator/lib/isURL";
 
 class WhatsApp implements IPersona {
@@ -25,13 +25,14 @@ class WhatsApp implements IPersona {
     async parse(q: string): Promise<IParseResult[]> {
 
         if (this.isWhatsAppURL(q)) {
-            return [{ name: this.name, confidence: 10, href: q }]
+            return [{ name: this.name, confidence: Confidence.VeryHigh, href: q }]
         }
     }
 
     async init() {
         electron.session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
 
+            // TODO: only rewrite headers if it's a whatsapp url?
             details.requestHeaders['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36';
 
             callback({ cancel: false, requestHeaders: details.requestHeaders });

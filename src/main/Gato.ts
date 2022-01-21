@@ -3,13 +3,13 @@ import { IGatoWindow, IPersona, IStatus, IParseResult, IWindows, PaletteMode } f
 import contextMenu from 'electron-context-menu'
 import { handleApi, listen } from '../utils/bridge';
 import Menu from './Menu';
-import Reader from './Reader';
-import Youtube from './Youtube';
-import GoogleSearch from './GoogleSearch';
-import Find from './Find';
-import WhatsApp from './WhatsApp';
-import History from './History';
-import Web from './Web';
+import Reader from './personas/Reader';
+import Youtube from './personas/Youtube';
+import GoogleSearch from './personas/GoogleSearch';
+import Find from './personas/Find';
+import WhatsApp from './personas/WhatsApp';
+import History from './personas/History';
+import Web from './personas/Web';
 import getPort from 'get-port';
 import { merge } from 'lodash';
 import TitleUpdater from './gato/TItleUpdater';
@@ -392,8 +392,6 @@ class Gato {
     }
 
     async open({ href, params = {} }: IParseResult) {
-
-        console.log('open', href, params)
 
         if (params.target == "_blank") {
 

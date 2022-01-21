@@ -1,8 +1,8 @@
-import settings from "./Settings"
+import settings from "../Settings"
 import { google } from 'googleapis'
-import { IParseResult, IPersona, ISearch, PersonaName } from "../interfaces";
+import { Confidence, IParseResult, IPersona, ISearch, PersonaName } from "../../interfaces";
 import isURL from "validator/lib/isURL";
-import { handleApi } from "../utils/bridge";
+import { handleApi } from "../../utils/bridge";
 
 const customsearch = google.customsearch('v1');
 
@@ -60,13 +60,13 @@ class GoogleSearch implements IPersona {
             return null
         }
 
-        let confidence = 5
+        let confidence = Confidence.Low
 
         if (!isURL(q, { require_protocol: false })) {
 
             const whiteSpaces = q.split(' ')
 
-            confidence += Math.min(whiteSpaces.length, 3)
+            confidence = whiteSpaces.length > 3 ? Confidence.High : Confidence.Medium
 
             return [{ name: this.name, confidence, href: `gato://search?q=${q}` }]
         }

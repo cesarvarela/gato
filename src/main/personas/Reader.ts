@@ -1,7 +1,7 @@
 import Mercury from '@postlight/mercury-parser';
-import { IParseResult, IPersona, IReader, PersonaName } from '../interfaces';
-import { handleApi } from '../utils/bridge';
-import settings from './Settings';
+import { Confidence, IParseResult, IPersona, IReader, PersonaName } from '../../interfaces';
+import { handleApi } from '../../utils/bridge';
+import settings from '../Settings';
 import matchUrl from 'match-url-wildcard'
 import isURL from 'validator/lib/isURL';
 
@@ -45,9 +45,9 @@ class Reader implements IPersona {
 
     async parse(q: string): Promise<IParseResult[]> {
 
-        if (isURL(q, { require_protocol: false }) && !(await this.isWhitelisted({ url: q }))) {
+        if (isURL(q, { require_protocol: false }) && await this.isWhitelisted({ url: q })) {
 
-            return [{ name: this.name, confidence: 10, href: `gato://read?url=${encodeURI(q)}` }]
+            return [{ name: this.name, confidence: Confidence.VeryHigh, href: `gato://read?url=${encodeURI(q)}` }]
         }
     }
 }

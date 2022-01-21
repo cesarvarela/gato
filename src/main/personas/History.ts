@@ -1,5 +1,5 @@
-import { IParseResult, IPersona, PersonaName } from "../interfaces"
-import settings from "./Settings"
+import { Confidence, IParseResult, IPersona, PersonaName } from "../../interfaces"
+import settings from "../Settings"
 import Fuse from 'fuse.js'
 import { uniqBy } from "lodash"
 
@@ -50,23 +50,46 @@ class History implements IPersona {
 
         const items: string[] = settings.get("history.items")
         const fuse = new Fuse([...new Set(items)], { includeScore: true, keys: ['href'], threshold: 0.3, ignoreLocation: true, })
-        let confidence = 9
+
+        const scoreToConfidence = (score: number) => {
+
+            if (score < 0.3) {
+                return Confidence.Low
+            }
+            else if (score < 0.6) {
+                return Confidence.Medium
+            }
+            else {
+                return Confidence.High
+            }
+        }
 
         const historyResults = fuse
             .search(q)
             .slice(0, 3)
-            .map(({ item, score }) => ({ name: this.name, confidence: confidence - score * confidence, href: item }))
+            .map(({ item, score }) => ({ name: this.name, confidence: scoreToConfidence(score), href: item }))
 
         const bookmarks: string[] = settings.get("history.bookmarks")
 
-        confidence = 10
-
         fuse.setCollection([...new Set(bookmarks)])
+
+        const scoreToConfidenceBookmarks = (score: number) => {
+
+            if (score < 0.3) {
+                return Confidence.Medium
+            }
+            else if (score < 0.6) {
+                return Confidence.High
+            }
+            else {
+                return Confidence.VeryHigh
+            }
+        }
 
         const bookmarksResults = fuse
             .search(q)
             .slice(0, 3)
-            .map(({ item, score }) => ({ name: this.name, confidence: confidence - score * confidence, href: item }))
+            .map(({ item, score }) => ({ name: this.name, confidence: scoreToConfidenceBookmarks(score), href: item }))
 
         const results = uniqBy([...bookmarksResults, ...historyResults], 'href')
 

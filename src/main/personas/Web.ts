@@ -1,8 +1,8 @@
 import matchUrl from 'match-url-wildcard';
-import { IParseResult, IPersona, PersonaName } from '../interfaces';
+import { Confidence, IParseResult, IPersona, PersonaName } from '../../interfaces';
 import isURL from 'validator/lib/isURL';
 import Reader from './Reader';
-import settings, { IWebOptions } from './Settings'
+import settings, { IWebOptions } from '../Settings'
 import { merge } from 'lodash';
 
 const fixHTTP = href => href.startsWith('http')
@@ -38,17 +38,24 @@ class Web implements IPersona {
 
         if (q.startsWith('gato://')) {
 
-            return [{ name: this.name, confidence: 10, href: q }]
+            return [{ name: this.name, confidence: Confidence.VeryHigh, href: q }]
         }
 
-        if (isURL(q) && await this.reader.isWhitelisted({ url: q })) {
+        const isLocalhost = isURL(q, { require_tld: false, require_protocol: false, host_whitelist: ['localhost'] })
+        const isTld = isURL(q, { require_tld: true, require_protocol: false })
+
+        if (isLocalhost || isTld) {
 
             const href = fixHTTP(q)
+            let confidence: Confidence = Confidence.VeryHigh
 
-            return [{ name: this.name, confidence: 10, href }]
+            if (await this.reader.isWhitelisted({ url: href })) {
+
+                confidence = Confidence.High
+            }
+
+            return [{ name: this.name, confidence, href }]
         }
-
-        return [{ name: this.name, confidence: 0, href: q }]
     }
 
     getOptions({ url }: { url: string }): IWebOptions {

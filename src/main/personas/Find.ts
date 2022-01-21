@@ -1,6 +1,6 @@
-import { IFind, IFinder, IParseResult, IPersona, IStopFind, PersonaName } from '../interfaces';
-import { handleApi } from '../utils/bridge';
-import Gato from './Gato';
+import { Confidence, IFind, IFinder, IParseResult, IPersona, IStopFind, PersonaName } from '../../interfaces';
+import { handleApi } from '../../utils/bridge';
+import Gato from '../Gato';
 
 class Find implements IPersona {
 
@@ -48,7 +48,7 @@ class Find implements IPersona {
 
         if (q.startsWith(':')) {
 
-            return [{ name: this.name, confidence: 10, params: { q, paletteMode: 'find' }, href: null }]
+            return [{ name: this.name, confidence: Confidence.VeryHigh, params: { q, paletteMode: 'find' }, href: null }]
         }
     }
 }

@@ -1,7 +1,7 @@
-import { IParseResult, IPersona, IYoutube, PersonaName } from "../interfaces";
+import { Confidence, IParseResult, IPersona, IYoutube, PersonaName } from "../../interfaces";
 import isURL from "validator/lib/isURL";
-import { handleApi } from "../utils/bridge";
-import settings from './Settings'
+import { handleApi } from "../../utils/bridge";
+import settings from '../Settings'
 import { google } from 'googleapis';
 
 const youtube = google.youtube('v3');
@@ -53,12 +53,11 @@ class Youtube implements IPersona {
 
                 if (parsed.searchParams.has('v')) {
 
-                    return [{ name: this.name, confidence: 10, href: `gato://youtube?v=${parsed.searchParams.get('v')}` }]
+                    return [{ name: this.name, confidence: Confidence.VeryHigh, href: `gato://youtube?v=${parsed.searchParams.get('v')}` }]
                 }
             }
             catch (e) {
-
-                return [{ name: this.name, confidence: 0, href: null }]
+                console.error(e)
             }
         }
     }
