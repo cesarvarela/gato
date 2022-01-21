@@ -4,8 +4,7 @@ import contextMenu from 'electron-context-menu'
 import { handleApi, listen } from '../utils/bridge';
 import Menu from './Menu';
 import Reader from './personas/Reader';
-import Youtube from './personas/Youtube';
-import GoogleSearch from './personas/GoogleSearch';
+import Search from './personas/Search';
 import Find from './personas/Find';
 import WhatsApp from './personas/WhatsApp';
 import History from './personas/History';
@@ -13,6 +12,7 @@ import Web from './personas/Web';
 import getPort from 'get-port';
 import { merge } from 'lodash';
 import TitleUpdater from './gato/TItleUpdater';
+import Alternative from './personas/Alternative';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -234,15 +234,16 @@ class Gato {
         const whatsapp = await WhatsApp.getInstance()
         const find = await Find.getInstance()
         const web = await Web.getInstance()
-        const search = await GoogleSearch.getInstance()
+        const search = await Search.getInstance()
         const history = await History.getInstance()
         const reader = await Reader.getInstance()
-        const youtube = await Youtube.getInstance()
+        const alternative = await Alternative.getInstance()
 
         // order of results if same score
+
         personas.push(find)
         personas.push(whatsapp)
-        personas.push(youtube)
+        personas.push(alternative)
         personas.push(reader)
         personas.push(search)
         personas.push(web)

@@ -1,5 +1,15 @@
 import React, { createRef, useEffect, useState } from "react";
-import { SearchIcon, DocumentSearchIcon, GlobeAltIcon, VideoCameraIcon, HomeIcon, DocumentTextIcon, ChatIcon, BookmarkIcon } from '@heroicons/react/solid'
+import {
+    SearchIcon,
+    DocumentSearchIcon,
+    GlobeAltIcon,
+    VideoCameraIcon,
+    HomeIcon,
+    DocumentTextIcon,
+    ChatIcon,
+    BookmarkIcon,
+    InformationCircleIcon,
+} from '@heroicons/react/solid'
 import { IParseResult, PersonaName } from "../../interfaces";
 import classnames from "classnames";
 
@@ -12,6 +22,7 @@ const iconsMap: Record<Partial<PersonaName>, unknown> = {
     read: DocumentTextIcon,
     whatsapp: ChatIcon,
     history: BookmarkIcon,
+    alternative: InformationCircleIcon,
 }
 
 const Suggestion = ({ title, text, name, active, onClick, innerRef }) => {

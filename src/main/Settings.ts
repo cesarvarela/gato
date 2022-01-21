@@ -24,10 +24,16 @@ interface ISettings {
     history: {
         bookmarks: string[],
         items: string[]
+    },
+    alternative: {
+        mappings: Array<Record<string, string>>
+    },
+    search: {
+        baseUrl: string,
     }
 }
 
-const store = new Store<ISettings>({
+const store = new Store<Partial<ISettings>>({
     schema: {
         googleSearch: {
             type: 'object',
@@ -74,6 +80,22 @@ const store = new Store<ISettings>({
                     type: 'array',
                 }
             }
+        },
+        alternative: {
+            type: 'object',
+            properties: {
+                "mappings": {
+                    type: 'array',
+                }
+            }
+        },
+        search: {
+            type: 'object',
+            properties: {
+                "baseUrl": {
+                    type: 'string',
+                },
+            }
         }
     },
     defaults: {
@@ -100,6 +122,12 @@ const store = new Store<ISettings>({
         history: {
             bookmarks: [],
             items: []
+        },
+        alternative: {
+            mappings: []
+        },
+        search: {
+            baseUrl: 'https://www.google.com/search?q=',
         }
     }
 })

@@ -4,7 +4,7 @@ interface ISearchResult {
     title: string
 }
 
-type PersonaName = 'search' | 'web' | 'read' | 'youtube' | 'find' | 'home' | 'whatsapp' | 'history'
+type PersonaName = 'search' | 'web' | 'read' | 'youtube' | 'find' | 'home' | 'whatsapp' | 'history' | 'alternative'
 
 interface IPersona {
     name: PersonaName
