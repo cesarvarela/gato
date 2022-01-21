@@ -51,8 +51,6 @@ class Gato {
 
     static personas: IPersona[] = []
 
-    static gatos: Record<string, Gato> = {}
-
     static async setup() {
 
         const menu = await Menu.getInstance()
