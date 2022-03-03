@@ -61,10 +61,10 @@ class Web implements IPersona {
     getOptions({ url }: { url: string }): IWebOptions {
 
         const list: any[] = settings.get('web.options')
+        const results = list.filter(o => o.url !== '*').filter(option => matchUrl(url, option.url) || option.url === '*')
+        const options = list.find(o => o.url === '*') || {}
 
-        const results = list.filter(option => matchUrl(url, option.url) || option.url === '*')
-
-        const options = results.reduce((result, current) => merge(current, result), {})
+        results.reduce((result, current) => merge(result, current), options)
 
         return options
     }
