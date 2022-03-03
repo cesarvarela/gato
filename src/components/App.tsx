@@ -118,8 +118,12 @@ export default function App() {
     useEffect(() => {
 
         async function update() {
-            const suggestions = await parse({ q })
-            setSuggestions(suggestions)
+
+            if (selected == 0) {
+
+                const suggestions = await parse({ q })
+                setSuggestions(suggestions)
+            }
 
             const first = suggestions[0]
 
@@ -178,22 +182,27 @@ export default function App() {
 
     const onDown = useCallback(() => {
 
-        if (selected < suggestions.length - 1) {
-            setSelected(selected + 1)
-        }
-        else {
-            setSelected(0)
-        }
+        const next = selected < suggestions.length - 1 ? selected + 1 : 0
+
+        setSelected(next)
+        setQ(suggestions[next].q || suggestions[next].href)
+
     }, [selected, suggestions])
 
     const onUp = useCallback(() => {
 
-        if (selected > 0) {
-            setSelected(selected - 1)
-        }
-        else {
-            setSelected(suggestions.length - 1)
-        }
+        const next = selected > 0 ? selected - 1 : suggestions.length - 1
+
+        setSelected(next)
+        setQ(suggestions[next].q || suggestions[next].href)
+
+    }, [selected, suggestions])
+
+    const onChange = useCallback((e) => {
+
+        setSelected(0)
+        setQ(e.target.value)
+
     }, [selected, suggestions])
 
     const onSuggestionsClick = (item) => {
@@ -227,7 +236,7 @@ export default function App() {
                     <SearchInput
                         innerRef={ref}
                         value={q}
-                        onChange={e => setQ(e.target.value)}
+                        onChange={onChange}
                         onUp={onUp}
                         onDown={onDown}
                         onAccept={onAccept}

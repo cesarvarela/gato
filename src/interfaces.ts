@@ -15,6 +15,7 @@ type IParseResult = {
     name?: PersonaName
     confidence?: Confidence,
     params?: Record<string, unknown>
+    q?: string
     href: string
 }
 

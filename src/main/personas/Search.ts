@@ -34,11 +34,11 @@ class Search implements IPersona {
 
             confidence = whiteSpaces.length > 3 ? Confidence.High : Confidence.Medium
 
-            return [{ name: this.name, confidence, href: `${baseUrl}${q}` }]
+            return [{ name: this.name, confidence, href: `${baseUrl}${q}`, q }]
         }
         else {
 
-            return [{ name: this.name, confidence, href: `${baseUrl}${q}` }]
+            return [{ name: this.name, confidence, href: `${baseUrl}${q}`, q }]
         }
     }
 }
