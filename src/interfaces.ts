@@ -42,23 +42,69 @@ interface IStopFind {
 
 type ITarget = '_blank' | '_self'
 
+interface ISettings {
+    getYouTubeSettings: () => Promise<{
+        key: string;
+        client_id: string;
+        client_secret: string;
+    }>;
+    setYouTubeSettings: (settings: {
+        key: string;
+        client_id: string;
+        client_secret: string;
+    }) => Promise<void>;
+    getGitHubSettings: () => Promise<{
+        client_id: string;
+        client_secret: string;
+    }>;
+    setGitHubSettings: (settings: {
+        client_id: string;
+        client_secret: string;
+    }) => Promise<void>;
+    getTwitterSettings: () => Promise<{
+        client_id: string;
+        client_secret: string;
+    }>;
+    setTwitterSettings: (settings: {
+        client_id: string;
+        client_secret: string;
+    }) => Promise<void>;
+    needsRestart: () => Promise<boolean>;
+}
+
+type ProviderType = 'google' | 'github' | 'twitter';
+
+interface IAuthProviderStatus {
+    provider: ProviderType;
+    isAuthenticated: boolean;
+    displayName?: string;
+    email?: string;
+    avatarUrl?: string;
+}
+
+interface IAccountsManager {
+    getProviders: () => Promise<IAuthProviderStatus[]>;
+    authenticate: (provider: ProviderType) => Promise<boolean>;
+    signOut: (provider: ProviderType) => Promise<void>;
+    signOutAll: () => Promise<void>;
+}
+
+interface IDebug {
+    testConnection: () => Promise<any>;
+}
+
 interface IGato {
-
     menu: () => Promise<Record<string, MenuItemConstructorOptions>>,
-
     on: (name: string, cb: (e, params) => void) => () => void,
-
     reader: IReader,
-
     gato: Partial<IGatoWindow>,
-
     find: IFinder,
-
     youtube: IYoutube,
-
     search: ISearch,
-
     platform: string,
+    settings: ISettings,
+    accounts: IAccountsManager,
+    debug?: IDebug,
 }
 
 interface IReaderResult {
@@ -78,6 +124,9 @@ interface ISearch {
 
 interface IYoutube {
     getComments: ({ v }: { v: string }) => Promise<any[]>
+    isAuthenticated: () => Promise<boolean>
+    authenticate: () => Promise<boolean>
+    signOut: () => Promise<void>
 }
 
 interface IGatoWindow {
@@ -140,4 +189,9 @@ export {
     PaletteMode,
     ISearch,
     Confidence,
+    ISettings,
+    IAccountsManager,
+    IAuthProviderStatus,
+    ProviderType,
+    IDebug,
 }

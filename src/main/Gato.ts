@@ -13,6 +13,8 @@ import getPort from 'get-port';
 import { merge } from 'lodash';
 import TitleUpdater from './gato/TItleUpdater';
 import Alternative from './personas/Alternative';
+import Youtube from './personas/Youtube';
+import AccountsManager from './auth/AccountsManager';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -22,6 +24,7 @@ declare const SEARCH_WEBPACK_ENTRY: string;
 declare const READ_WEBPACK_ENTRY: string;
 declare const YOUTUBE_WEBPACK_ENTRY: string;
 declare const ERROR_WEBPACK_ENTRY: string;
+declare const ACCOUNTS_WEBPACK_ENTRY: string;
 
 const map = {
     search: SEARCH_WEBPACK_ENTRY,
@@ -29,6 +32,7 @@ const map = {
     read: READ_WEBPACK_ENTRY,
     youtube: YOUTUBE_WEBPACK_ENTRY,
     error: ERROR_WEBPACK_ENTRY,
+    accounts: ACCOUNTS_WEBPACK_ENTRY,
 }
 
 declare const PERSONA_SHARED_PRELOAD_WEBPACK_ENTRY: string
@@ -236,6 +240,12 @@ class Gato {
         const history = await History.getInstance()
         const reader = await Reader.getInstance()
         const alternative = await Alternative.getInstance()
+        const youtube = await Youtube.getInstance()
+        
+        // Initialize AccountsManager (it will register its own API in init)
+        console.log('Initializing AccountsManager...');
+        await AccountsManager.getInstance();
+        console.log('AccountsManager initialized');
 
         // order of results if same score
 
@@ -243,6 +253,7 @@ class Gato {
         personas.push(whatsapp)
         personas.push(alternative)
         personas.push(reader)
+        personas.push(youtube)
         personas.push(search)
         personas.push(web)
         personas.push(history)
@@ -461,7 +472,7 @@ class Gato {
             showSaveImageAs: true,
             prepend: (defaultActions, parameters) => [
                 {
-                    label: 'Search for “{selection}”',
+                    label: 'Search for "{selection}"',
                     visible: parameters.selectionText.trim().length > 0,
                     click: async () => {
 

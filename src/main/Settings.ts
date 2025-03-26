@@ -1,4 +1,6 @@
 import Store from 'electron-store'
+import { handleApi } from '../utils/bridge';
+import { ISettings as ISettingsAPI } from '../interfaces';
 
 interface IWebOptions {
     url: URL | '*',
@@ -20,6 +22,16 @@ interface ISettings {
     },
     youtube: {
         key: string,
+        client_id: string,
+        client_secret: string,
+    },
+    github: {
+        client_id: string,
+        client_secret: string,
+    },
+    twitter: {
+        client_id: string,
+        client_secret: string,
     },
     history: {
         bookmarks: string[],
@@ -66,6 +78,34 @@ const store = new Store<Partial<ISettings>>({
             type: 'object',
             properties: {
                 "key": {
+                    type: 'string',
+                },
+                "client_id": {
+                    type: 'string',
+                },
+                "client_secret": {
+                    type: 'string',
+                }
+            }
+        },
+        github: {
+            type: 'object',
+            properties: {
+                "client_id": {
+                    type: 'string',
+                },
+                "client_secret": {
+                    type: 'string',
+                }
+            }
+        },
+        twitter: {
+            type: 'object',
+            properties: {
+                "client_id": {
+                    type: 'string',
+                },
+                "client_secret": {
                     type: 'string',
                 }
             }
@@ -117,7 +157,17 @@ const store = new Store<Partial<ISettings>>({
             ]
         },
         youtube: {
-            key: ''
+            key: '',
+            client_id: '',
+            client_secret: ''
+        },
+        github: {
+            client_id: '',
+            client_secret: ''
+        },
+        twitter: {
+            client_id: '',
+            client_secret: ''
         },
         history: {
             bookmarks: [],
@@ -131,6 +181,49 @@ const store = new Store<Partial<ISettings>>({
         }
     }
 })
+
+// Create API for renderer process
+const settingsApi = {
+    getYouTubeSettings: async () => {
+        return {
+            key: store.get('youtube.key', ''),
+            client_id: store.get('youtube.client_id', ''),
+            client_secret: store.get('youtube.client_secret', '')
+        };
+    },
+    setYouTubeSettings: async (settings: { key: string, client_id: string, client_secret: string }) => {
+        store.set('youtube.key', settings.key);
+        store.set('youtube.client_id', settings.client_id);
+        store.set('youtube.client_secret', settings.client_secret);
+    },
+    getGitHubSettings: async () => {
+        return {
+            client_id: store.get('github.client_id', ''),
+            client_secret: store.get('github.client_secret', '')
+        };
+    },
+    setGitHubSettings: async (settings: { client_id: string, client_secret: string }) => {
+        store.set('github.client_id', settings.client_id);
+        store.set('github.client_secret', settings.client_secret);
+    },
+    getTwitterSettings: async () => {
+        return {
+            client_id: store.get('twitter.client_id', ''),
+            client_secret: store.get('twitter.client_secret', '')
+        };
+    },
+    setTwitterSettings: async (settings: { client_id: string, client_secret: string }) => {
+        store.set('twitter.client_id', settings.client_id);
+        store.set('twitter.client_secret', settings.client_secret);
+    },
+    needsRestart: async () => {
+        // For now, we'll assume settings changes require restart
+        return true;
+    }
+};
+
+// Register the API
+handleApi<ISettingsAPI>('settings', settingsApi);
 
 export default store
 export { ISettings, IWebOptions }

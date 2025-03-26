@@ -96,6 +96,14 @@
                   "html": "./src/windows/persona_shared/index.html",
                   "js": "./src/windows/error/renderer.tsx",
                   "name": "error"
+                },
+                {
+                  "html": "./src/windows/accounts/index.html",
+                  "js": "./src/windows/accounts/renderer.tsx",
+                  "name": "accounts",
+                  "preload": {
+                    "js": "./src/windows/accounts/preload.ts"
+                  }
                 }
               ]
             },

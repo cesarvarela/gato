@@ -16,6 +16,10 @@ const api: Partial<IGato> = {
     ...secureInvoke('youtube', ['getComments']),
 
     ...secureInvoke('search', ['query']),
+    
+    ...secureInvoke('settings', ['getYouTubeSettings', 'setYouTubeSettings', 'getGitHubSettings', 'setGitHubSettings', 'getTwitterSettings', 'setTwitterSettings', 'needsRestart']),
+    
+    ...secureInvoke('accounts', ['getProviders', 'authenticate', 'signOut', 'signOutAll']),
 }
 
 contextBridge.exposeInMainWorld("gato", api);

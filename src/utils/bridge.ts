@@ -12,27 +12,35 @@ function listen<T>(emitter: EventEmiter, api: T) {
 }
 
 function handleApi<T>(key: string, api: T): void {
+    console.log(`Registering API handlers for "${key}" with methods:`, Object.keys(api));
 
     Object.keys(api).forEach(k => {
         const v = api[k];
 
         if (typeof v === 'function') {
-
             const channel = `${key}:${k}`;
+            console.log(`- Registering handler for "${channel}"`);
 
             electron.ipcMain.handle(channel, (e, ...args) => {
-
+                console.log(`Handling "${channel}" request`);
+                
                 if (e.sender.getURL().startsWith('gato://') || e.sender.getURL().startsWith(MAIN_WEBPACK_ENTRY)) {
-
-                    return api[k](...args, e)
+                    try {
+                        return api[k](...args, e);
+                    } catch (error) {
+                        console.error(`Error in "${channel}" handler:`, error);
+                        throw error;
+                    }
                 }
                 else {
-
-                    return null
+                    console.warn(`Rejected "${channel}" request from unauthorized URL:`, e.sender.getURL());
+                    return null;
                 }
             });
         }
-    })
+    });
+
+    console.log(`Finished registering API handlers for "${key}"`);
 }
 
 function secureInvoke(key: string, events: string[]): any {
