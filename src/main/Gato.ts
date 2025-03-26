@@ -21,7 +21,6 @@ declare const HOME_WEBPACK_ENTRY: string;
 declare const SEARCH_WEBPACK_ENTRY: string;
 declare const READ_WEBPACK_ENTRY: string;
 declare const YOUTUBE_WEBPACK_ENTRY: string;
-declare const WALLET_WEBPACK_ENTRY: string;
 declare const ERROR_WEBPACK_ENTRY: string;
 
 const map = {
@@ -29,7 +28,6 @@ const map = {
     home: HOME_WEBPACK_ENTRY,
     read: READ_WEBPACK_ENTRY,
     youtube: YOUTUBE_WEBPACK_ENTRY,
-    wallet: WALLET_WEBPACK_ENTRY,
     error: ERROR_WEBPACK_ENTRY,
 }
 

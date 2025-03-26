@@ -46,9 +46,9 @@
         }
       ],
       "plugins": [
-        [
-          "@electron-forge/plugin-webpack",
-          {
+        {
+          "name": "@electron-forge/plugin-webpack",
+          "config": {
             "devContentSecurityPolicy": "default-src 'self' 'unsafe-inline' data: ws:; script-src 'self' 'unsafe-eval' 'unsafe-inline' data:",
             "devServer": {
               "allowedHosts": "all"
@@ -94,11 +94,6 @@
                 },
                 {
                   "html": "./src/windows/persona_shared/index.html",
-                  "js": "./src/windows/wallet/renderer.tsx",
-                  "name": "wallet"
-                },
-                {
-                  "html": "./src/windows/persona_shared/index.html",
                   "js": "./src/windows/error/renderer.tsx",
                   "name": "error"
                 }
@@ -107,7 +102,7 @@
             "port": 3001,
             "loggerPort": 9001
           }
-        ]
+        }
       ],
       "publishers": [
         {
@@ -212,5 +207,6 @@
     "tailwindcss-classnames": "^2.2.6",
     "use-query-params": "^1.2.3",
     "validator": "^13.7.0"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

@@ -91,8 +91,14 @@ export default function Search() {
         Mousetrap.bind('down', down)
         Mousetrap.bind('right', onNextPage)
         Mousetrap.bind('left', onPrevPage)
-        Mousetrap.bind('enter', () => onOpen({ target: '_self' }))
-        Mousetrap.bind('command+enter', () => onOpen({ target: '_blank' }))
+        Mousetrap.bind('enter', () => {
+            onOpen({ target: '_self' })
+            return false
+        })
+        Mousetrap.bind('command+enter', () => {
+            onOpen({ target: '_blank' })
+            return false
+        })
 
         return () => {
 

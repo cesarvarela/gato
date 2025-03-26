@@ -77,7 +77,7 @@ interface ISearch {
 }
 
 interface IYoutube {
-    getComments: ({ v: string }) => Promise<any[]>
+    getComments: ({ v }: { v: string }) => Promise<any[]>
 }
 
 interface IGatoWindow {
