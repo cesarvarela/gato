@@ -1,22 +1,25 @@
 import React from 'react'
 
-function SearchInput({ innerRef, value, onChange, onAccept, onUp, onDown }) {
-
+function SearchInput({ innerRef, value, onChange, onAccept, onUp, onDown, onCommandMode }) {
     const onKeyDown = (e) => {
-
         if (e.key === 'ArrowDown') {
             onDown()
             e.preventDefault()
         }
-
         if (e.key === 'ArrowUp') {
             onUp()
             e.preventDefault()
         }
-
         if (e.key === "Enter") {
-
             onAccept()
+        }
+        // Check for '>' symbol to trigger command mode, but don't trigger if we're already typing
+        // Let the onChange handler handle it instead when there's already text
+        if (e.key === '>' && value === '') {
+            if (onCommandMode) {
+                e.preventDefault() // Prevent the '>' character from being added by the input
+                onCommandMode()
+            }
         }
     }
 
@@ -26,7 +29,6 @@ function SearchInput({ innerRef, value, onChange, onAccept, onUp, onDown }) {
                 <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
             </svg>
         </span>
-
         <input
             ref={innerRef}
             value={value}

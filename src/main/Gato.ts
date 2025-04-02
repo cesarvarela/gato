@@ -13,6 +13,7 @@ import getPort from 'get-port';
 import { merge } from 'lodash';
 import TitleUpdater from './gato/TItleUpdater';
 import Alternative from './personas/Alternative';
+import commands from './commands';
 
 declare const MAIN_WEBPACK_ENTRY: string;
 declare const MAIN_PRELOAD_WEBPACK_ENTRY: string;
@@ -150,6 +151,30 @@ class Gato {
                 }
             }
         })
+
+        // Add IPC handler for direct command execution from renderer
+        electron.ipcMain.handle('execute-command', async (event, { command }) => {
+            const window = electron.BrowserWindow.fromWebContents(event.sender);
+            if (!window || !gatos[window.id]) {
+                console.error('No valid window found for command execution');
+                return { success: false, error: 'No valid window found' };
+            }
+
+            const cmd = commands.find(c => c.id === command);
+            if (!cmd) {
+                console.error(`Unknown command: ${command}`);
+                return { success: false, error: `Unknown command: ${command}` };
+            }
+
+            try {
+                console.log(`Executing command: ${cmd.label}`);
+                await cmd.execute(window);
+                return { success: true };
+            } catch (error) {
+                console.error('Error executing command:', error);
+                return { success: false, error: error.message };
+            }
+        });
 
         handleApi<IGatoWindow>('gato', {
 

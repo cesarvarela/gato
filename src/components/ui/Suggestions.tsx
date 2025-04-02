@@ -9,11 +9,12 @@ import {
     ChatIcon,
     BookmarkIcon,
     InformationCircleIcon,
+    MenuIcon,
 } from '@heroicons/react/solid'
-import { IParseResult, PersonaName } from "../../interfaces";
+import { IParseResult } from "../../interfaces";
 import classnames from "classnames";
 
-const iconsMap: Record<Partial<PersonaName>, unknown> = {
+const iconsMap = {
     web: GlobeAltIcon,
     find: DocumentSearchIcon,
     search: SearchIcon,
@@ -23,11 +24,12 @@ const iconsMap: Record<Partial<PersonaName>, unknown> = {
     whatsapp: ChatIcon,
     history: BookmarkIcon,
     alternative: InformationCircleIcon,
+    command: MenuIcon,
 }
 
-const Suggestion = ({ title, text, name, active, onClick, innerRef }) => {
-
-    const Icon = iconsMap[name]
+const Suggestion = ({ title, text, name, active, onClick, innerRef, label }) => {
+    // Get the icon component from the map or default to MenuIcon if not found
+    const IconComponent = name && iconsMap[name] ? iconsMap[name] : MenuIcon;
 
     return <a
         ref={innerRef}
@@ -40,9 +42,18 @@ const Suggestion = ({ title, text, name, active, onClick, innerRef }) => {
         )}
         onClick={onClick}
     >
-        <Icon className={classnames("mr-3 h-5 w-5", { ['text-stone-100']: active, ['text-stone-400']: !active })} aria-hidden="true" />
-        <span className="font-thin">{title}</span>
-        <span className="ml-2">{text}</span>
+        <IconComponent className={classnames("mr-3 h-5 w-5", { ['text-stone-100']: active, ['text-stone-400']: !active })} aria-hidden="true" />
+        {name === 'command' ? (
+            <>
+                <span className="font-medium">{label}</span>
+                {text && <span className="ml-auto text-xs opacity-70">{text}</span>}
+            </>
+        ) : (
+            <>
+                <span className="font-thin">{title}</span>
+                <span className="ml-2">{text}</span>
+            </>
+        )}
     </a >
 }
 
@@ -51,27 +62,23 @@ export default function Suggestions({ items, selected, onClick }: { items: IPars
     const [refs, setRefs] = useState([])
 
     useEffect(() => {
-
         setRefs(items.map(r => createRef()))
-
     }, [items])
 
     useEffect(() => {
-
-        if (refs.length) {
-
+        if (refs.length && refs[selected] && refs[selected].current) {
             refs[selected].current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
         }
-
     }, [selected])
 
     return <div className="flex flex-col gap-1">
         {items.map((item, index) => <Suggestion
             name={item.name}
             innerRef={refs[index]}
-            key={`${item.name}:${item.href}`}
+            key={`${item.name}:${item.href || index}`}
             title={item.name}
             text={item.href}
+            label={item.label}
             active={selected === index}
             onClick={() => onClick(item)}
         />)}

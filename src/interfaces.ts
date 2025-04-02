@@ -17,6 +17,8 @@ type IParseResult = {
     params?: Record<string, unknown>
     q?: string
     href: string
+    label?: string
+    click?: (item: any, window?: any) => void
 }
 
 interface IStatus {
@@ -44,7 +46,7 @@ type ITarget = '_blank' | '_self'
 
 interface IGato {
 
-    menu: () => Promise<Record<string, MenuItemConstructorOptions>>,
+    menu: () => Promise<{ application: { submenu: MenuItemConstructorOptions[] }, commands: MenuItemConstructorOptions[] }>,
 
     on: (name: string, cb: (e, params) => void) => () => void,
 
@@ -59,6 +61,14 @@ interface IGato {
     search: ISearch,
 
     platform: string,
+
+    ipc?: {
+        invoke: (channel: string, data: any) => Promise<any>;
+    };
+
+    command: {
+        executeCommand: (args: { command: string }) => Promise<void>;
+    };
 }
 
 interface IReaderResult {
